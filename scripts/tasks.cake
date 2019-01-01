@@ -43,7 +43,9 @@ Tasks.Build = Task("Build")
         .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLower())
         .WithProperty("Version", Build.Version.AssemblyVersion)
         .WithProperty("FileVersion", Build.Version.AssemblyFileVersion)
-        .WithProperty("InformationalVersion", Build.Version.InformationalVersion);
+        .WithProperty("InformationalVersion", Build.Version.InformationalVersion)
+        .WithProperty("PackageVersion", Build.Version.FullSemVer)
+        .WithProperty("NoWarn", "NU5105");
     var buildSettings = new DotNetCoreBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
@@ -174,8 +176,8 @@ Tasks.NuGetPack = Task("NuGetPack")
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
     var msbuildSettings = new DotNetCoreMSBuildSettings { }
-        .WithProperty("NoWarn", "NU5105")
-        .WithProperty("PackageVersion", Build.Version.FullSemVer);
+        .WithProperty("PackageVersion", Build.Version.FullSemVer)
+        .WithProperty("NoWarn", "NU5105");
     var settings = new DotNetCorePackSettings
     {
         Configuration = Build.Parameters.Configuration,

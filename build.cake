@@ -20,6 +20,7 @@ Build.SetParameters
     logBuildSystem: false,
     logContext: false,
 
+    runBuild: true,
     runNuGetPack: true,
     runPublishToNuGet: true,
 
