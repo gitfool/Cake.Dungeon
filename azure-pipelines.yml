@@ -6,7 +6,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - bash: ./cake.ps1
+  - bash: ./cake.sh
     env:
       COREHOST_TRACE: 0
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -16,7 +16,7 @@ jobs:
   pool:
     vmImage: 'macos-10.13'
   steps:
-  - bash: ./cake.ps1
+  - bash: ./cake.sh
     env:
       COREHOST_TRACE: 0
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1

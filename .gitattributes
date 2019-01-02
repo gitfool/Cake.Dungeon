@@ -50,3 +50,6 @@
 #*.props     merge=binary
 #*.filters   merge=binary
 #*.vcxitems  merge=binary
+
+# Custom
+*.sh         text eol=lf
