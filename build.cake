@@ -17,8 +17,6 @@ Build.SetParameters
     configuration: "Release",
 
     defaultLog: true,
-    logBuildSystem: false,
-    logContext: false,
 
     runBuild: true,
     runNuGetPack: true,

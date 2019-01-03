@@ -4,6 +4,12 @@ public class Builder
     {
         BuildSystem = buildSystem;
         Context = context;
+
+        _buildSystemProvider = typeof(BuildSystem)
+            .GetProperties()
+            .Where(property => property.Name.StartsWith("IsRunningOn") && property.GetValue(buildSystem) is bool value && value)
+            .Select(property => property.Name.Substring(11))
+            .SingleOrDefault();
         _runTarget = runTarget;
 
         SetParameters(title: ""); // defaults
@@ -19,7 +25,7 @@ public class Builder
         }
 
         var tokens = this.ToTokens()
-            .Where(x => (!x.Key.StartsWith("BuildSystem.") || Parameters.LogBuildSystem) &&
+            .Where(x => (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{_buildSystemProvider}."))) &&
                 (!x.Key.StartsWith("Context.") || Parameters.LogContext) &&
                 !x.Key.StartsWith("Credentials.")) // always filter credentials
             .ToDictionary(x => x.Key, x => x.Value);
@@ -158,13 +164,11 @@ public class Builder
         return this;
     }
 
-    private Builder SetVersion()
+    private void SetVersion()
     {
         Version = new Version(
             BuildSystem,
             Context);
-
-        return this;
     }
 
     public BuildSystem BuildSystem { get; }
@@ -182,5 +186,6 @@ public class Builder
 
     public Version Version { get; private set; }
 
+    private readonly string _buildSystemProvider;
     private readonly Action<string> _runTarget;
 }
