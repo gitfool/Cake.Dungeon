@@ -25,12 +25,19 @@ public class Builder
         }
 
         var tokens = this.ToTokens()
-            .Where(x => (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{_buildSystemProvider}."))) &&
+            // .Where(x => (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{_buildSystemProvider}."))) &&
+            .Where(x => (!x.Key.StartsWith("BuildSystem.") || Parameters.LogBuildSystem) &&
                 (!x.Key.StartsWith("Context.") || Parameters.LogContext) &&
                 !x.Key.StartsWith("Credentials.")) // always filter credentials
             .ToDictionary(x => x.Key, x => x.Value);
-
         var padding = tokens.Select(x => x.Key.Length).Max() + 4;
+
+        if (Parameters.LogBuildSystem)
+        {
+            Context.Information(string.Concat("BuildSystem.Provider".PadRight(padding), _buildSystemProvider.ToTokenString()));
+            Context.Information("");
+        }
+
         var groups = new HashSet<string>();
         foreach (var token in tokens)
         {
