@@ -5,11 +5,7 @@ public class Builder
         BuildSystem = buildSystem;
         Context = context;
 
-        _buildSystemProvider = typeof(BuildSystem)
-            .GetProperties()
-            .Where(property => property.Name.StartsWith("IsRunningOn") && property.GetValue(buildSystem) is bool value && value)
-            .Select(property => property.Name.Substring(11))
-            .SingleOrDefault();
+        _buildSystemProvider = GetBuildSystemProvider();
         _runTarget = runTarget;
 
         SetParameters(title: ""); // defaults
@@ -25,18 +21,11 @@ public class Builder
         }
 
         var tokens = this.ToTokens()
-            // .Where(x => (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{_buildSystemProvider}."))) &&
-            .Where(x => (!x.Key.StartsWith("BuildSystem.") || Parameters.LogBuildSystem) &&
+            .Where(x => (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{_buildSystemProvider}."))) &&
                 (!x.Key.StartsWith("Context.") || Parameters.LogContext) &&
                 !x.Key.StartsWith("Credentials.")) // always filter credentials
             .ToDictionary(x => x.Key, x => x.Value);
         var padding = tokens.Select(x => x.Key.Length).Max() + 4;
-
-        if (Parameters.LogBuildSystem)
-        {
-            Context.Information(string.Concat("BuildSystem.Provider".PadRight(padding), _buildSystemProvider.ToTokenString()));
-            Context.Information("");
-        }
 
         var groups = new HashSet<string>();
         foreach (var token in tokens)
@@ -169,6 +158,19 @@ public class Builder
             containerFile);
 
         return this;
+    }
+
+    private string GetBuildSystemProvider()
+    {
+        return typeof(BuildSystem)
+            .GetProperties()
+            .Where(property => property.Name.StartsWith("IsRunningOn") && property.GetValue(BuildSystem) is bool value && value)
+            .Select(property =>
+            {
+                var provider = property.Name.Substring(11);
+                return provider == "VSTS" ? "TFBuild" : provider; // map VSTS to hosted TFBuild
+            })
+            .SingleOrDefault();
     }
 
     private void SetVersion()
