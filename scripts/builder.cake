@@ -160,18 +160,16 @@ public class Builder
         return this;
     }
 
-    private string GetBuildSystemProvider()
-    {
-        return typeof(BuildSystem)
+    private string GetBuildSystemProvider() =>
+        typeof(BuildSystem)
             .GetProperties()
             .Where(property => property.Name.StartsWith("IsRunningOn") && property.GetValue(BuildSystem) is bool value && value)
             .Select(property =>
             {
                 var provider = property.Name.Substring(11);
-                return provider == "VSTS" ? "TFBuild" : provider; // map VSTS to hosted TFBuild
+                return provider == "TFS" || provider == "VSTS" ? "TFBuild" : provider; // map TFS & VSTS to TFBuild
             })
             .SingleOrDefault();
-    }
 
     private void SetVersion()
     {
