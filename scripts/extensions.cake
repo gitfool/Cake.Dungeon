@@ -1,5 +1,6 @@
 using Cake.Core.Text;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 
@@ -95,3 +96,7 @@ public static void WithVerbosity(this ICakeLog log, Verbosity verbosity, Action 
         log.Verbosity = lastVerbosity;
     }
 }
+
+public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
+
+private static readonly Regex TrailingWhitespaceRegex = new Regex(@"[ \t]+(\r?\n|$)", RegexOptions.Compiled | RegexOptions.Multiline);
