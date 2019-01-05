@@ -21,9 +21,13 @@ public class Builder
         }
 
         var tokens = this.ToTokens()
-            .Where(x => (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{_buildSystemProvider}."))) &&
-                (!x.Key.StartsWith("Context.") || Parameters.LogContext) &&
-                !x.Key.StartsWith("Credentials.")) // always filter credentials
+            .Where(x =>
+            {
+                var provider = _buildSystemProvider == "TFS" || _buildSystemProvider == "VSTS" ? "TFBuild" : _buildSystemProvider; // map TFS & VSTS to TFBuild
+                return (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{provider}."))) &&
+                    (!x.Key.StartsWith("Context.") || Parameters.LogContext) &&
+                    !x.Key.StartsWith("Credentials."); // always filter credentials
+            })
             .ToDictionary(x => x.Key, x => x.Value);
         var padding = tokens.Select(x => x.Key.Length).Max() + 4;
 
@@ -164,11 +168,7 @@ public class Builder
         typeof(BuildSystem)
             .GetProperties()
             .Where(property => property.Name.StartsWith("IsRunningOn") && property.GetValue(BuildSystem) is bool value && value)
-            .Select(property =>
-            {
-                var provider = property.Name.Substring(11);
-                return provider == "TFS" || provider == "VSTS" ? "TFBuild" : provider; // map TFS & VSTS to TFBuild
-            })
+            .Select(property => property.Name.Substring("IsRunningOn".Length))
             .SingleOrDefault();
 
     private void SetVersion()
