@@ -12,7 +12,7 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         {
             return property.GetValue(obj);
         }
-        catch (TargetInvocationException ex) when (ex.InnerException is ArgumentException || ex.InnerException is FormatException)
+        catch (TargetInvocationException) // when (ex.InnerException is ArgumentException || ex.InnerException is FormatException || ex.InnerException is TypeInitializationException)
         {
             return null; // ignore
         }
