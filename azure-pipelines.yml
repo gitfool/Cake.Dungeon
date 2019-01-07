@@ -2,16 +2,12 @@ trigger:
 - master
 - refs/tags/*
 
-resources:
-  containers:
-  - container: cake
-    image: cakebuild/cake:v0.32.1-2.1-sdk
-
 jobs:
 - job: Docker
   pool:
     vmImage: ubuntu-16.04
-  container: cake
+  container:
+    image: cakebuild/cake:v0.32.1-2.1-sdk
   steps:
   - bash: cake --bootstrap && cake
     env:
