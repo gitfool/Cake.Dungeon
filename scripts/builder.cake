@@ -14,33 +14,43 @@ public class Builder
 
     public void Info()
     {
-        if (!Parameters.DefaultLog)
+        var secrets = typeof(Environment)
+            .GetProperties()
+            .Select(property => property.GetValue(Environment))
+            .ToList();
+        var variables = Context.EnvironmentVariables()
+            .OrderBy(entry => entry.Key)
+            .ToDictionary(entry => entry.Key, entry => secrets.Contains(entry.Key) ? entry.Value.Redact() : entry.Value); // redact secrets
+
+        var provider = _buildSystemProvider == "TFS" || _buildSystemProvider == "VSTS" ? "TFBuild" : _buildSystemProvider; // map TFS & VSTS to TFBuild
+        var properties = this.ToTokens()
+            .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"BuildSystem.{provider}.")) ||
+                (Parameters.LogContext && entry.Key.StartsWith("Context.")) ||
+                (Parameters.DefaultLog && !entry.Key.StartsWith("BuildSystem.") && !entry.Key.StartsWith("Context.")))
+            .ToDictionary(entry => entry.Key, entry => entry.Key.StartsWith("Credentials.") ? entry.Value?.ToString()?.Redact() : entry.Value); // redact secrets
+
+        var padding = variables.Keys.Concat(properties.Keys).Select(key => key.Length).Max() + 4;
+
+        Context.Information(Version.Summary);
+        if (Parameters.LogEnvironment)
         {
-            Context.Information(Version.Summary);
-            return;
+            Context.Information("");
+            foreach (var variable in variables)
+            {
+                Context.Information(string.Concat(variable.Key.PadRight(padding), variable.Value.ToTokenString()));
+            }
         }
 
-        var tokens = this.ToTokens()
-            .Where(x =>
-            {
-                var provider = _buildSystemProvider == "TFS" || _buildSystemProvider == "VSTS" ? "TFBuild" : _buildSystemProvider; // map TFS & VSTS to TFBuild
-                return (!x.Key.StartsWith("BuildSystem.") || (Parameters.LogBuildSystem && x.Key.StartsWith($"BuildSystem.{provider}."))) &&
-                    (!x.Key.StartsWith("Context.") || Parameters.LogContext) &&
-                    !x.Key.StartsWith("Credentials."); // always filter credentials
-            })
-            .ToDictionary(x => x.Key, x => x.Value);
-        var padding = tokens.Select(x => x.Key.Length).Max() + 4;
-
         var groups = new HashSet<string>();
-        foreach (var token in tokens)
+        foreach (var property in properties)
         {
-            var group = token.Key.Split('.').First();
+            var group = property.Key.Split('.').First();
             if (!groups.Contains(group))
             {
-                Context.Information("");
                 groups.Add(group);
+                Context.Information("");
             }
-            Context.Information(string.Concat(token.Key.PadRight(padding), token.Value.ToTokenString()));
+            Context.Information(string.Concat(property.Key.PadRight(padding), property.Value.ToTokenString()));
         }
     }
 
@@ -55,6 +65,7 @@ public class Builder
         string configuration = null,
 
         bool? defaultLog = null,
+        bool? logEnvironment = null,
         bool? logBuildSystem = null,
         bool? logContext = null,
 
@@ -105,6 +116,7 @@ public class Builder
             configuration,
 
             defaultLog,
+            logEnvironment,
             logBuildSystem,
             logContext,
 

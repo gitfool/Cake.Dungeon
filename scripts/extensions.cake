@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 
+public static string Redact(this string value) => value != null ? "****" : value;
+
 public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj, string prefix = null)
 {
     object GetValue(PropertyInfo property)
@@ -55,7 +57,7 @@ public static string ToTokenString(this object value)
         case IDictionary<string, string> dict when dict.Count == 0: // empty string dictionary
             return "{}";
         case IDictionary<string, string> dict: // flatten string dictionary
-            return string.Concat("{ ", string.Join(", ", dict.Select(x => string.Concat(x.Key, ": ", x.Value))), " }");
+            return string.Concat("{ ", string.Join(", ", dict.Select(entry => string.Concat(entry.Key, ": ", entry.Value))), " }");
         case null:
             return "(null)";
         default:
@@ -65,6 +67,8 @@ public static string ToTokenString(this object value)
                 : value.ToString(); // default
     }
 }
+
+public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
 
 public static TextTransformation<TTemplate> WithTokens<TTemplate>(
     this TextTransformation<TTemplate> transformation, IEnumerable<KeyValuePair<string, object>> tokens)
@@ -96,7 +100,5 @@ public static void WithVerbosity(this ICakeLog log, Verbosity verbosity, Action 
         log.Verbosity = lastVerbosity;
     }
 }
-
-public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
 
 private static readonly Regex TrailingWhitespaceRegex = new Regex(@"[ \t]+(\r?\n|$)", RegexOptions.Compiled | RegexOptions.Multiline);

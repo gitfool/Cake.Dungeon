@@ -8,6 +8,7 @@ public class Parameters
         string configuration,
 
         bool? defaultLog,
+        bool? logEnvironment,
         bool? logBuildSystem,
         bool? logContext,
 
@@ -26,6 +27,7 @@ public class Parameters
         Configuration = configuration ?? builder.Context.Argument("configuration", "Release");
 
         DefaultLog = defaultLog ?? false;
+        LogEnvironment = logEnvironment ?? DefaultLog;
         LogBuildSystem = logBuildSystem ?? DefaultLog;
         LogContext = logContext ?? DefaultLog;
 
@@ -45,6 +47,7 @@ public class Parameters
     public string Configuration { get; }
 
     public bool DefaultLog { get; }
+    public bool LogEnvironment { get; }
     public bool LogBuildSystem { get; }
     public bool LogContext { get; }
 
