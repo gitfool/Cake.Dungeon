@@ -4,8 +4,6 @@ public class Builder
     {
         BuildSystem = buildSystem;
         Context = context;
-
-        _buildSystemProvider = GetBuildSystemProvider();
         _runTarget = runTarget;
 
         SetParameters(title: ""); // defaults
@@ -22,7 +20,8 @@ public class Builder
             .OrderBy(entry => entry.Key)
             .ToDictionary(entry => entry.Key, entry => secrets.Contains(entry.Key) ? entry.Value.Redact() : entry.Value); // redact secrets
 
-        var provider = _buildSystemProvider == "TFS" || _buildSystemProvider == "VSTS" ? "TFBuild" : _buildSystemProvider; // map TFS & VSTS to TFBuild
+        var provider = BuildSystem.Provider == BuildProvider.AzurePipelines || BuildSystem.Provider == BuildProvider.AzurePipelinesHosted
+            ? "TFBuild" : BuildSystem.Provider.ToString(); // map AzurePipelines & AzurePipelinesHosted providers to TFBuild properties
         var properties = this.ToTokens()
             .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"BuildSystem.{provider}.")) ||
                 (Parameters.LogContext && entry.Key.StartsWith("Context.")) ||
@@ -176,13 +175,6 @@ public class Builder
         return this;
     }
 
-    private string GetBuildSystemProvider() =>
-        typeof(BuildSystem)
-            .GetProperties()
-            .Where(property => property.Name.StartsWith("IsRunningOn") && property.GetValue(BuildSystem) is bool value && value)
-            .Select(property => property.Name.Substring("IsRunningOn".Length))
-            .SingleOrDefault();
-
     private void SetVersion()
     {
         Version = new Version(
@@ -205,6 +197,5 @@ public class Builder
 
     public Version Version { get; private set; }
 
-    private readonly string _buildSystemProvider;
     private readonly Action<string> _runTarget;
 }
