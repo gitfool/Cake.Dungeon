@@ -7,11 +7,11 @@ public class Patterns
         string[] integrationTestProjects,
         string[] nuGetProjects)
     {
-        BuildSolutions = buildSolutions ?? new [] { "**/*.sln" };
-        BuildPublishProjects = buildPublishProjects ?? new [] { "**/*.csproj" };
-        UnitTestProjects = unitTestProjects ?? new [] { "**/*.csproj" };
-        IntegrationTestProjects = integrationTestProjects ?? new [] { "**/*.csproj" };
-        NuGetProjects = nuGetProjects ?? new [] { "**/*.csproj" };
+        BuildSolutions = buildSolutions ?? new[] { "**/*.sln" };
+        BuildPublishProjects = buildPublishProjects ?? new[] { "**/*.csproj" };
+        UnitTestProjects = unitTestProjects ?? new[] { "**/*.csproj" };
+        IntegrationTestProjects = integrationTestProjects ?? new[] { "**/*.csproj" };
+        NuGetProjects = nuGetProjects ?? new[] { "**/*.csproj" };
     }
 
     public string[] BuildSolutions { get; }
