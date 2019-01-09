@@ -20,6 +20,11 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   steps:
+  - task: DotNetCoreInstaller@0
+    displayName: Install .NET Core SDK
+    inputs:
+      version: $(DotNet.Sdk.Version)
+
   - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
 
@@ -27,6 +32,11 @@ jobs:
   pool:
     vmImage: macos-10.13
   steps:
+  - task: DotNetCoreInstaller@0
+    displayName: Install .NET Core SDK
+    inputs:
+      version: $(DotNet.Sdk.Version)
+
   - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
 
@@ -34,5 +44,10 @@ jobs:
   pool:
     vmImage: vs2017-win2016
   steps:
+  - task: DotNetCoreInstaller@0
+    displayName: Install .NET Core SDK
+    inputs:
+      version: $(DotNet.Sdk.Version)
+
   - powershell: ./cake.ps1 -configuration $(Cake.Configuration) -verbosity $(Cake.Verbosity)
     displayName: Cake build
