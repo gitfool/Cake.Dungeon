@@ -1,6 +1,5 @@
 trigger:
 - master
-- refs/tags/*
 
 variables:
 - group: Cake
