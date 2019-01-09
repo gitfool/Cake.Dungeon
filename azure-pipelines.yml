@@ -5,6 +5,7 @@ trigger:
 variables:
 - group: Cake
 - group: DotNet
+- group: NuGet
 
 jobs:
 - job: Docker
@@ -15,6 +16,8 @@ jobs:
   steps:
   - bash: cake --bootstrap && cake --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
+    env:
+      NUGET_API_KEY: $(NuGet.Api.Key)
 
 - job: Linux
   pool:
@@ -27,6 +30,8 @@ jobs:
 
   - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
+    env:
+      NUGET_API_KEY: $(NuGet.Api.Key)
 
 - job: Mac
   pool:
@@ -39,6 +44,8 @@ jobs:
 
   - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
+    env:
+      NUGET_API_KEY: $(NuGet.Api.Key)
 
 - job: Windows
   pool:
@@ -51,3 +58,5 @@ jobs:
 
   - powershell: ./cake.ps1 -configuration $(Cake.Configuration) -verbosity $(Cake.Verbosity)
     displayName: Cake build
+    env:
+      NUGET_API_KEY: $(NuGet.Api.Key)
