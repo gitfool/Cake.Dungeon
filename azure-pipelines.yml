@@ -4,6 +4,7 @@ trigger:
 
 variables:
 - group: Cake
+- group: DotNet
 
 jobs:
 - job: Docker
@@ -14,10 +15,6 @@ jobs:
   steps:
   - bash: cake --bootstrap && cake --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
-    env:
-      COREHOST_TRACE: 0
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
 - job: Linux
   pool:
@@ -25,10 +22,6 @@ jobs:
   steps:
   - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
-    env:
-      COREHOST_TRACE: 0
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
 - job: Mac
   pool:
@@ -36,10 +29,6 @@ jobs:
   steps:
   - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
-    env:
-      COREHOST_TRACE: 0
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
 - job: Windows
   pool:
@@ -47,7 +36,3 @@ jobs:
   steps:
   - powershell: ./cake.ps1 -configuration $(Cake.Configuration) -verbosity $(Cake.Verbosity)
     displayName: Cake build
-    env:
-      COREHOST_TRACE: 0
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
