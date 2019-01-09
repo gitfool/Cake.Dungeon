@@ -20,4 +20,6 @@ public class NuGetCredentials
 
     public string ApiKey { get; }
     public string Source { get; }
+
+    public bool IsConfigured => ApiKey.IsConfigured() && Source.IsConfigured();
 }

@@ -218,6 +218,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("NuGetPack")
     .WithCriteria(() => Build.Parameters.RunPublishToNuGet)
+    .WithCriteria(() => Build.Credentials.NuGet.IsConfigured, "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not publishable")
     .Does(() =>
 {

@@ -26,7 +26,8 @@ public class Builder
             .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"BuildSystem.{provider}.")) ||
                 (Parameters.LogContext && entry.Key.StartsWith("Context.")) ||
                 (Parameters.DefaultLog && !entry.Key.StartsWith("BuildSystem.") && !entry.Key.StartsWith("Context.")))
-            .ToDictionary(entry => entry.Key, entry => entry.Key.StartsWith("Credentials.") ? entry.Value?.ToString()?.Redact() : entry.Value); // redact secrets
+            .ToDictionary(entry => entry.Key, entry => entry.Key.StartsWith("Credentials.") && !entry.Key.EndsWith(".IsConfigured")
+                ? entry.Value?.ToString()?.Redact() : entry.Value); // redact secrets
 
         var padding = variables.Keys.Concat(properties.Keys).Select(key => key.Length).Max() + 4;
 
