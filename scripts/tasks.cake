@@ -203,6 +203,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .WithCriteria(() => Build.Parameters.RunPublishToDocker)
     .WithCriteria(() => Build.Container.IsConfigured, "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not publishable")
+    .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
     .Does(() =>
 {
     DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
@@ -220,6 +221,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     .WithCriteria(() => Build.Parameters.RunPublishToNuGet)
     .WithCriteria(() => Build.Credentials.NuGet.IsConfigured, "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not publishable")
+    .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
     .Does(() =>
 {
     var packages = GetFiles(Build.Directories.ArtifactsNuGet.CombineWithFilePath("**/*.nupkg").FullPath);

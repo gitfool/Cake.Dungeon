@@ -59,4 +59,5 @@ jobs:
   - powershell: ./cake.ps1 -configuration $(Cake.Configuration) -verbosity $(Cake.Verbosity)
     displayName: Cake build
     env:
+      CAKE_PUBLISH: true
       NUGET_API_KEY: $(NuGet.Api.Key)

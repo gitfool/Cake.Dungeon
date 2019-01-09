@@ -64,6 +64,8 @@ public class Builder
         string target = null,
         string configuration = null,
 
+        bool? isPublisher = null,
+
         bool? defaultLog = null,
         bool? logEnvironment = null,
         bool? logBuildSystem = null,
@@ -114,6 +116,8 @@ public class Builder
             title,
             target,
             configuration,
+
+            isPublisher,
 
             defaultLog,
             logEnvironment,

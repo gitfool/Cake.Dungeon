@@ -7,6 +7,8 @@ public class Parameters
         string target,
         string configuration,
 
+        bool? isPublisher,
+
         bool? defaultLog,
         bool? logEnvironment,
         bool? logBuildSystem,
@@ -25,6 +27,8 @@ public class Parameters
         Title = title ?? throw new ArgumentNullException(nameof(title), @"Set the build title to the ""artifact"" name");
         Target = target ?? builder.Context.Argument("target", "Default");
         Configuration = configuration ?? builder.Context.Argument("configuration", "Release");
+
+        IsPublisher = isPublisher ?? builder.Context.EnvironmentVariable<bool>("CAKE_PUBLISH", false);
 
         DefaultLog = defaultLog ?? false;
         LogEnvironment = logEnvironment ?? DefaultLog;
@@ -45,6 +49,8 @@ public class Parameters
     public string Title { get; }
     public string Target { get; }
     public string Configuration { get; }
+
+    public bool IsPublisher { get; }
 
     public bool DefaultLog { get; }
     public bool LogEnvironment { get; }
