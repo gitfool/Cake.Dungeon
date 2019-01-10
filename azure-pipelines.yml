@@ -17,6 +17,7 @@ jobs:
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
+      TF_BUILD: true
 
 - job: Linux
   pool:
