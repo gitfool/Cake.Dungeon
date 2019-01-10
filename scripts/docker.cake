@@ -2,7 +2,7 @@ public class DockerContainer
 {
     public DockerContainer(string registry, string repository, string context, string file)
     {
-        Registry = registry ?? "hub.docker.com";
+        Registry = registry;
         Repository = repository;
         Context = context ?? ".";
         File = file;
@@ -13,5 +13,5 @@ public class DockerContainer
     public string Context { get; }
     public string File { get; }
 
-    public bool IsConfigured => Registry.IsConfigured() && Repository.IsConfigured() && Context.IsConfigured();
+    public bool IsConfigured => Repository.IsConfigured() && Context.IsConfigured();
 }

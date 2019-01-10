@@ -206,12 +206,23 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
     .Does(() =>
 {
-    DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
-    DockerPush($"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
-    if (Build.Version.IsRelease || Build.ToolSettings.DockerPushLatest)
+    if (Build.Container.Registry.IsConfigured())
     {
-        DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:latest");
-        DockerPush($"{Build.Container.Registry}/{Build.Container.Repository}:latest");
+        DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
+        DockerPush($"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
+        if (Build.Version.IsRelease || Build.ToolSettings.DockerPushLatest)
+        {
+            DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:latest");
+            DockerPush($"{Build.Container.Registry}/{Build.Container.Repository}:latest");
+        }
+    }
+    else
+    {
+        DockerPush($"{Build.Container.Repository}:{Build.Version.SemVer}");
+        if (Build.Version.IsRelease || Build.ToolSettings.DockerPushLatest)
+        {
+            DockerPush($"{Build.Container.Repository}:latest");
+        }
     }
 });
 
