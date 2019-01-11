@@ -7,4 +7,4 @@
 
 `Cake.Dungeon` is a playground for Cake build scripts. See [cakebuild.net](https://cakebuild.net).
 
-`Cake.Dungeon` is inspired by and derived from [Cake.Baker](https://github.com/akordowski/Cake.Baker) and [Cake.Recipe](https://github.com/cake-contrib/Cake.Recipe).
+`Cake.Dungeon` is a derivative of [Cake.Baker](https://github.com/akordowski/Cake.Baker) and [Cake.Recipe](https://github.com/cake-contrib/Cake.Recipe) that focuses on [.NET Core](https://docs.microsoft.com/en-us/dotnet/core/about) apps and [Docker](https://docs.docker.com/engine/docker-overview) containers.
