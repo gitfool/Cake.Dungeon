@@ -20,7 +20,7 @@ Tasks.Info = Task("Info")
 });
 
 Tasks.Build = Task("Build")
-    .WithCriteria(() => Build.Parameters.RunBuild)
+    .WithCriteria(() => Build.Parameters.RunBuild, "Not run")
     .Does(() =>
 {
     var solutionPatterns = Build.Patterns.BuildSolutions
@@ -87,7 +87,7 @@ Tasks.Build = Task("Build")
 
 Tasks.UnitTests = Task("UnitTests")
     .IsDependentOn("Build")
-    .WithCriteria(() => Build.Parameters.RunUnitTests)
+    .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
     .Does(() =>
 {
     var patterns = Build.Patterns.UnitTestProjects
@@ -114,7 +114,7 @@ Tasks.UnitTests = Task("UnitTests")
 
 Tasks.DockerBuild = Task("DockerBuild")
     .IsDependentOn("Build")
-    .WithCriteria(() => Build.Parameters.RunDockerBuild)
+    .WithCriteria(() => Build.Parameters.RunDockerBuild, "Not run")
     .WithCriteria(() => Build.Container.IsConfigured, "Not configured")
     .Does(() =>
 {
@@ -130,7 +130,7 @@ Tasks.DockerBuild = Task("DockerBuild")
 Tasks.IntegrationTests = Task("IntegrationTests")
     .IsDependentOn("UnitTests")
     .IsDependentOn("DockerBuild")
-    .WithCriteria(() => Build.Parameters.RunIntegrationTests)
+    .WithCriteria(() => Build.Parameters.RunIntegrationTests, "Not run")
     .Does(() =>
 {
     var patterns = Build.Patterns.IntegrationTestProjects
@@ -161,7 +161,7 @@ Tasks.StageArtifacts = Task("StageArtifacts")
 
 Tasks.NuGetPack = Task("NuGetPack")
     .IsDependentOn("Build")
-    .WithCriteria(() => Build.Parameters.RunNuGetPack)
+    .WithCriteria(() => Build.Parameters.RunNuGetPack, "Not run")
     .Does(() =>
 {
     var patterns = Build.Patterns.NuGetProjects
@@ -175,7 +175,7 @@ Tasks.NuGetPack = Task("NuGetPack")
 
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
-    var msbuildSettings = new DotNetCoreMSBuildSettings { }
+    var msbuildSettings = new DotNetCoreMSBuildSettings()
         .WithProperty("PackageVersion", Build.Version.FullSemVer)
         .WithProperty("NoWarn", "NU5105");
     var settings = new DotNetCorePackSettings
@@ -200,9 +200,9 @@ Tasks.PublishArtifacts = Task("PublishArtifacts")
 Tasks.PublishToDocker = Task("PublishToDocker")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("DockerBuild")
-    .WithCriteria(() => Build.Parameters.RunPublishToDocker)
+    .WithCriteria(() => Build.Parameters.RunPublishToDocker, "Not run")
     .WithCriteria(() => Build.Container.IsConfigured, "Not configured")
-    .WithCriteria(() => Build.Version.IsPublic, "Not publishable")
+    .WithCriteria(() => Build.Version.IsPublic, "Not public")
     .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
     .Does(() =>
 {
@@ -229,9 +229,9 @@ Tasks.PublishToDocker = Task("PublishToDocker")
 Tasks.PublishToNuGet = Task("PublishToNuGet")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("NuGetPack")
-    .WithCriteria(() => Build.Parameters.RunPublishToNuGet)
+    .WithCriteria(() => Build.Parameters.RunPublishToNuGet, "Not run")
     .WithCriteria(() => Build.Credentials.NuGet.IsConfigured, "Not configured")
-    .WithCriteria(() => Build.Version.IsPublic, "Not publishable")
+    .WithCriteria(() => Build.Version.IsPublic, "Not public")
     .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
     .Does(() =>
 {
