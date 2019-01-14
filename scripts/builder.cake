@@ -6,8 +6,8 @@ public class Builder
         Context = context;
         _runTarget = runTarget;
 
-        SetParameters(title: ""); // defaults
         SetVersion();
+        SetParameters(title: ""); // defaults
     }
 
     public void Info()
@@ -105,10 +105,7 @@ public class Builder
         bool? dockerPushLatest = null,
         bool? nuGetPackSymbols = null,
 
-        string containerRegistry = null, // container
-        string containerRepository = null,
-        string containerContext = null,
-        string containerFile = null)
+        DockerImage[] dockerImages = null) // docker images
     {
         Parameters = new Parameters(
             this,
@@ -162,6 +159,7 @@ public class Builder
             nuGetProjectPatterns);
 
         ToolSettings = new ToolSettings(
+            this,
             buildBinaryLoggerEnabled,
             buildEmbedAllSources,
             buildMaxCpuCount,
@@ -171,11 +169,7 @@ public class Builder
             dockerPushLatest,
             nuGetPackSymbols);
 
-        Container = new DockerContainer(
-            containerRegistry,
-            containerRepository,
-            containerContext,
-            containerFile);
+        DockerImages = dockerImages;
 
         return this;
     }
@@ -198,7 +192,7 @@ public class Builder
     public Patterns Patterns { get; private set; }
     public ToolSettings ToolSettings { get; private set; }
 
-    public DockerContainer Container { get; private set; }
+    public DockerImage[] DockerImages { get; private set; }
 
     public Version Version { get; private set; }
 

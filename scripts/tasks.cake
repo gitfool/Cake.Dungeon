@@ -115,16 +115,19 @@ Tasks.UnitTests = Task("UnitTests")
 Tasks.DockerBuild = Task("DockerBuild")
     .IsDependentOn("Build")
     .WithCriteria(() => Build.Parameters.RunDockerBuild, "Not run")
-    .WithCriteria(() => Build.Container.IsConfigured, "Not configured")
-    .Does(() =>
+    .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
+    .DoesForEach(() => Build.DockerImages, image =>
 {
+    var tokens = Build.Version.ToTokens("Build.Version");
+    var tags = image.Tags
+        .Select(tag => TransformText($"{image.Repository}:{tag}", "{{", "}}").WithTokens(tokens).ToString()).ToArray();
     var settings = new DockerImageBuildSettings
     {
-        File = Build.Container.File,
+        File = image.File,
         BuildArg = new[] { $"configuration={Build.Parameters.Configuration}" },
-        Tag = new[] { $"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Repository}:latest" }
+        Tag = tags
     };
-    DockerBuild(settings, Build.Container.Context);
+    DockerBuild(settings, image.Context);
 });
 
 Tasks.IntegrationTests = Task("IntegrationTests")
@@ -201,27 +204,25 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("DockerBuild")
     .WithCriteria(() => Build.Parameters.RunPublishToDocker, "Not run")
-    .WithCriteria(() => Build.Container.IsConfigured, "Not configured")
+    .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not public")
     .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
-    .Does(() =>
+    .DoesForEach(() => Build.DockerImages, image =>
 {
-    if (Build.Container.Registry.IsConfigured())
+    var tokens = Build.Version.ToTokens("Build.Version");
+    var tags = image.Tags
+        .Where(tag => Build.ToolSettings.DockerPushLatest || tag != "latest")
+        .Select(tag => TransformText($"{image.Repository}:{tag}", "{{", "}}").WithTokens(tokens).ToString());
+    foreach (var tag in tags)
     {
-        DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
-        DockerPush($"{Build.Container.Registry}/{Build.Container.Repository}:{Build.Version.SemVer}");
-        if (Build.Version.IsRelease || Build.ToolSettings.DockerPushLatest)
+        if (image.Registry.IsConfigured())
         {
-            DockerTag($"{Build.Container.Repository}:{Build.Version.SemVer}", $"{Build.Container.Registry}/{Build.Container.Repository}:latest");
-            DockerPush($"{Build.Container.Registry}/{Build.Container.Repository}:latest");
+            DockerTag(tag, $"{image.Registry}/{tag}");
+            DockerPush($"{image.Registry}/{tag}");
         }
-    }
-    else
-    {
-        DockerPush($"{Build.Container.Repository}:{Build.Version.SemVer}");
-        if (Build.Version.IsRelease || Build.ToolSettings.DockerPushLatest)
+        else
         {
-            DockerPush($"{Build.Container.Repository}:latest");
+            DockerPush(tag);
         }
     }
 });

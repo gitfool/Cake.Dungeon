@@ -1,6 +1,8 @@
 public class ToolSettings
 {
     public ToolSettings(
+        Builder builder,
+
         bool? buildBinaryLoggerEnabled,
         bool? buildEmbedAllSources,
         int? buildMaxCpuCount,
@@ -18,7 +20,7 @@ public class ToolSettings
         UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
         IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
 
-        DockerPushLatest = dockerPushLatest ?? false;
+        DockerPushLatest = dockerPushLatest ?? builder.Version.IsRelease;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
     }
