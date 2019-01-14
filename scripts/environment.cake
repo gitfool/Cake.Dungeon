@@ -1,13 +1,13 @@
 public class Environment
 {
     public Environment(
-        string nuGetApiKeyVariable,
-        string nuGetSourceVariable)
+        string nuGetApiKey,
+        string nuGetSource)
     {
-        NuGetApiKeyVariable = nuGetApiKeyVariable ?? "NUGET_API_KEY";
-        NuGetSourceVariable = nuGetSourceVariable ?? "NUGET_SOURCE";
+        NuGetApiKey = nuGetApiKey ?? "NUGET_API_KEY";
+        NuGetSource = nuGetSource ?? "NUGET_SOURCE";
     }
 
-    public string NuGetApiKeyVariable { get; }
-    public string NuGetSourceVariable { get; }
+    public string NuGetApiKey { get; }
+    public string NuGetSource { get; }
 }

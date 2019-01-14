@@ -3,8 +3,8 @@ public class Credentials
     public Credentials(ICakeContext context, Environment environment)
     {
         NuGet = new NuGetCredentials(
-            context.EnvironmentVariable(environment.NuGetApiKeyVariable),
-            context.EnvironmentVariable(environment.NuGetSourceVariable));
+            context.EnvironmentVariable(environment.NuGetApiKey),
+            context.EnvironmentVariable(environment.NuGetSource));
     }
 
     public NuGetCredentials NuGet { get; }
