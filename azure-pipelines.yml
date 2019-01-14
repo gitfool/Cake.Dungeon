@@ -11,7 +11,7 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   container:
-    image: dockfool/cake-docker:1.0.0-pre.3
+    image: dockfool/cake-docker:1.0.1-pre.1
   steps:
   - bash: cake --bootstrap && cake --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
     displayName: Cake build
