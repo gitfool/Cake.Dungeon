@@ -37,7 +37,7 @@ public class Builder
             Context.Information("");
             foreach (var variable in variables)
             {
-                Context.Information(string.Concat(variable.Key.PadRight(padding), variable.Value.ToTokenString()));
+                Context.Information(string.Concat(variable.Key.PadRight(padding), variable.Value.ToValueString()));
             }
         }
 
@@ -50,7 +50,7 @@ public class Builder
                 groups.Add(group);
                 Context.Information("");
             }
-            Context.Information(string.Concat(property.Key.PadRight(padding), property.Value.ToTokenString()));
+            Context.Information(string.Concat(property.Key.PadRight(padding), property.Value.ToValueString()));
         }
     }
 

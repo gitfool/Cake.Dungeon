@@ -15,6 +15,25 @@ public static string Redact(this string value) => value != null ? "****" : value
 
 public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj, string prefix = null)
 {
+    IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
+    {
+        if (value == null || IsLeafType(value.GetType()) || (value is Array emptyArray && emptyArray.Length == 0))
+        {
+            yield return Enumerable.Repeat(new KeyValuePair<string, object>(key, value), 1);
+        }
+        else if (value is Array array)
+        {
+            for (var i = 0; i < array.Length; i++) // unroll array tokens
+            {
+                yield return GetTokens(string.Concat(key, "[", i, "]"), array.GetValue(i)).SelectMany(tokens => tokens); // flatten nested tokens
+            }
+        }
+        else
+        {
+            yield return value.ToTokens(key);
+        }
+    }
+
     object GetValue(PropertyInfo property)
     {
         try
@@ -30,11 +49,11 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
     bool IsLeafType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
-        return type.IsPrimitive || (type == typeof(decimal)) || (type == typeof(string)) || (type == typeof(byte[])) || // extended primitives
-            (type == typeof(DateTime)) || (type == typeof(DateTimeOffset)) || (type == typeof(TimeSpan)) || (type == typeof(Guid)) || (type == typeof(Uri)) ||
-            (type == typeof(DirectoryPath)) || (type == typeof(FilePath)) || // cake primitives
-            type.IsArray || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)) || // arrays and enumerables
-            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)); // dictionaries
+        return type.IsPrimitive || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
+            type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(Uri) ||
+            type == typeof(DirectoryPath) || type == typeof(FilePath) || // cake primitives
+            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)) || // list
+            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)); // dictionary
     }
 
     return obj?.GetType()
@@ -42,14 +61,12 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         .Where(property => property.GetIndexParameters().Length == 0) // filter indexed properties
         .SelectMany(property => // flatten nested properties
         {
-            var value = GetValue(property);
-            return value == null || IsLeafType(value.GetType())
-                ? Enumerable.Repeat(new KeyValuePair<string, object>(string.Concat(prefix, property.Name), value), 1)
-                : value.ToTokens(string.Concat(prefix, property.Name, ".")); // recursive
+            var key = prefix != null ? string.Concat(prefix, ".", property.Name) : property.Name;
+            return GetTokens(key, GetValue(property)).SelectMany(tokens => tokens); // flatten nested tokens
         });
 }
 
-public static string ToTokenString(this object value)
+public static string ToValueString(this object value)
 {
     switch (value)
     {
@@ -57,10 +74,8 @@ public static string ToTokenString(this object value)
             return boolean.ToString().ToLower();
         case string str when str.Length == 0: // empty string
             return @"""";
-        case string[] strings when strings.Length == 0: // empty string array
+        case Array array when array.Length == 0: // empty array
             return "[]";
-        case string[] strings: // flatten string array
-            return string.Concat("[ ", string.Join(", ", strings), " ]");
         case IDictionary<string, string> dict when dict.Count == 0: // empty string dictionary
             return "{}";
         case IDictionary<string, string> dict: // flatten string dictionary
@@ -69,7 +84,7 @@ public static string ToTokenString(this object value)
             return "(null)";
         default:
             var type = value.GetType();
-            return type.IsArray || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ? "[...]" // roll-up
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) ? "[...]" // roll-up
                 : type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) ? "{...}"
                 : value.ToString(); // default
     }
