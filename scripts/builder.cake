@@ -20,8 +20,8 @@ public class Builder
             .OrderBy(entry => entry.Key)
             .ToDictionary(entry => entry.Key, entry => secrets.Contains(entry.Key) ? entry.Value.Redact() : entry.Value); // redact secrets
 
-        var provider = BuildSystem.Provider == BuildProvider.AzurePipelines || BuildSystem.Provider == BuildProvider.AzurePipelinesHosted
-            ? "TFBuild" : BuildSystem.Provider.ToString(); // map AzurePipelines & AzurePipelinesHosted providers to TFBuild properties
+        var provider = (BuildSystem.Provider & (BuildProvider.AzurePipelines | BuildProvider.AzurePipelinesHosted)) != 0
+            ? "TFBuild" : BuildSystem.Provider.ToString(); // map AzurePipelines* providers to TFBuild properties
         var properties = this.ToTokens()
             .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"BuildSystem.{provider}.")) ||
                 (Parameters.LogContext && entry.Key.StartsWith("Context.")) ||
