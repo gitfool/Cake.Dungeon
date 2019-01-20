@@ -4,6 +4,9 @@ public class Version
     {
         BuildSystem = buildSystem;
         GitVersion = context.GitVersion();
+
+        IsPullRequest = (buildSystem.Provider & (BuildProvider.AzurePipelines | BuildProvider.AzurePipelinesHosted)) != 0 &&
+            context.EnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTID") != null;
     }
 
     public string SemVer => GitVersion.SemVer;
@@ -13,10 +16,11 @@ public class Version
     public string InformationalVersion => GitVersion.InformationalVersion;
 
     public bool IsLocal => BuildSystem.IsLocalBuild;
+    public bool IsPullRequest { get; }
     public bool IsTagged => string.IsNullOrEmpty(GitVersion.BuildMetaData);
     public bool IsPrelease => IsTagged && !string.IsNullOrEmpty(GitVersion.PreReleaseTag);
     public bool IsRelease => IsTagged && string.IsNullOrEmpty(GitVersion.PreReleaseTag);
-    public bool IsPublic => !IsLocal && (IsPrelease || IsRelease);
+    public bool IsPublic => !IsLocal && !IsPullRequest && (IsPrelease || IsRelease);
 
     public string Summary => $"{(IsPublic ? "Public " : "")}{(IsPrelease ? "Prelease " : IsRelease ? "Release " : "")}Version {FullSemVer}";
 
