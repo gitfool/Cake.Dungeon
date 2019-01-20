@@ -17,15 +17,32 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
 {
     IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
     {
-        if (value == null || IsLeafType(value.GetType()) || (value is Array emptyArray && emptyArray.Length == 0))
+        if (value == null || IsLeafType(value.GetType()) ||
+            (value is Array emptyArray && emptyArray.Length == 0) ||
+            (value is Dictionary<string, string> emptyStringDict && emptyStringDict.Count == 0) ||
+            (value is Dictionary<string, object> emptyObjectDict && emptyObjectDict.Count == 0))
         {
             yield return Enumerable.Repeat(new KeyValuePair<string, object>(key, value), 1);
         }
-        else if (value is Array array)
+        else if (value is Array array) // unroll array tokens
         {
-            for (var i = 0; i < array.Length; i++) // unroll array tokens
+            for (var i = 0; i < array.Length; i++)
             {
-                yield return GetTokens(string.Concat(key, "[", i, "]"), array.GetValue(i)).SelectMany(tokens => tokens); // flatten nested tokens
+                yield return GetTokens(string.Concat(key, "[", i, "]"), array.GetValue(i)).SelectMany(tokens => tokens);
+            }
+        }
+        else if (value is Dictionary<string, string> stringDict) // unroll string dictionary tokens
+        {
+            foreach (var entry in stringDict)
+            {
+                yield return GetTokens(string.Concat(key, "['", entry.Key, "']"), entry.Value).SelectMany(tokens => tokens);
+            }
+        }
+        else if (value is Dictionary<string, object> objectDict) // unroll object dictionary tokens
+        {
+            foreach (var entry in objectDict)
+            {
+                yield return GetTokens(string.Concat(key, "['", entry.Key, "']"), entry.Value).SelectMany(tokens => tokens);
             }
         }
         else
@@ -52,8 +69,7 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         return type.IsPrimitive || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
             type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(Uri) ||
             type == typeof(DirectoryPath) || type == typeof(FilePath) || // cake primitives
-            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)) || // list
-            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)); // dictionary
+            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)); // list
     }
 
     return obj?.GetType()
@@ -76,10 +92,9 @@ public static string ToValueString(this object value)
             return @"""";
         case Array array when array.Length == 0: // empty array
             return "[]";
-        case IDictionary<string, string> dict when dict.Count == 0: // empty string dictionary
+        case Dictionary<string, string> stringDict when stringDict.Count == 0: // empty dictionary
+        case Dictionary<string, object> objectDict when objectDict.Count == 0:
             return "{}";
-        case IDictionary<string, string> dict: // flatten string dictionary
-            return string.Concat("{ ", string.Join(", ", dict.Select(entry => string.Concat(entry.Key, ": ", entry.Value))), " }");
         case null:
             return "(null)";
         default:
