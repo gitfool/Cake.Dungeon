@@ -13,7 +13,12 @@ jobs:
   container:
     image: dockfool/cake-docker:1.0.1-pre.1
   steps:
-  - bash: cake --bootstrap && cake --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
+  - bash: |
+      set -ex
+      printenv | sort
+    displayName: Print env
+
+  - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity)
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
@@ -28,7 +33,7 @@ jobs:
     inputs:
       version: $(DotNet.Sdk.Version)
 
-  - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
+  - bash: ./cake.sh --verbosity=$(Cake.Verbosity)
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
@@ -42,7 +47,7 @@ jobs:
     inputs:
       version: $(DotNet.Sdk.Version)
 
-  - bash: ./cake.sh --configuration=$(Cake.Configuration) --verbosity=$(Cake.Verbosity)
+  - bash: ./cake.sh --verbosity=$(Cake.Verbosity)
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
@@ -56,8 +61,7 @@ jobs:
     inputs:
       version: $(DotNet.Sdk.Version)
 
-  - powershell: ./cake.ps1 -configuration $(Cake.Configuration) -verbosity $(Cake.Verbosity)
+  - powershell: ./cake.ps1 --verbosity=$(Cake.Verbosity) --ispublisher=true
     displayName: Cake build
     env:
-      CAKE_PUBLISH: true
       NUGET_API_KEY: $(NuGet.Api.Key)

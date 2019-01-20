@@ -26,14 +26,14 @@ public class Parameters
     {
         Title = title ?? throw new ArgumentNullException(nameof(title), @"Set the build title to the ""artifact"" name");
         Target = target ?? builder.Context.Argument("target", "Default");
-        Configuration = configuration ?? builder.Context.Argument("configuration", "Release");
+        Configuration = configuration ?? builder.Context.Argument("Configuration", builder.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
 
-        IsPublisher = isPublisher ?? builder.Context.EnvironmentVariable<bool>("CAKE_PUBLISH", false);
+        IsPublisher = isPublisher ?? builder.Context.Argument("IsPublisher", builder.Context.EnvironmentVariable("CAKE_IS_PUBLISHER", false));
 
-        DefaultLog = defaultLog ?? false;
-        LogEnvironment = logEnvironment ?? DefaultLog;
-        LogBuildSystem = logBuildSystem ?? DefaultLog;
-        LogContext = logContext ?? DefaultLog;
+        DefaultLog = defaultLog ?? builder.Context.Argument("DefaultLog", builder.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
+        LogEnvironment = logEnvironment ?? builder.Context.Argument("LogEnvironment", builder.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
+        LogBuildSystem = logBuildSystem ?? builder.Context.Argument("LogBuildSystem", builder.Context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
+        LogContext = logContext ?? builder.Context.Argument("LogContext", builder.Context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
 
         DefaultRun = defaultRun ?? false;
         RunBuild = runBuild ?? DefaultRun;
