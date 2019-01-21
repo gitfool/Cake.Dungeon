@@ -103,6 +103,7 @@ public class Builder
         string unitTestsLogger = null,
         string integrationTestsLogger = null,
         bool? dockerPushLatest = null,
+        string dockerRegistry = null,
         bool? nuGetPackSymbols = null,
 
         DockerImage[] dockerImages = null) // docker images
@@ -167,6 +168,7 @@ public class Builder
             unitTestsLogger,
             integrationTestsLogger,
             dockerPushLatest,
+            dockerRegistry,
             nuGetPackSymbols);
 
         DockerImages = dockerImages;

@@ -120,7 +120,7 @@ Tasks.DockerBuild = Task("DockerBuild")
 {
     var tokens = Build.Version.ToTokens("Build.Version");
     var tags = image.Tags
-        .Select(tag => TransformText($"{image.Repository}:{tag}", "{{", "}}").WithTokens(tokens).ToString()).ToArray();
+        .Select(tag => string.Concat(image.Repository, ":", TransformText(tag, "{{", "}}").WithTokens(tokens))).ToArray();
     var settings = new DockerImageBuildSettings
     {
         File = image.File,
@@ -209,16 +209,17 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
     .DoesForEach(() => Build.DockerImages, image =>
 {
+    var registry = image.Registry ?? Build.ToolSettings.DockerRegistry;
     var tokens = Build.Version.ToTokens("Build.Version");
     var tags = image.Tags
         .Where(tag => Build.ToolSettings.DockerPushLatest || tag != "latest")
-        .Select(tag => TransformText($"{image.Repository}:{tag}", "{{", "}}").WithTokens(tokens).ToString());
+        .Select(tag => string.Concat(image.Repository, ":", TransformText(tag, "{{", "}}").WithTokens(tokens)));
     foreach (var tag in tags)
     {
-        if (image.Registry.IsConfigured())
+        if (registry.IsConfigured())
         {
-            DockerTag(tag, $"{image.Registry}/{tag}");
-            DockerPush($"{image.Registry}/{tag}");
+            DockerTag(tag, $"{registry}/{tag}");
+            DockerPush($"{registry}/{tag}");
         }
         else
         {

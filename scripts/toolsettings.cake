@@ -10,6 +10,7 @@ public class ToolSettings
         string unitTestsLogger,
         string integrationTestsLogger,
         bool? dockerPushLatest,
+        string dockerRegistry,
         bool? nuGetPackSymbols)
     {
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
@@ -21,6 +22,7 @@ public class ToolSettings
         IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
 
         DockerPushLatest = dockerPushLatest ?? builder.Version.IsRelease;
+        DockerRegistry = dockerRegistry;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
     }
@@ -34,6 +36,7 @@ public class ToolSettings
     public string IntegrationTestsLogger { get; }
 
     public bool DockerPushLatest { get; }
+    public string DockerRegistry { get; }
 
     public bool NuGetPackSymbols { get; }
 }
