@@ -28,21 +28,21 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         {
             for (var i = 0; i < array.Length; i++)
             {
-                yield return GetTokens(string.Concat(key, "[", i, "]"), array.GetValue(i)).SelectMany(tokens => tokens);
+                yield return GetTokens($"{key}[{i}]", array.GetValue(i)).SelectMany(tokens => tokens);
             }
         }
         else if (value is Dictionary<string, string> stringDict) // unroll string dictionary tokens
         {
             foreach (var entry in stringDict)
             {
-                yield return GetTokens(string.Concat(key, "['", entry.Key, "']"), entry.Value).SelectMany(tokens => tokens);
+                yield return GetTokens($"{key}['{entry.Key}']", entry.Value).SelectMany(tokens => tokens);
             }
         }
         else if (value is Dictionary<string, object> objectDict) // unroll object dictionary tokens
         {
             foreach (var entry in objectDict)
             {
-                yield return GetTokens(string.Concat(key, "['", entry.Key, "']"), entry.Value).SelectMany(tokens => tokens);
+                yield return GetTokens($"{key}['{entry.Key}']", entry.Value).SelectMany(tokens => tokens);
             }
         }
         else
@@ -77,7 +77,7 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         .Where(property => property.GetIndexParameters().Length == 0) // filter indexed properties
         .SelectMany(property => // flatten nested properties
         {
-            var key = prefix != null ? string.Concat(prefix, ".", property.Name) : property.Name;
+            var key = prefix != null ? $"{prefix}.{property.Name}" : property.Name;
             return GetTokens(key, GetValue(property)).SelectMany(tokens => tokens); // flatten nested tokens
         });
 }
