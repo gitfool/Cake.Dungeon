@@ -13,16 +13,10 @@ jobs:
   container:
     image: dockfool/cake-docker:1.0.1-pre.1
   steps:
-  - bash: |
-      set -ex
-      printenv | sort
-    displayName: Print env
-
   - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity)
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
-      TF_BUILD: true
 
 - job: Linux
   pool:
