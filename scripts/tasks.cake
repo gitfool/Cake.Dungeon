@@ -44,8 +44,7 @@ Tasks.Build = Task("Build")
         .WithProperty("Version", Build.Version.AssemblyVersion)
         .WithProperty("FileVersion", Build.Version.AssemblyFileVersion)
         .WithProperty("InformationalVersion", Build.Version.InformationalVersion)
-        .WithProperty("PackageVersion", Build.Version.FullSemVer)
-        .WithProperty("NoWarn", "NU5105");
+        .WithProperty("PackageVersion", Build.Version.FullSemVer);
     var buildSettings = new DotNetCoreBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
