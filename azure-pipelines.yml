@@ -8,12 +8,16 @@ variables:
 
 jobs:
 - job: Docker
+  dependsOn:
+  - Linux
+  - Mac
+  - Windows
   pool:
     vmImage: ubuntu-16.04
   container:
-    image: dockfool/cake-docker:1.0.1-pre.1
+    image: dockfool/cake-docker:latest
   steps:
-  - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity)
+  - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity) --ispublisher=true
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
@@ -55,7 +59,7 @@ jobs:
     inputs:
       version: $(DotNet.Sdk.Version)
 
-  - powershell: ./cake.ps1 --verbosity=$(Cake.Verbosity) --ispublisher=true
+  - powershell: ./cake.ps1 --verbosity=$(Cake.Verbosity)
     displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
