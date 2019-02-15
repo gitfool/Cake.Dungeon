@@ -13,7 +13,7 @@
     <IsPackable>true</IsPackable>
     <!-- <MinClientVersion>4.3.0</MinClientVersion> -->
     <NoBuild>true</NoBuild>
-    <NoWarn>CS8021,NU5105</NoWarn>
+    <NoWarn>$(NoWarn),CS8021</NoWarn>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
 

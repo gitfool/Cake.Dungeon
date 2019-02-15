@@ -13,6 +13,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <LangVersion>latest</LangVersion>
+    <NoWarn>NU5105</NoWarn>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
