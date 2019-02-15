@@ -178,8 +178,7 @@ Tasks.NuGetPack = Task("NuGetPack")
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
     var msbuildSettings = new DotNetCoreMSBuildSettings()
-        .WithProperty("PackageVersion", Build.Version.FullSemVer)
-        .WithProperty("NoWarn", "NU5105");
+        .WithProperty("PackageVersion", Build.Version.FullSemVer);
     var settings = new DotNetCorePackSettings
     {
         Configuration = Build.Parameters.Configuration,
