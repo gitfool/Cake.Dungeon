@@ -18,48 +18,48 @@ jobs:
     image: dockfool/cake-docker:latest
   steps:
   - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity) --ispublisher=true
-    displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
+    displayName: Cake build
 
 - job: Linux
   pool:
     vmImage: ubuntu-16.04
   steps:
   - task: DotNetCoreInstaller@0
-    displayName: Install .NET Core SDK
     inputs:
       version: $(DotNet.Sdk.Version)
+    displayName: Install .NET Core SDK
 
   - bash: ./cake.sh --verbosity=$(Cake.Verbosity)
-    displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
+    displayName: Cake build
 
 - job: Mac
   pool:
     vmImage: macos-10.13
   steps:
   - task: DotNetCoreInstaller@0
-    displayName: Install .NET Core SDK
     inputs:
       version: $(DotNet.Sdk.Version)
+    displayName: Install .NET Core SDK
 
   - bash: ./cake.sh --verbosity=$(Cake.Verbosity)
-    displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
+    displayName: Cake build
 
 - job: Windows
   pool:
     vmImage: vs2017-win2016
   steps:
   - task: DotNetCoreInstaller@0
-    displayName: Install .NET Core SDK
     inputs:
       version: $(DotNet.Sdk.Version)
+    displayName: Install .NET Core SDK
 
   - powershell: ./cake.ps1 --verbosity=$(Cake.Verbosity)
-    displayName: Cake build
     env:
       NUGET_API_KEY: $(NuGet.Api.Key)
+    displayName: Cake build
