@@ -1,6 +1,6 @@
 #module nuget:?package=Cake.DotNetTool.Module&version=0.1.0
 
-#addin nuget:?package=Cake.Docker&version=0.9.7
+#addin nuget:?package=Cake.Docker&version=0.9.9
 #addin nuget:?package=Cake.FileHelpers&version=3.1.0
 #addin nuget:?package=Cake.Incubator&version=3.1.0
 
