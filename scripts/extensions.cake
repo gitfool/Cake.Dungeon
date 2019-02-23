@@ -1,13 +1,6 @@
 using Cake.Core.Text;
-using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
-
-public static T EnvironmentVariable<T>(this ICakeContext context, string variable, T defaultValue)
-{
-    var value = context?.Environment.GetEnvironmentVariable(variable);
-    return value == null ? defaultValue : Convert<T>(value);
-}
 
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 
@@ -122,26 +115,6 @@ public static TextTransformation<TTemplate> WithTokens<TTemplate>(
         }
     }
     return transformation;
-}
-
-public static void WithVerbosity(this ICakeLog log, Verbosity verbosity, Action action)
-{
-    var lastVerbosity = log.Verbosity;
-    try
-    {
-        log.Verbosity = verbosity;
-        action();
-    }
-    finally
-    {
-        log.Verbosity = lastVerbosity;
-    }
-}
-
-private static T Convert<T>(string value)
-{
-    var converter = TypeDescriptor.GetConverter(typeof(T));
-    return (T)converter.ConvertFromInvariantString(value);
 }
 
 private static readonly Regex TrailingWhitespaceRegex = new Regex(@"[ \t]+(\r?\n|$)", RegexOptions.Compiled | RegexOptions.Multiline);
