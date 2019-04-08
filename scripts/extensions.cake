@@ -1,4 +1,3 @@
-using Cake.Core.Text;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -99,22 +98,5 @@ public static string ToValueString(this object value)
 }
 
 public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
-
-public static TextTransformation<TTemplate> WithTokens<TTemplate>(
-    this TextTransformation<TTemplate> transformation, IEnumerable<KeyValuePair<string, object>> tokens)
-    where TTemplate : class, ITextTransformationTemplate
-{
-    if (transformation != null && tokens != null)
-    {
-        foreach (var token in tokens)
-        {
-            if (token.Value != null)
-            {
-                transformation.Template.Register(token.Key, token.Value);
-            }
-        }
-    }
-    return transformation;
-}
 
 private static readonly Regex TrailingWhitespaceRegex = new Regex(@"[ \t]+(\r?\n|$)", RegexOptions.Compiled | RegexOptions.Multiline);
