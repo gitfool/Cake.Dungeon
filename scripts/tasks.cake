@@ -117,7 +117,7 @@ Tasks.DockerBuild = Task("DockerBuild")
     .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
     .DoesForEach(() => Build.DockerImages, image =>
 {
-    var tokens = Build.Version.ToTokens("Build.Version");
+    var tokens = Build.ToTokens();
     var tags = image.Tags
         .Select(tag => string.Concat(image.Repository, ":", TransformText(tag, "{{", "}}").WithTokens(tokens))).ToArray();
     var settings = new DockerImageBuildSettings
@@ -147,6 +147,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
     var settings = new DotNetCoreTestSettings
     {
         Configuration = Build.Parameters.Configuration,
+        EnvironmentVariables = Build.ToEnvVars(),
         Logger = Build.ToolSettings.IntegrationTestsLogger,
         NoBuild = true,
         NoRestore = true
@@ -208,7 +209,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .DoesForEach(() => Build.DockerImages, image =>
 {
     var registry = image.Registry ?? Build.ToolSettings.DockerRegistry;
-    var tokens = Build.Version.ToTokens("Build.Version");
+    var tokens = Build.ToTokens();
     var tags = image.Tags
         .Where(tag => Build.ToolSettings.DockerPushLatest || tag != "latest")
         .Select(tag => string.Concat(image.Repository, ":", TransformText(tag, "{{", "}}").WithTokens(tokens)));

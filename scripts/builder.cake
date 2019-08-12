@@ -23,10 +23,10 @@ public class Builder
         var provider = (BuildSystem.Provider & (BuildProvider.AzurePipelines | BuildProvider.AzurePipelinesHosted)) != 0
             ? "TFBuild" : BuildSystem.Provider.ToString(); // map AzurePipelines* providers to TFBuild properties
         var properties = this.ToTokens()
-            .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"BuildSystem.{provider}.")) ||
-                (Parameters.LogContext && entry.Key.StartsWith("Context.")) ||
-                (Parameters.DefaultLog && !entry.Key.StartsWith("BuildSystem.") && !entry.Key.StartsWith("Context.")))
-            .ToDictionary(entry => entry.Key, entry => entry.Key.StartsWith("Credentials.") && !entry.Key.EndsWith(".IsConfigured")
+            .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"Build.BuildSystem.{provider}.")) ||
+                (Parameters.LogContext && entry.Key.StartsWith("Build.Context.")) ||
+                (Parameters.DefaultLog && !entry.Key.StartsWith("Build.BuildSystem.") && !entry.Key.StartsWith("Build.Context.")))
+            .ToDictionary(entry => entry.Key.Substring(6), entry => entry.Key.StartsWith("Build.Credentials.") && !entry.Key.EndsWith(".IsConfigured")
                 ? entry.Value?.ToString()?.Redact() : entry.Value); // redact secrets
 
         var padding = variables.Keys.Concat(properties.Keys).Select(key => key.Length).Max() + 4;

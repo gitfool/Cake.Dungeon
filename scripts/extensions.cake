@@ -5,6 +5,25 @@ public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace
 
 public static string Redact(this string value) => value != null ? "****" : value;
 
+public static Dictionary<string, string> ToEnvVars(this Builder build)
+{
+    return _buildEnvVars ??
+    (
+        _buildEnvVars = build.ToTokens()
+            .Where(entry => BuildEnvVarsRegex.IsMatch(entry.Key))
+            .ToDictionary(entry => entry.Key.Replace(".", "_").ToUpper(), entry => entry.Value.ToString())
+    );
+}
+
+public static Dictionary<string, object> ToTokens(this Builder build)
+{
+    return _buildTokens ??
+    (
+        _buildTokens = build.ToTokens("Build")
+            .ToDictionary(entry => entry.Key, entry => entry.Value)
+    );
+}
+
 public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj, string prefix = null)
 {
     IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
@@ -99,4 +118,8 @@ public static string ToValueString(this object value)
 
 public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
 
+private static readonly Regex BuildEnvVarsRegex = new Regex(@"^Build\.(?:(?:Parameters\.(?:Configuration|Title))|Version\.)", RegexOptions.Compiled);
 private static readonly Regex TrailingWhitespaceRegex = new Regex(@"[ \t]+(\r?\n|$)", RegexOptions.Compiled | RegexOptions.Multiline);
+
+private static Dictionary<string, string> _buildEnvVars;
+private static Dictionary<string, object> _buildTokens;
