@@ -102,6 +102,7 @@ public class Builder
         bool? buildTreatWarningsAsErrors = null,
         string unitTestsLogger = null,
         string integrationTestsLogger = null,
+        bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
         string dockerRegistry = null,
         bool? nuGetPackSymbols = null,
@@ -167,6 +168,7 @@ public class Builder
             buildTreatWarningsAsErrors,
             unitTestsLogger,
             integrationTestsLogger,
+            dockerBuildPull,
             dockerPushLatest,
             dockerRegistry,
             nuGetPackSymbols);

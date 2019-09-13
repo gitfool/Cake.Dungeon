@@ -9,6 +9,7 @@ public class ToolSettings
         bool? buildTreatWarningsAsErrors,
         string unitTestsLogger,
         string integrationTestsLogger,
+        bool? dockerBuildPull,
         bool? dockerPushLatest,
         string dockerRegistry,
         bool? nuGetPackSymbols)
@@ -21,6 +22,7 @@ public class ToolSettings
         UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
         IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
 
+        DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? builder.Version.IsRelease;
         DockerRegistry = dockerRegistry;
 
@@ -35,6 +37,7 @@ public class ToolSettings
     public string UnitTestsLogger { get; }
     public string IntegrationTestsLogger { get; }
 
+    public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
     public string DockerRegistry { get; }
 

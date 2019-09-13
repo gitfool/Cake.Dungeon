@@ -124,6 +124,7 @@ Tasks.DockerBuild = Task("DockerBuild")
     {
         File = image.File,
         BuildArg = new[] { $"configuration={Build.Parameters.Configuration}" },
+        Pull = Build.ToolSettings.DockerBuildPull,
         Tag = tags
     };
     DockerBuild(settings, image.Context);
