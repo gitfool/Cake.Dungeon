@@ -1,9 +1,6 @@
 trigger:
 - master
 
-variables:
-- group: NuGet
-
 jobs:
 - job: Docker
   dependsOn: [Linux, Mac, Windows]
@@ -13,8 +10,8 @@ jobs:
   steps:
   - bash: cake --bootstrap && cake --verbosity=verbose --ispublisher=true
     env:
-      NUGET_API_KEY: $(NuGet.ApiKey)
-      NUGET_SOURCE: $(NuGet.Source)
+      NUGET_API_KEY: $(NUGET_API_KEY)
+      NUGET_SOURCE: $(NUGET_SOURCE)
     displayName: Cake build
 
 - job: Linux
