@@ -1,7 +1,7 @@
 # Cake.Dungeon
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Build Status](https://dev.azure.com/gitfool/Cake.Dungeon/_apis/build/status/Cake.Dungeon?branchName=master)](https://dev.azure.com/gitfool/Cake.Dungeon/_build)
+[![Build Status](https://dev.azure.com/gitfool/Cake.Dungeon/_apis/build/status/Build?branchName=master)](https://dev.azure.com/gitfool/Cake.Dungeon/_build)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=gitfool/Cake.Dungeon)](https://dependabot.com)
 [![NuGet Package](https://img.shields.io/nuget/v/Cake.Dungeon.svg)](https://nuget.org/packages/Cake.Dungeon)
 
