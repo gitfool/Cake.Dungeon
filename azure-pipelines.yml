@@ -2,8 +2,6 @@ trigger:
 - master
 
 variables:
-- group: Cake
-- group: DotNet
 - group: NuGet
 
 jobs:
@@ -13,9 +11,10 @@ jobs:
     vmImage: ubuntu-16.04
   container: dockfool/cake-docker:latest
   steps:
-  - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity) --ispublisher=true
+  - bash: cake --bootstrap && cake --verbosity=verbose --ispublisher=true
     env:
-      NUGET_API_KEY: $(NuGet.Api.Key)
+      NUGET_API_KEY: $(NuGet.ApiKey)
+      NUGET_SOURCE: $(NuGet.Source)
     displayName: Cake build
 
 - job: Linux
@@ -24,12 +23,10 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@1
     inputs:
-      version: $(DotNet.Sdk.Version)
+      version: 2.2.402
     displayName: Install .NET Core SDK
 
-  - bash: ./cake.sh --verbosity=$(Cake.Verbosity)
-    env:
-      NUGET_API_KEY: $(NuGet.Api.Key)
+  - bash: ./cake.sh --verbosity=verbose
     displayName: Cake build
 
 - job: Mac
@@ -38,12 +35,10 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@1
     inputs:
-      version: $(DotNet.Sdk.Version)
+      version: 2.2.402
     displayName: Install .NET Core SDK
 
-  - bash: ./cake.sh --verbosity=$(Cake.Verbosity)
-    env:
-      NUGET_API_KEY: $(NuGet.Api.Key)
+  - bash: ./cake.sh --verbosity=verbose
     displayName: Cake build
 
 - job: Windows
@@ -52,10 +47,8 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@1
     inputs:
-      version: $(DotNet.Sdk.Version)
+      version: 2.2.402
     displayName: Install .NET Core SDK
 
-  - powershell: ./cake.ps1 --verbosity=$(Cake.Verbosity)
-    env:
-      NUGET_API_KEY: $(NuGet.Api.Key)
+  - powershell: ./cake.ps1 --verbosity=verbose
     displayName: Cake build
