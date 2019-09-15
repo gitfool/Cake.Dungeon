@@ -13,19 +13,19 @@ jobs:
     - name: Cake build
       run: cake --bootstrap && cake --verbosity=verbose --ispublisher=true
       env:
-        NUGET_API_KEY: $
-        NUGET_SOURCE: $
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
 
   Linux:
     runs-on: ubuntu-18.04
     steps:
+    - name: Checkout source
+      uses: actions/checkout@v1
+
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.402
-
-    - name: Checkout source
-      uses: actions/checkout@v1
 
     - name: Cake build
       run: ./cake.sh --verbosity=verbose
@@ -35,13 +35,13 @@ jobs:
   Mac:
     runs-on: macOS-10.14
     steps:
+    - name: Checkout source
+      uses: actions/checkout@v1
+
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.402
-
-    - name: Checkout source
-      uses: actions/checkout@v1
 
     - name: Cake build
       run: ./cake.sh --verbosity=verbose
@@ -51,13 +51,13 @@ jobs:
   Windows:
     runs-on: windows-2019
     steps:
+    - name: Checkout source
+      uses: actions/checkout@v1
+
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.402
-
-    - name: Checkout source
-      uses: actions/checkout@v1
 
     - name: Cake build
       shell: powershell

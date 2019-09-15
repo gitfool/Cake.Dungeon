@@ -8,6 +8,9 @@ jobs:
     vmImage: ubuntu-16.04
   container: dockfool/cake-docker:latest
   steps:
+  - checkout: self
+    displayName: Checkout source
+
   - bash: cake --bootstrap && cake --verbosity=verbose --ispublisher=true
     env:
       NUGET_API_KEY: $(NUGET_API_KEY)
@@ -18,6 +21,9 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   steps:
+  - checkout: self
+    displayName: Checkout source
+
   - task: DotNetCoreInstaller@1
     inputs:
       version: 2.2.402
@@ -30,6 +36,9 @@ jobs:
   pool:
     vmImage: macOS-10.14
   steps:
+  - checkout: self
+    displayName: Checkout source
+
   - task: DotNetCoreInstaller@1
     inputs:
       version: 2.2.402
@@ -42,6 +51,9 @@ jobs:
   pool:
     vmImage: windows-2019
   steps:
+  - checkout: self
+    displayName: Checkout source
+
   - task: DotNetCoreInstaller@1
     inputs:
       version: 2.2.402
