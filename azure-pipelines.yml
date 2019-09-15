@@ -8,14 +8,10 @@ variables:
 
 jobs:
 - job: Docker
-  dependsOn:
-  - Linux
-  - Mac
-  - Windows
+  dependsOn: [Linux, Mac, Windows]
   pool:
     vmImage: ubuntu-16.04
-  container:
-    image: dockfool/cake-docker:latest
+  container: dockfool/cake-docker:latest
   steps:
   - bash: cake --bootstrap && cake --verbosity=$(Cake.Verbosity) --ispublisher=true
     env:
@@ -26,7 +22,7 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   steps:
-  - task: DotNetCoreInstaller@0
+  - task: DotNetCoreInstaller@1
     inputs:
       version: $(DotNet.Sdk.Version)
     displayName: Install .NET Core SDK
@@ -40,7 +36,7 @@ jobs:
   pool:
     vmImage: macOS-10.14
   steps:
-  - task: DotNetCoreInstaller@0
+  - task: DotNetCoreInstaller@1
     inputs:
       version: $(DotNet.Sdk.Version)
     displayName: Install .NET Core SDK
@@ -54,7 +50,7 @@ jobs:
   pool:
     vmImage: windows-2019
   steps:
-  - task: DotNetCoreInstaller@0
+  - task: DotNetCoreInstaller@1
     inputs:
       version: $(DotNet.Sdk.Version)
     displayName: Install .NET Core SDK
