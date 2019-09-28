@@ -5,33 +5,23 @@ public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace
 
 public static string Redact(this string value) => value != null ? "****" : value;
 
-public static Dictionary<string, string> ToEnvVars(this Builder build)
-{
-    return _buildEnvVars ??
-    (
-        _buildEnvVars = build.ToTokens()
-            .Where(entry => BuildEnvVarsRegex.IsMatch(entry.Key))
-            .ToDictionary(entry => entry.Key.Replace(".", "_").ToUpper(), entry => entry.Value.ToString())
-    );
-}
+public static Dictionary<string, string> ToEnvVars(this Builder build) =>
+    _buildEnvVars ??= build.ToTokens()
+        .Where(entry => BuildEnvVarsRegex.IsMatch(entry.Key))
+        .ToDictionary(entry => entry.Key.Replace(".", "_").ToUpper(), entry => entry.Value.ToString());
 
-public static Dictionary<string, object> ToTokens(this Builder build)
-{
-    return _buildTokens ??
-    (
-        _buildTokens = build.ToTokens("Build")
-            .ToDictionary(entry => entry.Key, entry => entry.Value)
-    );
-}
+public static Dictionary<string, object> ToTokens(this Builder build) =>
+    _buildTokens ??= build.ToTokens("Build")
+        .ToDictionary(entry => entry.Key, entry => entry.Value);
 
 public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj, string prefix = null)
 {
-    IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
+    static IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
     {
         if (value == null || IsLeafType(value.GetType()) ||
             (value is Array emptyArray && emptyArray.Length == 0) ||
-            (value is Dictionary<string, string> emptyStringDict && emptyStringDict.Count == 0) ||
-            (value is Dictionary<string, object> emptyObjectDict && emptyObjectDict.Count == 0))
+            (value is List<string> emptyStringList && emptyStringList.Count == 0) ||
+            (value is Dictionary<string, string> emptyStringDict && emptyStringDict.Count == 0))
         {
             yield return Enumerable.Repeat(new KeyValuePair<string, object>(key, value), 1);
         }
@@ -42,16 +32,16 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
                 yield return GetTokens($"{key}[{i}]", array.GetValue(i)).SelectMany(tokens => tokens);
             }
         }
+        else if (value is List<string> stringList) // unroll string list tokens
+        {
+            for (var i = 0; i < stringList.Count; i++)
+            {
+                yield return GetTokens($"{key}[{i}]", stringList[i]).SelectMany(tokens => tokens);
+            }
+        }
         else if (value is Dictionary<string, string> stringDict) // unroll string dictionary tokens
         {
             foreach (var entry in stringDict)
-            {
-                yield return GetTokens($"{key}['{entry.Key}']", entry.Value).SelectMany(tokens => tokens);
-            }
-        }
-        else if (value is Dictionary<string, object> objectDict) // unroll object dictionary tokens
-        {
-            foreach (var entry in objectDict)
             {
                 yield return GetTokens($"{key}['{entry.Key}']", entry.Value).SelectMany(tokens => tokens);
             }
@@ -74,13 +64,16 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         }
     }
 
-    bool IsLeafType(Type type)
+    static bool IsLeafType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
         return type.IsPrimitive || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
             type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(Uri) ||
             type == typeof(DirectoryPath) || type == typeof(FilePath) || // cake primitives
-            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)); // list
+            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) && // list
+                type.GetGenericArguments()[0] != typeof(string)) ||
+            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) && // dictionary
+                (type.GetGenericArguments()[0] != typeof(string) || type.GetGenericArguments()[1] != typeof(string)));
     }
 
     return obj?.GetType()
@@ -95,25 +88,19 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
 
 public static string ToValueString(this object value)
 {
-    switch (value)
+    var type = value?.GetType();
+    return value switch
     {
-        case bool boolean:
-            return boolean.ToString().ToLower();
-        case string str when str.Length == 0: // empty string
-            return @"""";
-        case Array array when array.Length == 0: // empty array
-            return "[]";
-        case Dictionary<string, string> stringDict when stringDict.Count == 0: // empty dictionary
-        case Dictionary<string, object> objectDict when objectDict.Count == 0:
-            return "{}";
-        case null:
-            return "(null)";
-        default:
-            var type = value.GetType();
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) ? "[...]" // roll-up
-                : type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) ? "{...}"
-                : value.ToString(); // default
-    }
+        null => "(null)",
+        bool boolean => boolean.ToString().ToLower(),
+        string { Length: 0 } => @"""",
+        Array { Length: 0 } => "[]",
+        List<string> { Count: 0 } => "[]",
+        Dictionary<string, string> { Count: 0 } => "{}",
+        _ when type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) => "[...]", // roll-up list
+        _ when type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) => "{...}", // roll-up dictionary
+        _ => value.ToString()
+    };
 }
 
 public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
