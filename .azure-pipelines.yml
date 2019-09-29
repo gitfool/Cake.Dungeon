@@ -26,10 +26,12 @@ jobs:
 
   - task: DotNetCoreInstaller@1
     inputs:
-      version: 2.2.402
+      version: 3.0.100
     displayName: Install .NET Core SDK
 
   - bash: ./cake.sh --verbosity=verbose
+    env:
+      DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
     displayName: Cake build
 
 - job: Mac
@@ -41,10 +43,12 @@ jobs:
 
   - task: DotNetCoreInstaller@1
     inputs:
-      version: 2.2.402
+      version: 3.0.100
     displayName: Install .NET Core SDK
 
   - bash: ./cake.sh --verbosity=verbose
+    env:
+      DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
     displayName: Cake build
 
 - job: Windows
@@ -56,8 +60,10 @@ jobs:
 
   - task: DotNetCoreInstaller@1
     inputs:
-      version: 2.2.402
+      version: 3.0.100
     displayName: Install .NET Core SDK
 
   - powershell: ./cake.ps1 --verbosity=verbose
+    env:
+      DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
     displayName: Cake build
