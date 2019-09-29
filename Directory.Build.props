@@ -3,7 +3,7 @@
     <Authors>Sean Fausett</Authors>
     <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
     <Description>A playground for Cake build scripts.</Description>
-    <PackageIconUrl>https://raw.githubusercontent.com/cake-contrib/graphics/master/png/cake-contrib-small.png</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageTags>Cake;Build;Scripts</PackageTags>
