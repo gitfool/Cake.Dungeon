@@ -5,7 +5,7 @@ jobs:
 - job: Docker
   dependsOn: [Linux, Mac, Windows]
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ubuntu-latest
   container: dockfool/cake-docker:latest
   steps:
   - checkout: self
@@ -19,7 +19,7 @@ jobs:
 
 - job: Linux
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ubuntu-latest
   steps:
   - checkout: self
     displayName: Checkout source
@@ -36,7 +36,7 @@ jobs:
 
 - job: Mac
   pool:
-    vmImage: macOS-10.14
+    vmImage: macos-latest
   steps:
   - checkout: self
     displayName: Checkout source
@@ -53,7 +53,7 @@ jobs:
 
 - job: Windows
   pool:
-    vmImage: windows-2019
+    vmImage: windows-latest
   steps:
   - checkout: self
     displayName: Checkout source
