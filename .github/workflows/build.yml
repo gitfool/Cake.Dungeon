@@ -8,7 +8,7 @@ on:
 jobs:
   Docker:
     needs: [ Linux, Mac, Windows ]
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     container: dockfool/cake-docker:latest
     steps:
     - name: Checkout source
@@ -21,7 +21,7 @@ jobs:
         NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
 
   Linux:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout source
       uses: actions/checkout@v1
@@ -38,7 +38,7 @@ jobs:
         DOTNET_ROOT: /opt/hostedtoolcache/dncs/3.0.100/x64
 
   Mac:
-    runs-on: macOS-10.14
+    runs-on: macos-latest
     steps:
     - name: Checkout source
       uses: actions/checkout@v1
@@ -55,7 +55,7 @@ jobs:
         DOTNET_ROOT: /Users/runner/hostedtoolcache/dncs/3.0.100/x64
 
   Windows:
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
     - name: Checkout source
       uses: actions/checkout@v1
