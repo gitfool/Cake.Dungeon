@@ -35,7 +35,6 @@ jobs:
       run: ./cake.sh --verbosity=verbose
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
-        DOTNET_ROOT: /opt/hostedtoolcache/dncs/3.0.100/x64
 
   Mac:
     runs-on: macos-latest
@@ -52,7 +51,6 @@ jobs:
       run: ./cake.sh --verbosity=verbose
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
-        DOTNET_ROOT: /Users/runner/hostedtoolcache/dncs/3.0.100/x64
 
   Windows:
     runs-on: windows-latest
