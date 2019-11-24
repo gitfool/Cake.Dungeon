@@ -6,6 +6,7 @@ public class ToolSettings
         bool? buildBinaryLoggerEnabled,
         bool? buildEmbedAllSources,
         int? buildMaxCpuCount,
+        bool? buildRestoreLockedMode,
         bool? buildTreatWarningsAsErrors,
         string unitTestsLogger,
         string integrationTestsLogger,
@@ -17,6 +18,7 @@ public class ToolSettings
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
         BuildEmbedAllSources = buildEmbedAllSources ?? false;
         BuildMaxCpuCount = buildMaxCpuCount;
+        BuildRestoreLockedMode = buildRestoreLockedMode ?? false;
         BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? false;
 
         UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
@@ -32,6 +34,7 @@ public class ToolSettings
     public bool BuildBinaryLoggerEnabled { get; }
     public bool BuildEmbedAllSources { get; }
     public int? BuildMaxCpuCount { get; }
+    public bool BuildRestoreLockedMode { get; }
     public bool BuildTreatWarningsAsErrors { get; }
 
     public string UnitTestsLogger { get; }

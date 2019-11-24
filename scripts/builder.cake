@@ -99,6 +99,7 @@ public class Builder
         bool? buildBinaryLoggerEnabled = null, // tool settings
         bool? buildEmbedAllSources = null,
         int? buildMaxCpuCount = null,
+        bool? buildRestoreLockedMode = null,
         bool? buildTreatWarningsAsErrors = null,
         string unitTestsLogger = null,
         string integrationTestsLogger = null,
@@ -165,6 +166,7 @@ public class Builder
             buildBinaryLoggerEnabled,
             buildEmbedAllSources,
             buildMaxCpuCount,
+            buildRestoreLockedMode,
             buildTreatWarningsAsErrors,
             unitTestsLogger,
             integrationTestsLogger,

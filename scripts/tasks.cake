@@ -41,6 +41,7 @@ Tasks.Build = Task("Build")
         TreatAllWarningsAs = Build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default
     }
         .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLower())
+        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLower())
         .WithProperty("Version", Build.Version.AssemblyVersion)
         .WithProperty("FileVersion", Build.Version.AssemblyFileVersion)
         .WithProperty("InformationalVersion", Build.Version.InformationalVersion)
