@@ -1,6 +1,9 @@
 trigger:
 - master
 
+variables:
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+
 jobs:
 - job: Docker
   dependsOn: [Linux, Mac, Windows]
@@ -10,6 +13,14 @@ jobs:
   steps:
   - checkout: self
     displayName: Checkout source
+
+  - task: Cache@2
+    inputs:
+      path: $(NUGET_PACKAGES)
+      key: $(Agent.OS)|nuget|**/packages.lock.json
+      restoreKeys: |
+        $(Agent.OS)|nuget
+    displayName: Cache packages
 
   - bash: cake --bootstrap && cake --verbosity=verbose --ispublisher=true
     env:
@@ -29,6 +40,14 @@ jobs:
       version: 3.0.100
     displayName: Install .NET Core SDK
 
+  - task: Cache@2
+    inputs:
+      path: $(NUGET_PACKAGES)
+      key: $(Agent.OS)|nuget|**/packages.lock.json
+      restoreKeys: |
+        $(Agent.OS)|nuget
+    displayName: Cache packages
+
   - bash: ./cake.sh --verbosity=verbose
     env:
       DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
@@ -46,6 +65,14 @@ jobs:
       version: 3.0.100
     displayName: Install .NET Core SDK
 
+  - task: Cache@2
+    inputs:
+      path: $(NUGET_PACKAGES)
+      key: $(Agent.OS)|nuget|**/packages.lock.json
+      restoreKeys: |
+        $(Agent.OS)|nuget
+    displayName: Cache packages
+
   - bash: ./cake.sh --verbosity=verbose
     env:
       DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
@@ -62,6 +89,14 @@ jobs:
     inputs:
       version: 3.0.100
     displayName: Install .NET Core SDK
+
+  - task: Cache@2
+    inputs:
+      path: $(NUGET_PACKAGES)
+      key: $(Agent.OS)|nuget|**/packages.lock.json
+      restoreKeys: |
+        $(Agent.OS)|nuget
+    displayName: Cache packages
 
   - powershell: ./cake.ps1 --verbosity=verbose
     env:
