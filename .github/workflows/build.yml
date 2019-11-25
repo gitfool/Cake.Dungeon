@@ -52,6 +52,9 @@ jobs:
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
 
+    - name: Cache usage
+      run: du -h ~/.nuget/packages
+
   Mac:
     runs-on: macos-latest
     steps:
@@ -75,6 +78,9 @@ jobs:
       run: ./cake.sh --verbosity=verbose
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
+
+    - name: Cache usage
+      run: du -h ~/.nuget/packages
 
   Windows:
     runs-on: windows-latest
