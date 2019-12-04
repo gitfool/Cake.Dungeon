@@ -37,7 +37,7 @@ jobs:
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 3.1.100
 
     - name: Cache packages
       uses: actions/cache@v1
@@ -64,7 +64,7 @@ jobs:
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 3.1.100
 
     - name: Cache packages
       uses: actions/cache@v1
@@ -91,7 +91,7 @@ jobs:
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 3.1.100
 
     - name: Cache packages
       uses: actions/cache@v1
