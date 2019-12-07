@@ -9,6 +9,7 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
   Docker:
@@ -22,7 +23,7 @@ jobs:
     - name: Cache packages
       uses: actions/cache@v1
       with:
-        path: ~/.nuget/packages
+        path: ${{ env.NUGET_PACKAGES }}
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
@@ -47,7 +48,7 @@ jobs:
     - name: Cache packages
       uses: actions/cache@v1
       with:
-        path: ~/.nuget/packages
+        path: ${{ env.NUGET_PACKAGES }}
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
@@ -56,7 +57,7 @@ jobs:
       run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
 
     - name: Cache usage
-      run: du -h ~/.nuget/packages
+      run: du -h $NUGET_PACKAGES
 
   Mac:
     runs-on: macos-latest
@@ -72,7 +73,7 @@ jobs:
     - name: Cache packages
       uses: actions/cache@v1
       with:
-        path: ~/.nuget/packages
+        path: ${{ env.NUGET_PACKAGES }}
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
@@ -81,7 +82,7 @@ jobs:
       run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
 
     - name: Cache usage
-      run: du -h ~/.nuget/packages
+      run: du -h $NUGET_PACKAGES
 
   Windows:
     runs-on: windows-latest
@@ -97,7 +98,7 @@ jobs:
     - name: Cache packages
       uses: actions/cache@v1
       with:
-        path: ~\.nuget\packages
+        path: ${{ env.NUGET_PACKAGES }}
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
