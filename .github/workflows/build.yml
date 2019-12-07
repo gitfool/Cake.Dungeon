@@ -23,7 +23,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      run: cake --bootstrap && cake --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
@@ -48,7 +48,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      run: ./cake.sh --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
 
@@ -75,7 +75,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      run: ./cake.sh --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
 
@@ -102,7 +102,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      shell: powershell
-      run: ./cake.ps1 --verbosity=verbose
+      shell: cmd
+      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
       env:
         DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
