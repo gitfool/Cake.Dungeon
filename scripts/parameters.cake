@@ -25,7 +25,7 @@ public class Parameters
         bool? runPublishToNuGet)
     {
         Title = title ?? throw new ArgumentNullException(nameof(title), @"Set the build title to the ""artifact"" name");
-        Target = target ?? builder.Context.Argument("Target", "Default");
+        Target = target ?? builder.Context.Argument("Target", builder.Context.EnvironmentVariable("CAKE_TARGET", "Default"));
         Configuration = configuration ?? builder.Context.Argument("Configuration", builder.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
 
         IsPublisher = isPublisher ?? builder.Context.Argument("IsPublisher", builder.Context.EnvironmentVariable("CAKE_IS_PUBLISHER", false));

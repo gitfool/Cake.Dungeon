@@ -18,8 +18,8 @@ public class ToolSettings
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
         BuildEmbedAllSources = buildEmbedAllSources ?? false;
         BuildMaxCpuCount = buildMaxCpuCount;
-        BuildRestoreLockedMode = buildRestoreLockedMode ?? false;
-        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? false;
+        BuildRestoreLockedMode = buildRestoreLockedMode ?? builder.Context.Argument("BuildRestoreLockedMode", builder.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
+        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? builder.Context.Argument("BuildTreatWarningsAsErrors", builder.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
 
         UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
         IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
