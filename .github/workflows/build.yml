@@ -5,6 +5,11 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
 jobs:
   Docker:
     needs: [ Linux, Mac, Windows ]
@@ -49,8 +54,6 @@ jobs:
 
     - name: Cake build
       run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
-      env:
-        DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
 
     - name: Cache usage
       run: du -h ~/.nuget/packages
@@ -76,8 +79,6 @@ jobs:
 
     - name: Cake build
       run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
-      env:
-        DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
 
     - name: Cache usage
       run: du -h ~/.nuget/packages
@@ -104,5 +105,3 @@ jobs:
     - name: Cake build
       shell: cmd
       run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
-      env:
-        DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2

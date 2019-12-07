@@ -2,6 +2,9 @@ trigger:
 - master
 
 variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 jobs:
@@ -49,8 +52,6 @@ jobs:
     displayName: Cache packages
 
   - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
-    env:
-      DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
     displayName: Cake build
 
 - job: Mac
@@ -74,8 +75,6 @@ jobs:
     displayName: Cache packages
 
   - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
-    env:
-      DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
     displayName: Cake build
 
 - job: Windows
@@ -99,6 +98,4 @@ jobs:
     displayName: Cache packages
 
   - script: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
-    env:
-      DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
     displayName: Cake build
