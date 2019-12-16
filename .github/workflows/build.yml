@@ -29,7 +29,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
@@ -57,7 +57,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
 
     - name: Cache usage
       run: du -h $NUGET_PACKAGES
@@ -85,7 +85,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Cake build
-      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
 
     - name: Cache usage
       run: du -h $NUGET_PACKAGES
@@ -111,4 +111,4 @@ jobs:
 
     - name: Cake build
       shell: cmd
-      run: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose
+      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
