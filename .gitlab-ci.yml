@@ -1,0 +1,38 @@
+workflow:
+  rules:
+    - if: '$CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: always
+    - when: never
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+  NUGET_PACKAGES: $CI_PROJECT_DIR/.nuget/packages
+
+stages: [ Build ]
+
+Docker:
+  stage: Build
+#   tags: [ ubuntu-latest ]
+  image: dockfool/cake-docker:latest
+  script:
+    - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+
+# Linux:
+#   stage: Build
+#   tags: [ ubuntu-latest ]
+#   script:
+#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+
+# Mac:
+#   stage: Build
+#   tags: [ macos-latest ]
+#   script:
+#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+
+# Windows:
+#   stage: Build
+#   tags: [ windows-latest ]
+#   script:
+#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
