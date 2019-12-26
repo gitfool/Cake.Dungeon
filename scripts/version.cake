@@ -3,7 +3,11 @@ public class Version
     public Version(BuildSystem buildSystem, ICakeContext context)
     {
         BuildSystem = buildSystem;
-        GitVersion = context.GitVersion();
+        if (!buildSystem.IsLocalBuild)
+        {
+            context.GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.BuildServer });
+        }
+        GitVersion = context.GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.Json });
     }
 
     public string SemVer => GitVersion.SemVer;
