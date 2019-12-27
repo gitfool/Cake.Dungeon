@@ -19,8 +19,6 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
 
     - name: Cache packages
       uses: actions/cache@v1
@@ -41,8 +39,6 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
 
     - name: Source usage
       run: ls -ahlR $GITHUB_WORKSPACE
@@ -71,8 +67,6 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
 
     - name: Source usage
       run: ls -ahlR $GITHUB_WORKSPACE
@@ -101,8 +95,6 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
 
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
