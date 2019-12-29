@@ -41,7 +41,7 @@ jobs:
   - task: DotNetCoreInstaller@1
     inputs:
       version: 3.1.100
-    displayName: Install .NET Core SDK
+    displayName: Install dotnet
 
   - task: Cache@2
     inputs:
@@ -64,7 +64,7 @@ jobs:
   - task: DotNetCoreInstaller@1
     inputs:
       version: 3.1.100
-    displayName: Install .NET Core SDK
+    displayName: Install dotnet
 
   - task: Cache@2
     inputs:
@@ -87,7 +87,7 @@ jobs:
   - task: DotNetCoreInstaller@1
     inputs:
       version: 3.1.100
-    displayName: Install .NET Core SDK
+    displayName: Install dotnet
 
   - task: Cache@2
     inputs:

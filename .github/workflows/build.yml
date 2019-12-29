@@ -46,10 +46,7 @@ jobs:
     - name: Fetch unshallow
       run: git fetch --prune --tags --unshallow
 
-    - name: Source usage
-      run: ls -ahlR $GITHUB_WORKSPACE
-
-    - name: Install .NET Core SDK
+    - name: Install dotnet
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
@@ -64,9 +61,6 @@ jobs:
 
     - name: Cake build
       run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
-
-    - name: Cache usage
-      run: du -h $NUGET_PACKAGES
 
   Mac:
     runs-on: macos-latest
@@ -77,10 +71,7 @@ jobs:
     - name: Fetch unshallow
       run: git fetch --prune --tags --unshallow
 
-    - name: Source usage
-      run: ls -ahlR $GITHUB_WORKSPACE
-
-    - name: Install .NET Core SDK
+    - name: Install dotnet
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
@@ -96,9 +87,6 @@ jobs:
     - name: Cake build
       run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
 
-    - name: Cache usage
-      run: du -h $NUGET_PACKAGES
-
   Windows:
     runs-on: windows-latest
     steps:
@@ -108,7 +96,7 @@ jobs:
     - name: Fetch unshallow
       run: git fetch --prune --tags --unshallow
 
-    - name: Install .NET Core SDK
+    - name: Install dotnet
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
