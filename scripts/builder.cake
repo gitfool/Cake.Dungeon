@@ -64,7 +64,9 @@ public class Builder
         string target = null,
         string configuration = null,
 
-        bool? isPublisher = null,
+        bool? publish = null,
+        bool? deploy = null,
+        string deployEnvironment = null,
 
         bool? defaultLog = null,
         bool? logEnvironment = null,
@@ -72,7 +74,7 @@ public class Builder
         bool? logContext = null,
 
         bool? defaultRun = null,
-        bool? runBuild = null,
+        bool? runBuildSolutions = null,
         bool? runBuildPublish = null,
         bool? runUnitTests = null,
         bool? runDockerBuild = null,
@@ -80,6 +82,7 @@ public class Builder
         bool? runNuGetPack = null,
         bool? runPublishToDocker = null,
         bool? runPublishToNuGet = null,
+        bool? runDockerDeploy = null,
 
         string nuGetApiKeyVariable = null, // environment
         string nuGetSourceVariable = null,
@@ -105,10 +108,10 @@ public class Builder
         string integrationTestsLogger = null,
         bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
-        string dockerRegistry = null,
         bool? nuGetPackSymbols = null,
 
-        DockerImage[] dockerImages = null) // docker images
+        DockerImage[] dockerImages = null, // docker images
+        DockerDeployer[] dockerDeployers = null) // docker deployers
     {
         Parameters = new Parameters(
             this,
@@ -117,7 +120,9 @@ public class Builder
             target,
             configuration,
 
-            isPublisher,
+            publish,
+            deploy,
+            deployEnvironment,
 
             defaultLog,
             logEnvironment,
@@ -125,14 +130,15 @@ public class Builder
             logContext,
 
             defaultRun,
-            runBuild,
+            runBuildSolutions,
             runBuildPublish,
             runUnitTests,
             runDockerBuild,
             runIntegrationTests,
             runNuGetPack,
             runPublishToDocker,
-            runPublishToNuGet);
+            runPublishToNuGet,
+            runDockerDeploy);
 
         Environment = new Environment(
             nuGetApiKeyVariable,
@@ -172,13 +178,21 @@ public class Builder
             integrationTestsLogger,
             dockerBuildPull,
             dockerPushLatest,
-            dockerRegistry,
             nuGetPackSymbols);
 
         DockerImages = dockerImages;
+        DockerDeployers = dockerDeployers;
 
         return this;
     }
+
+    public string[] TransformTokens(IEnumerable<string> strings) =>
+        strings?.Select(text => Context.TransformText(text, "{{", "}}").WithTokens(this.ToTokens()).ToString()).ToArray();
+
+    public void TransformTokens(FilePath source, FilePath destination) =>
+        Context.TransformTextFile(source, "{{", "}}")
+            .WithTokens(this.ToTokens())
+            .Save(destination);
 
     private void SetVersion()
     {
@@ -199,6 +213,7 @@ public class Builder
     public ToolSettings ToolSettings { get; private set; }
 
     public DockerImage[] DockerImages { get; private set; }
+    public DockerDeployer[] DockerDeployers { get; private set; }
 
     public Version Version { get; private set; }
 

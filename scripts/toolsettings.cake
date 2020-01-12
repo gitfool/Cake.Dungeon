@@ -1,7 +1,7 @@
 public class ToolSettings
 {
     public ToolSettings(
-        Builder builder,
+        Builder build,
 
         bool? buildBinaryLoggerEnabled,
         bool? buildEmbedAllSources,
@@ -12,21 +12,19 @@ public class ToolSettings
         string integrationTestsLogger,
         bool? dockerBuildPull,
         bool? dockerPushLatest,
-        string dockerRegistry,
         bool? nuGetPackSymbols)
     {
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
         BuildEmbedAllSources = buildEmbedAllSources ?? false;
         BuildMaxCpuCount = buildMaxCpuCount;
-        BuildRestoreLockedMode = buildRestoreLockedMode ?? builder.Context.Argument("BuildRestoreLockedMode", builder.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
-        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? builder.Context.Argument("BuildTreatWarningsAsErrors", builder.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
+        BuildRestoreLockedMode = buildRestoreLockedMode ?? build.Context.Argument("BuildRestoreLockedMode", build.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
+        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? build.Context.Argument("BuildTreatWarningsAsErrors", build.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
 
         UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
         IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
 
         DockerBuildPull = dockerBuildPull ?? false;
-        DockerPushLatest = dockerPushLatest ?? builder.Version.IsRelease;
-        DockerRegistry = dockerRegistry;
+        DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
     }
@@ -42,7 +40,6 @@ public class ToolSettings
 
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
-    public string DockerRegistry { get; }
 
     public bool NuGetPackSymbols { get; }
 }

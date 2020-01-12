@@ -1,13 +1,15 @@
 public class Parameters
 {
     public Parameters(
-        Builder builder,
+        Builder build,
 
         string title,
         string target,
         string configuration,
 
-        bool? isPublisher,
+        bool? publish,
+        bool? deploy,
+        string deployEnvironment,
 
         bool? defaultLog,
         bool? logEnvironment,
@@ -15,28 +17,31 @@ public class Parameters
         bool? logContext,
 
         bool? defaultRun,
-        bool? runBuild,
+        bool? runBuildSolutions,
         bool? runBuildPublish,
         bool? runUnitTests,
         bool? runDockerBuild,
         bool? runIntegrationTests,
         bool? runNuGetPack,
         bool? runPublishToDocker,
-        bool? runPublishToNuGet)
+        bool? runPublishToNuGet,
+        bool? runDockerDeploy)
     {
         Title = title ?? throw new ArgumentNullException(nameof(title), @"Set the build title to the ""artifact"" name");
-        Target = target ?? builder.Context.Argument("Target", builder.Context.EnvironmentVariable("CAKE_TARGET", "Default"));
-        Configuration = configuration ?? builder.Context.Argument("Configuration", builder.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
+        Target = target ?? build.Context.Argument("Target", build.Context.EnvironmentVariable("CAKE_TARGET", "Build"));
+        Configuration = configuration ?? build.Context.Argument("Configuration", build.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
 
-        IsPublisher = isPublisher ?? builder.Context.Argument("IsPublisher", builder.Context.EnvironmentVariable("CAKE_IS_PUBLISHER", false));
+        Publish = publish ?? build.Context.Argument("Publish", build.Context.EnvironmentVariable("CAKE_PUBLISH", false));
+        Deploy = deploy ?? build.Context.Argument("Deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", true));
+        DeployEnvironment = deployEnvironment ?? build.Context.Argument("DeployEnvironment", build.Context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
 
-        DefaultLog = defaultLog ?? builder.Context.Argument("DefaultLog", builder.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
-        LogEnvironment = logEnvironment ?? builder.Context.Argument("LogEnvironment", builder.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
-        LogBuildSystem = logBuildSystem ?? builder.Context.Argument("LogBuildSystem", builder.Context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
-        LogContext = logContext ?? builder.Context.Argument("LogContext", builder.Context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
+        DefaultLog = defaultLog ?? build.Context.Argument("DefaultLog", build.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
+        LogEnvironment = logEnvironment ?? build.Context.Argument("LogEnvironment", build.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
+        LogBuildSystem = logBuildSystem ?? build.Context.Argument("LogBuildSystem", build.Context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
+        LogContext = logContext ?? build.Context.Argument("LogContext", build.Context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
 
         DefaultRun = defaultRun ?? false;
-        RunBuild = runBuild ?? DefaultRun;
+        RunBuildSolutions = runBuildSolutions ?? DefaultRun;
         RunBuildPublish = runBuildPublish ?? DefaultRun;
         RunUnitTests = runUnitTests ?? DefaultRun;
         RunDockerBuild = runDockerBuild ?? DefaultRun;
@@ -44,13 +49,16 @@ public class Parameters
         RunNuGetPack = runNuGetPack ?? DefaultRun;
         RunPublishToDocker = runPublishToDocker ?? DefaultRun;
         RunPublishToNuGet = runPublishToNuGet ?? DefaultRun;
+        RunDockerDeploy = runDockerDeploy ?? DefaultRun;
     }
 
     public string Title { get; }
     public string Target { get; }
     public string Configuration { get; }
 
-    public bool IsPublisher { get; }
+    public bool Publish { get; }
+    public bool Deploy { get; }
+    public string DeployEnvironment { get; }
 
     public bool DefaultLog { get; }
     public bool LogEnvironment { get; }
@@ -58,7 +66,7 @@ public class Parameters
     public bool LogContext { get; }
 
     public bool DefaultRun { get; }
-    public bool RunBuild { get; }
+    public bool RunBuildSolutions { get; }
     public bool RunBuildPublish { get; }
     public bool RunUnitTests { get; }
     public bool RunDockerBuild { get; }
@@ -66,4 +74,5 @@ public class Parameters
     public bool RunNuGetPack { get; }
     public bool RunPublishToDocker { get; }
     public bool RunPublishToNuGet { get; }
+    public bool RunDockerDeploy { get; }
 }

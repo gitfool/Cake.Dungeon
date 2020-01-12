@@ -1,7 +1,7 @@
 public static class Tasks
 {
     public static CakeTaskBuilder Info { get; set; }
-    public static CakeTaskBuilder Build { get; set; }
+    public static CakeTaskBuilder BuildSolutions { get; set; }
     public static CakeTaskBuilder UnitTests { get; set; }
     public static CakeTaskBuilder DockerBuild { get; set; }
     public static CakeTaskBuilder IntegrationTests { get; set; }
@@ -10,7 +10,10 @@ public static class Tasks
     public static CakeTaskBuilder PublishArtifacts { get; set; }
     public static CakeTaskBuilder PublishToDocker { get; set; }
     public static CakeTaskBuilder PublishToNuGet { get; set; }
-    public static CakeTaskBuilder Default { get; set; }
+    public static CakeTaskBuilder DeployArtifacts { get; set; }
+    public static CakeTaskBuilder DockerDeploy { get; set; }
+    public static CakeTaskBuilder Build { get; set; }
+    public static CakeTaskBuilder Deploy { get; set; }
 }
 
 Tasks.Info = Task("Info")
@@ -19,8 +22,9 @@ Tasks.Info = Task("Info")
     Build.Info();
 });
 
-Tasks.Build = Task("Build")
-    .WithCriteria(() => Build.Parameters.RunBuild, "Not run")
+Tasks.BuildSolutions = Task("BuildSolutions")
+    .IsDependentOn("Info")
+    .WithCriteria(() => Build.Parameters.RunBuildSolutions, "Not run")
     .Does(() =>
 {
     var solutionPatterns = Build.Patterns.BuildSolutions
@@ -86,7 +90,7 @@ Tasks.Build = Task("Build")
 });
 
 Tasks.UnitTests = Task("UnitTests")
-    .IsDependentOn("Build")
+    .IsDependentOn("BuildSolutions")
     .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
     .Does(() =>
 {
@@ -113,20 +117,17 @@ Tasks.UnitTests = Task("UnitTests")
 });
 
 Tasks.DockerBuild = Task("DockerBuild")
-    .IsDependentOn("Build")
+    .IsDependentOn("BuildSolutions")
     .WithCriteria(() => Build.Parameters.RunDockerBuild, "Not run")
     .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
     .DoesForEach(() => Build.DockerImages, image =>
 {
-    var tokens = Build.ToTokens();
-    var tags = image.Tags
-        .Select(tag => string.Concat(image.Repository, ":", TransformText(tag, "{{", "}}").WithTokens(tokens))).ToArray();
     var settings = new DockerImageBuildSettings
     {
         File = image.File,
-        BuildArg = new[] { $"configuration={Build.Parameters.Configuration}" },
+        BuildArg = Build.TransformTokens(image.Args),
         Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = tags
+        Tag = Build.TransformTokens(image.Tags.Select(tag => $"{image.Repository}:{tag}"))
     };
     DockerBuild(settings, image.Context);
 });
@@ -165,7 +166,7 @@ Tasks.StageArtifacts = Task("StageArtifacts")
     .IsDependentOn("NuGetPack");
 
 Tasks.NuGetPack = Task("NuGetPack")
-    .IsDependentOn("Build")
+    .IsDependentOn("BuildSolutions")
     .WithCriteria(() => Build.Parameters.RunNuGetPack, "Not run")
     .Does(() =>
 {
@@ -207,25 +208,27 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .WithCriteria(() => Build.Parameters.RunPublishToDocker, "Not run")
     .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not public")
-    .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
+    .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
     .DoesForEach(() => Build.DockerImages, image =>
 {
-    var registry = image.Registry ?? Build.ToolSettings.DockerRegistry;
-    var tokens = Build.ToTokens();
-    var tags = image.Tags
-        .Where(tag => Build.ToolSettings.DockerPushLatest || tag != "latest")
-        .Select(tag => string.Concat(image.Repository, ":", TransformText(tag, "{{", "}}").WithTokens(tokens)));
+    var tags = Build.TransformTokens(image.Tags)
+        .Where(tag => tag != "latest" || Build.ToolSettings.DockerPushLatest)
+        .Select(tag =>
+        {
+            var local = $"{image.Repository}:{tag}";
+            var remote = image.Registry.IsConfigured() ? $"{image.Registry}/{image.Repository}:{tag}" : local;
+            return (tag != "latest" && DockerImageExists(remote))
+                ? throw new InvalidOperationException($"Docker image {remote} already exists")
+                : new { Local = local, Remote = remote };
+        }).ToArray(); // eager check any image exists
+
     foreach (var tag in tags)
     {
-        if (registry.IsConfigured())
+        if (tag.Local != tag.Remote)
         {
-            DockerTag(tag, $"{registry}/{tag}");
-            DockerPush($"{registry}/{tag}");
+            DockerTag(tag.Local, tag.Remote);
         }
-        else
-        {
-            DockerPush(tag);
-        }
+        DockerPush(tag.Remote);
     }
 });
 
@@ -235,7 +238,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     .WithCriteria(() => Build.Parameters.RunPublishToNuGet, "Not run")
     .WithCriteria(() => Build.Credentials.NuGet.IsConfigured, "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not public")
-    .WithCriteria(() => Build.Parameters.IsPublisher, "Not publisher")
+    .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
     .Does(() =>
 {
     var packages = GetFiles(Build.Directories.ArtifactsNuGet.CombineWithFilePath("**/*.nupkg").FullPath);
@@ -256,11 +259,39 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     }
 });
 
-Tasks.Default = Task("Default")
+Tasks.DeployArtifacts = Task("DeployArtifacts")
     .IsDependentOn("Info")
-    .IsDependentOn("Build")
+    .IsDependentOn("DockerDeploy");
+
+Tasks.DockerDeploy = Task("DockerDeploy")
+    .WithCriteria(() => Build.Parameters.RunDockerDeploy, "Not run")
+    .WithCriteria(() => Build.Parameters.Title.IsConfigured() && Build.DockerDeployers != null && Build.DockerDeployers.All(deployer => deployer.IsConfigured), "Not configured")
+    .WithCriteria(() => Build.Version.IsPublic, "Not public")
+    .WithCriteria(() => Build.Parameters.Deploy, "Not deployer")
+    .DoesForEach(() => Build.DockerDeployers, deployer =>
+{
+    var image = deployer.Registry.IsConfigured() ? $"{deployer.Registry}/{deployer.Repository}:{deployer.Tag}" : $"{deployer.Repository}:{deployer.Tag}";
+    DockerPull(image);
+
+    var settings = new DockerContainerRunSettings
+    {
+        Env = Build.TransformTokens(deployer.Environment),
+        Volume = Build.TransformTokens(deployer.Volumes),
+        Tty = true
+    };
+    var args = Build.TransformTokens(deployer.Args);
+    DockerRunWithoutResult(settings, image, args?[0], args?[1..]);
+});
+
+Tasks.Build = Task("Build")
+    .IsDependentOn("Info")
+    .IsDependentOn("BuildSolutions")
     .IsDependentOn("UnitTests")
     .IsDependentOn("DockerBuild")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("StageArtifacts")
     .IsDependentOn("PublishArtifacts");
+
+Tasks.Deploy = Task("Deploy")
+    .IsDependentOn("Info")
+    .IsDependentOn("DeployArtifacts");

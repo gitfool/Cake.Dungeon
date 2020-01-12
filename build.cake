@@ -7,7 +7,7 @@ Build.SetParameters
 
     defaultLog: true,
 
-    runBuild: true,
+    runBuildSolutions: true,
     runNuGetPack: true,
     runPublishToNuGet: true,
 
