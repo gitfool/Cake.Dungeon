@@ -1,7 +1,6 @@
 workflow:
   rules:
-    - if: '$CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
     - when: never
 
 variables:
@@ -18,22 +17,22 @@ Docker:
 #   tags: [ ubuntu-latest ]
   image: dockfool/cake-docker:latest
   script:
-    - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+    - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Linux:
 #   stage: Build
 #   tags: [ ubuntu-latest ]
 #   script:
-#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Mac:
 #   stage: Build
 #   tags: [ macos-latest ]
 #   script:
-#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Windows:
 #   stage: Build
 #   tags: [ windows-latest ]
 #   script:
-#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose
+#     - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build

@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ master ]
+    branches: [ "**" ]
   pull_request:
     branches: [ master ]
 
@@ -17,98 +17,98 @@ jobs:
     runs-on: ubuntu-latest
     container: dockfool/cake-docker:latest
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v2
+      - name: Checkout source
+        uses: actions/checkout@v2
 
-    - name: Fetch unshallow
-      run: git fetch --prune --tags --unshallow
+      - name: Fetch unshallow
+        run: git fetch --prune --tags --unshallow
 
-    - name: Cache packages
-      uses: actions/cache@v1
-      with:
-        path: ${{ env.NUGET_PACKAGES }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Cache packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-    - name: Cake build
-      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
+      - name: Cake build
+        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
 
   Linux:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v2
+      - name: Checkout source
+        uses: actions/checkout@v2
 
-    - name: Fetch unshallow
-      run: git fetch --prune --tags --unshallow
+      - name: Fetch unshallow
+        run: git fetch --prune --tags --unshallow
 
-    - name: Install dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
+      - name: Install dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.100
 
-    - name: Cache packages
-      uses: actions/cache@v1
-      with:
-        path: ${{ env.NUGET_PACKAGES }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Cache packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-    - name: Cake build
-      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
+      - name: Cake build
+        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
   Mac:
     runs-on: macos-latest
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v2
+      - name: Checkout source
+        uses: actions/checkout@v2
 
-    - name: Fetch unshallow
-      run: git fetch --prune --tags --unshallow
+      - name: Fetch unshallow
+        run: git fetch --prune --tags --unshallow
 
-    - name: Install dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
+      - name: Install dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.100
 
-    - name: Cache packages
-      uses: actions/cache@v1
-      with:
-        path: ${{ env.NUGET_PACKAGES }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Cache packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-    - name: Cake build
-      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
+      - name: Cake build
+        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
   Windows:
     runs-on: windows-latest
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v2
+      - name: Checkout source
+        uses: actions/checkout@v2
 
-    - name: Fetch unshallow
-      run: git fetch --prune --tags --unshallow
+      - name: Fetch unshallow
+        run: git fetch --prune --tags --unshallow
 
-    - name: Install dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
+      - name: Install dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.100
 
-    - name: Cache packages
-      uses: actions/cache@v1
-      with:
-        path: ${{ env.NUGET_PACKAGES }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Cache packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-    - name: Cake build
-      shell: cmd
-      run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=diagnostic
+      - name: Cake build
+        shell: cmd
+        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
