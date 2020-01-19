@@ -42,7 +42,7 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.100
+          version: 3.1.101
         displayName: Install dotnet
 
       - task: Cache@2
@@ -65,7 +65,7 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.100
+          version: 3.1.101
         displayName: Install dotnet
 
       - task: Cache@2
@@ -88,7 +88,7 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.100
+          version: 3.1.101
         displayName: Install dotnet
 
       - task: Cache@2
