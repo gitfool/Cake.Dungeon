@@ -110,5 +110,4 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Cake build
-        shell: cmd
-        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+        run: dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build
