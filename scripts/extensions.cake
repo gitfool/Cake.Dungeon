@@ -93,7 +93,7 @@ public static string ToValueString(this object value)
     {
         null => "(null)",
         bool boolean => boolean.ToString().ToLower(),
-        string { Length: 0 } => @"""",
+        string { Length: 0 } => @"""""",
         Array { Length: 0 } => "[]",
         List<string> { Count: 0 } => "[]",
         Dictionary<string, string> { Count: 0 } => "{}",
