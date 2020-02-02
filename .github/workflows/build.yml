@@ -10,7 +10,9 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
 
 jobs:
   Docker:
@@ -34,9 +36,6 @@ jobs:
 
       - name: Cake build
         run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-          NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
 
   Linux:
     runs-on: ubuntu-latest
