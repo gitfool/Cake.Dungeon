@@ -84,8 +84,12 @@ public class Builder
         bool? runPublishToNuGet = null,
         bool? runDockerDeploy = null,
 
-        string nuGetApiKeyVariable = null, // environment
-        string nuGetSourceVariable = null,
+        string gitHubTokenVariable = null, // environment
+        string gitHubUserNameVariable = null,
+        string gitHubPasswordVariable = null,
+        string nuGetApiKeyVariable = null,
+        string nuGetUserNameVariable = null,
+        string nuGetPasswordVariable = null,
 
         DirectoryPath rootDirectory = null, // directories
         DirectoryPath sourceDirectory = null,
@@ -109,6 +113,7 @@ public class Builder
         bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
         bool? nuGetPackSymbols = null,
+        string nuGetSource = null,
 
         DockerImage[] dockerImages = null, // docker images
         DockerDeployer[] dockerDeployers = null) // docker deployers
@@ -141,8 +146,12 @@ public class Builder
             runDockerDeploy);
 
         Environment = new Environment(
+            gitHubTokenVariable,
+            gitHubUserNameVariable,
+            gitHubPasswordVariable,
             nuGetApiKeyVariable,
-            nuGetSourceVariable);
+            nuGetUserNameVariable,
+            nuGetPasswordVariable);
 
         Credentials = new Credentials(
             Context,
@@ -178,7 +187,8 @@ public class Builder
             integrationTestsLogger,
             dockerBuildPull,
             dockerPushLatest,
-            nuGetPackSymbols);
+            nuGetPackSymbols,
+            nuGetSource);
 
         DockerImages = dockerImages;
         DockerDeployers = dockerDeployers;

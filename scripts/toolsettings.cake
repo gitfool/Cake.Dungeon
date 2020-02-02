@@ -12,7 +12,8 @@ public class ToolSettings
         string integrationTestsLogger,
         bool? dockerBuildPull,
         bool? dockerPushLatest,
-        bool? nuGetPackSymbols)
+        bool? nuGetPackSymbols,
+        string nuGetSource)
     {
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
         BuildEmbedAllSources = buildEmbedAllSources ?? false;
@@ -27,6 +28,7 @@ public class ToolSettings
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
+        NuGetSource = nuGetSource ?? build.Context.Argument("NuGetSource", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
     }
 
     public bool BuildBinaryLoggerEnabled { get; }
@@ -42,4 +44,5 @@ public class ToolSettings
     public bool DockerPushLatest { get; }
 
     public bool NuGetPackSymbols { get; }
+    public string NuGetSource { get; }
 }

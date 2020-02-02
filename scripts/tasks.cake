@@ -236,7 +236,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("NuGetPack")
     .WithCriteria(() => Build.Parameters.RunPublishToNuGet, "Not run")
-    .WithCriteria(() => Build.Credentials.NuGet.IsConfigured, "Not configured")
+    .WithCriteria(() => Build.Credentials.NuGet.IsConfigured && Build.ToolSettings.NuGetSource.IsConfigured(), "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not public")
     .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
     .Does(() =>
@@ -251,7 +251,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     var settings = new DotNetCoreNuGetPushSettings
     {
         ApiKey = Build.Credentials.NuGet.ApiKey,
-        Source = Build.Credentials.NuGet.Source
+        Source = Build.ToolSettings.NuGetSource
     };
     foreach (var package in packages)
     {
