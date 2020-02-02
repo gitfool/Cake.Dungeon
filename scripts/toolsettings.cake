@@ -15,19 +15,19 @@ public class ToolSettings
         bool? nuGetPackSymbols,
         string nuGetSource)
     {
-        BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
-        BuildEmbedAllSources = buildEmbedAllSources ?? false;
-        BuildMaxCpuCount = buildMaxCpuCount;
+        BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? build.Context.Argument("build-binary-logger-enabled", build.Context.EnvironmentVariable("CAKE_BUILD_BINARY_LOGGER_ENABLED", false));
+        BuildEmbedAllSources = buildEmbedAllSources ?? build.Context.Argument("build-embed-all-sources", build.Context.EnvironmentVariable("CAKE_BUILD_EMBED_ALL_SOURCES", false));
+        BuildMaxCpuCount = buildMaxCpuCount ?? build.Context.Argument("build-max-cpu-count", build.Context.EnvironmentVariable("CAKE_BUILD_MAX_CPU_COUNT", (int?)null));
         BuildRestoreLockedMode = buildRestoreLockedMode ?? build.Context.Argument("build-restore-locked-mode", build.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
         BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? build.Context.Argument("build-treat-warnings-as-errors", build.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
 
-        UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
-        IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
+        UnitTestsLogger = unitTestsLogger ?? build.Context.Argument("unit-tests-logger", build.Context.EnvironmentVariable("CAKE_UNIT_TESTS_LOGGER", "console;verbosity=minimal"));
+        IntegrationTestsLogger = integrationTestsLogger ?? build.Context.Argument("integration-tests-logger", build.Context.EnvironmentVariable("CAKE_INTEGRATION_TESTS_LOGGER", "console;verbosity=minimal"));
 
-        DockerBuildPull = dockerBuildPull ?? false;
-        DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
+        DockerBuildPull = dockerBuildPull ?? build.Context.Argument("docker-build-pull", build.Context.EnvironmentVariable("CAKE_DOCKER_BUILD_PULL", false));
+        DockerPushLatest = dockerPushLatest ?? build.Context.Argument("docker-push-latest", build.Context.EnvironmentVariable("CAKE_DOCKER_PUSH_LATEST", build.Version.IsRelease));
 
-        NuGetPackSymbols = nuGetPackSymbols ?? false;
+        NuGetPackSymbols = nuGetPackSymbols ?? build.Context.Argument("nuget-pack-symbols", build.Context.EnvironmentVariable("CAKE_NUGET_PACK_SYMBOLS", false));
         NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
     }
 
