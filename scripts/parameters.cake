@@ -28,17 +28,17 @@ public class Parameters
         bool? runDockerDeploy)
     {
         Title = title ?? throw new ArgumentNullException(nameof(title), @"Set the build title to the ""artifact"" name");
-        Target = target ?? build.Context.Argument("Target", build.Context.EnvironmentVariable("CAKE_TARGET", "Build"));
-        Configuration = configuration ?? build.Context.Argument("Configuration", build.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
+        Target = target ?? build.Context.Argument("target", build.Context.EnvironmentVariable("CAKE_TARGET", "Build"));
+        Configuration = configuration ?? build.Context.Argument("configuration", build.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
 
-        Publish = publish ?? build.Context.Argument("Publish", build.Context.EnvironmentVariable("CAKE_PUBLISH", false));
-        Deploy = deploy ?? build.Context.Argument("Deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", true));
-        DeployEnvironment = deployEnvironment ?? build.Context.Argument("DeployEnvironment", build.Context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
+        Publish = publish ?? build.Context.Argument("publish", build.Context.EnvironmentVariable("CAKE_PUBLISH", false));
+        Deploy = deploy ?? build.Context.Argument("deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", true));
+        DeployEnvironment = deployEnvironment ?? build.Context.Argument("deploy-environment", build.Context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
 
-        DefaultLog = defaultLog ?? build.Context.Argument("DefaultLog", build.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
-        LogEnvironment = logEnvironment ?? build.Context.Argument("LogEnvironment", build.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
-        LogBuildSystem = logBuildSystem ?? build.Context.Argument("LogBuildSystem", build.Context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
-        LogContext = logContext ?? build.Context.Argument("LogContext", build.Context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
+        DefaultLog = defaultLog ?? build.Context.Argument("default-log", build.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
+        LogEnvironment = logEnvironment ?? build.Context.Argument("log-environment", build.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
+        LogBuildSystem = logBuildSystem ?? build.Context.Argument("log-build-system", build.Context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
+        LogContext = logContext ?? build.Context.Argument("log-context", build.Context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
 
         DefaultRun = defaultRun ?? false;
         RunBuildSolutions = runBuildSolutions ?? DefaultRun;

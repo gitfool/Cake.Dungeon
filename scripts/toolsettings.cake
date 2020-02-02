@@ -18,8 +18,8 @@ public class ToolSettings
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
         BuildEmbedAllSources = buildEmbedAllSources ?? false;
         BuildMaxCpuCount = buildMaxCpuCount;
-        BuildRestoreLockedMode = buildRestoreLockedMode ?? build.Context.Argument("BuildRestoreLockedMode", build.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
-        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? build.Context.Argument("BuildTreatWarningsAsErrors", build.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
+        BuildRestoreLockedMode = buildRestoreLockedMode ?? build.Context.Argument("build-restore-locked-mode", build.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
+        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? build.Context.Argument("build-treat-warnings-as-errors", build.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
 
         UnitTestsLogger = unitTestsLogger ?? "console;verbosity=minimal";
         IntegrationTestsLogger = integrationTestsLogger ?? "console;verbosity=minimal";
@@ -28,7 +28,7 @@ public class ToolSettings
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
-        NuGetSource = nuGetSource ?? build.Context.Argument("NuGetSource", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
+        NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
     }
 
     public bool BuildBinaryLoggerEnabled { get; }
