@@ -5,10 +5,17 @@ public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace
 
 public static string Redact(this string value) => value != null ? "****" : value;
 
+public static string ToEnvVar(this string value)
+{
+    value = Regex.Replace(value, @"(?<=A)ppVeyor|(?<=G)itHub|(?<=G)itLab|(?<=M)yGet|(?<=N)uGet|(?<=S)emVer|(?<=T)eamCity|(?<=U)serName", match => match.Value.ToLowerInvariant()); // compound values
+    value = Regex.Replace(value, @"(?<=[a-z])(?=[A-Z])|(?<=[A-Za-z])\.(?=[A-Z])", "_").ToUpperInvariant(); // split values
+    return Regex.Replace(value, @"\['?(.+?)'?\]", "_$1"); // indexed values
+}
+
 public static Dictionary<string, string> ToEnvVars(this Builder build) =>
     _buildEnvVars ??= build.ToTokens()
-        .Where(entry => BuildEnvVarsRegex.IsMatch(entry.Key))
-        .ToDictionary(entry => entry.Key.Replace(".", "_").ToUpper(), entry => entry.Value.ToString());
+        .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)")) // filter tokens
+        .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
 
 public static Dictionary<string, object> ToTokens(this Builder build) =>
     _buildTokens ??= build.ToTokens("Build")
@@ -103,10 +110,7 @@ public static string ToValueString(this object value)
     };
 }
 
-public static string TrimTrailingWhitespace(this string value) => TrailingWhitespaceRegex.Replace(value, "$1");
-
-private static readonly Regex BuildEnvVarsRegex = new Regex(@"^Build\.(?:(?:Parameters\.(?:Configuration|Title))|Version\.)", RegexOptions.Compiled);
-private static readonly Regex TrailingWhitespaceRegex = new Regex(@"[ \t]+(\r?\n|$)", RegexOptions.Compiled | RegexOptions.Multiline);
+public static string TrimTrailingWhitespace(this string value) => Regex.Replace(value, @"[ \t]+(\r?\n|$)", "$1", RegexOptions.Multiline);
 
 private static Dictionary<string, string> _buildEnvVars;
 private static Dictionary<string, object> _buildTokens;
