@@ -31,7 +31,6 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build --publish=true
         env:
           NUGET_API_KEY: $(NUGET_API_KEY)
-          NUGET_SOURCE: $(NUGET_SOURCE)
         displayName: Cake build
 
   - job: Linux

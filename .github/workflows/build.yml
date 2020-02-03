@@ -12,7 +12,6 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-  NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
 
 jobs:
   Docker:
