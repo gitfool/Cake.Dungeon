@@ -15,7 +15,7 @@ stages: [ Build ]
 
 Docker:
   stage: Build
-#   tags: [ ubuntu-latest ]
+  # tags: [ ubuntu-latest ]
   image: dockfool/cake-docker:latest
   cache:
     paths: [ $NUGET_PACKAGES ]
@@ -25,20 +25,20 @@ Docker:
   script:
     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
-# Linux:
-#   stage: Build
-#   tags: [ ubuntu-latest ]
-#   cache:
-#     paths: [ $NUGET_PACKAGES ]
-#     key:
-#       prefix: nuget
-#       files: [ packages.lock.json ]
-#   script:
-#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+Linux:
+  stage: Build
+  # tags: [ ubuntu-latest ]
+  cache:
+    paths: [ $NUGET_PACKAGES ]
+    key:
+      prefix: nuget
+      files: [ packages.lock.json ]
+  script:
+    - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Mac:
 #   stage: Build
-#   tags: [ macos-latest ]
+#   # tags: [ macos-latest ]
 #   cache:
 #     paths: [ $NUGET_PACKAGES ]
 #     key:
@@ -49,7 +49,7 @@ Docker:
 
 # Windows:
 #   stage: Build
-#   tags: [ windows-latest ]
+#   # tags: [ windows-latest ]
 #   cache:
 #     paths: [ $NUGET_PACKAGES ]
 #     key:
