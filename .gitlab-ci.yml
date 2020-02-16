@@ -20,8 +20,10 @@ Docker:
   cache:
     paths: [ $NUGET_PACKAGES ]
     key:
-      prefix: nuget
+      prefix: linux-nuget
       files: [ packages.lock.json ]
+  before_script:
+    - cat /etc/os-release
   script:
     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
@@ -31,8 +33,10 @@ Linux:
   cache:
     paths: [ $NUGET_PACKAGES ]
     key:
-      prefix: nuget
+      prefix: linux-nuget
       files: [ packages.lock.json ]
+  before_script:
+    - cat /etc/os-release
   script:
     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
@@ -53,7 +57,7 @@ Windows:
   cache:
     paths: [ $NUGET_PACKAGES ]
     key:
-      prefix: nuget
+      prefix: windows-nuget
       files: [ packages.lock.json ]
   script:
     - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build
