@@ -47,13 +47,13 @@ Linux:
 #   script:
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
-# Windows:
-#   stage: Build
-#   # tags: [ windows-latest ]
-#   cache:
-#     paths: [ $NUGET_PACKAGES ]
-#     key:
-#       prefix: nuget
-#       files: [ packages.lock.json ]
-#   script:
-#     - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build
+Windows:
+  stage: Build
+  tags: [ shared-windows, windows, windows-1809 ]
+  cache:
+    paths: [ $NUGET_PACKAGES ]
+    key:
+      prefix: nuget
+      files: [ packages.lock.json ]
+  script:
+    - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build
