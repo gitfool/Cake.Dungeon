@@ -44,6 +44,9 @@ jobs:
           version: 3.1.101
         displayName: Install dotnet
 
+      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+        displayName: Touch dotnet
+
       - task: Cache@2
         inputs:
           path: $(NUGET_PACKAGES)
@@ -65,6 +68,9 @@ jobs:
         inputs:
           version: 3.1.101
         displayName: Install dotnet
+
+      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+        displayName: Touch dotnet
 
       - task: Cache@2
         inputs:
@@ -88,6 +94,9 @@ jobs:
           version: 3.1.101
         displayName: Install dotnet
 
+      - pwsh: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
+        displayName: Touch dotnet
+
       - task: Cache@2
         inputs:
           path: $(NUGET_PACKAGES)
@@ -95,5 +104,5 @@ jobs:
           restoreKeys: $(Agent.OS)|nuget
         displayName: Cache packages
 
-      - script: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
+      - pwsh: dotnet tool restore ; dotnet cake --bootstrap ; dotnet cake --verbosity=verbose --target=build
         displayName: Cake build

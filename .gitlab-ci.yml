@@ -35,7 +35,7 @@ Docker:
 #       files: [ packages.lock.json ]
 #   script:
 #     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.101
-#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$DOTNET_ROOT/$(dotnet --version).dotnetFirstUseSentinel"
+#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Mac:
@@ -48,7 +48,7 @@ Docker:
 #       files: [ packages.lock.json ]
 #   script:
 #     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.101
-#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$DOTNET_ROOT/$(dotnet --version).dotnetFirstUseSentinel"
+#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 Windows:
@@ -60,6 +60,6 @@ Windows:
       prefix: windows-nuget
       files: [ packages.lock.json ]
   script:
-    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -InstallDir $env:USERPROFILE\.dotnet -Version 3.1.101"'
-    - $env:DOTNET_ROOT="$env:USERPROFILE\.dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH" ; Set-Content "$env:DOTNET_ROOT\$(dotnet --version).dotnetFirstUseSentinel" $null
+    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 3.1.101"'
+    - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH" ; New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
     - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build

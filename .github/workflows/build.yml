@@ -25,6 +25,9 @@ jobs:
       - name: Fetch unshallow
         run: git fetch --prune --tags --unshallow
 
+      - name: Touch dotnet
+        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+
       - name: Cache packages
         uses: actions/cache@v1
         with:
@@ -48,6 +51,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
+
+      - name: Touch dotnet
+        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 
       - name: Cache packages
         uses: actions/cache@v1
@@ -73,6 +79,9 @@ jobs:
         with:
           dotnet-version: 3.1.101
 
+      - name: Touch dotnet
+        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+
       - name: Cache packages
         uses: actions/cache@v1
         with:
@@ -96,6 +105,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
+
+      - name: Touch dotnet
+        run: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
 
       - name: Cache packages
         uses: actions/cache@v1
