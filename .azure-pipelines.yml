@@ -7,7 +7,6 @@ variables:
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 jobs:
@@ -19,6 +18,9 @@ jobs:
     steps:
       - checkout: self
         displayName: Checkout source
+
+      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+        displayName: Touch dotnet
 
       - task: Cache@2
         inputs:
