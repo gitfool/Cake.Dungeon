@@ -113,6 +113,7 @@ public class Builder
         bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
         bool? nuGetPackSymbols = null,
+        bool? nuGetPushSkipDuplicate = null,
         string nuGetSource = null,
 
         DockerImage[] dockerImages = null, // docker images
@@ -188,6 +189,7 @@ public class Builder
             dockerBuildPull,
             dockerPushLatest,
             nuGetPackSymbols,
+            nuGetPushSkipDuplicate,
             nuGetSource);
 
         DockerImages = dockerImages;

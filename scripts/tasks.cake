@@ -251,7 +251,8 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     var settings = new DotNetCoreNuGetPushSettings
     {
         ApiKey = Build.Credentials.NuGet.ApiKey,
-        Source = Build.ToolSettings.NuGetSource
+        Source = Build.ToolSettings.NuGetSource,
+        ArgumentCustomization = args => { if (Build.ToolSettings.NuGetPushSkipDuplicate) args.Append("--skip-duplicate"); return args; }
     };
     foreach (var package in packages)
     {

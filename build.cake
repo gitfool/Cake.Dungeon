@@ -11,7 +11,9 @@ Build.SetParameters
     runNuGetPack: true,
     runPublishToNuGet: true,
 
-    sourceDirectory: Build.Directories.Root
+    sourceDirectory: Build.Directories.Root,
+
+    nuGetPushSkipDuplicate: true
 );
 
 Build.Run();

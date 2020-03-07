@@ -13,6 +13,7 @@ public class ToolSettings
         bool? dockerBuildPull,
         bool? dockerPushLatest,
         bool? nuGetPackSymbols,
+        bool? nuGetPushSkipDuplicate,
         string nuGetSource)
     {
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? build.Context.Argument("build-binary-logger-enabled", build.Context.EnvironmentVariable("CAKE_BUILD_BINARY_LOGGER_ENABLED", false));
@@ -28,6 +29,7 @@ public class ToolSettings
         DockerPushLatest = dockerPushLatest ?? build.Context.Argument("docker-push-latest", build.Context.EnvironmentVariable("CAKE_DOCKER_PUSH_LATEST", build.Version.IsRelease));
 
         NuGetPackSymbols = nuGetPackSymbols ?? build.Context.Argument("nuget-pack-symbols", build.Context.EnvironmentVariable("CAKE_NUGET_PACK_SYMBOLS", false));
+        NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? build.Context.Argument("nuget-push-skip-duplicate", build.Context.EnvironmentVariable("CAKE_NUGET_PUSH_SKIP_DUPLICATE", false));
         NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
     }
 
@@ -44,5 +46,6 @@ public class ToolSettings
     public bool DockerPushLatest { get; }
 
     public bool NuGetPackSymbols { get; }
+    public bool NuGetPushSkipDuplicate { get; }
     public string NuGetSource { get; }
 }
