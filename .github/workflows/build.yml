@@ -14,29 +14,29 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  Docker:
-    needs: [ Linux, Mac, Windows ]
-    runs-on: ubuntu-latest
-    container: dockfool/cake-docker:latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
+  # Docker:
+  #   needs: [ Linux, Mac, Windows ]
+  #   runs-on: ubuntu-latest
+  #   container: dockfool/cake-docker:latest
+  #   steps:
+  #     - name: Checkout source
+  #       uses: actions/checkout@v2
 
-      - name: Fetch unshallow
-        run: git fetch --prune --tags --unshallow
+  #     - name: Fetch unshallow
+  #       run: git fetch --prune --tags --unshallow
 
-      - name: Touch dotnet
-        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+  #     - name: Touch dotnet
+  #       run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 
-      - name: Cache packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: ${{ runner.os }}-nuget-
+  #     - name: Cache packages
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ${{ env.NUGET_PACKAGES }}
+  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+  #         restore-keys: ${{ runner.os }}-nuget-
 
-      - name: Cake build
-        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+  #     - name: Cake build
+  #       run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
   Linux:
     runs-on: ubuntu-latest
@@ -63,58 +63,58 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
-        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && GITHUB_REF="" dotnet cake --verbosity=diagnostic --target=build
 
-  Mac:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
+  # Mac:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout source
+  #       uses: actions/checkout@v2
 
-      - name: Fetch unshallow
-        run: git fetch --prune --tags --unshallow
+  #     - name: Fetch unshallow
+  #       run: git fetch --prune --tags --unshallow
 
-      - name: Install dotnet
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.101
+  #     - name: Install dotnet
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: 3.1.101
 
-      - name: Touch dotnet
-        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+  #     - name: Touch dotnet
+  #       run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 
-      - name: Cache packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: ${{ runner.os }}-nuget-
+  #     - name: Cache packages
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ${{ env.NUGET_PACKAGES }}
+  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+  #         restore-keys: ${{ runner.os }}-nuget-
 
-      - name: Cake build
-        run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+  #     - name: Cake build
+  #       run: dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
-  Windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
+  # Windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout source
+  #       uses: actions/checkout@v2
 
-      - name: Fetch unshallow
-        run: git fetch --prune --tags --unshallow
+  #     - name: Fetch unshallow
+  #       run: git fetch --prune --tags --unshallow
 
-      - name: Install dotnet
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.101
+  #     - name: Install dotnet
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: 3.1.101
 
-      - name: Touch dotnet
-        run: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
+  #     - name: Touch dotnet
+  #       run: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
 
-      - name: Cache packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: ${{ runner.os }}-nuget-
+  #     - name: Cache packages
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ${{ env.NUGET_PACKAGES }}
+  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+  #         restore-keys: ${{ runner.os }}-nuget-
 
-      - name: Cake build
-        run: dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build
+  #     - name: Cake build
+  #       run: dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build

@@ -10,29 +10,29 @@ variables:
   NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 jobs:
-  - job: Docker
-    dependsOn: [Linux, Mac, Windows]
-    pool:
-      vmImage: ubuntu-latest
-    container: dockfool/cake-docker:latest
-    steps:
-      - checkout: self
-        displayName: Checkout source
+  # - job: Docker
+  #   dependsOn: [Linux, Mac, Windows]
+  #   pool:
+  #     vmImage: ubuntu-latest
+  #   container: dockfool/cake-docker:latest
+  #   steps:
+  #     - checkout: self
+  #       displayName: Checkout source
 
-      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
-        displayName: Touch dotnet
+  #     - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+  #       displayName: Touch dotnet
 
-      - task: Cache@2
-        inputs:
-          path: $(NUGET_PACKAGES)
-          key: $(Agent.OS)|nuget|**/packages.lock.json
-          restoreKeys: $(Agent.OS)|nuget
-        displayName: Cache packages
+  #     - task: Cache@2
+  #       inputs:
+  #         path: $(NUGET_PACKAGES)
+  #         key: $(Agent.OS)|nuget|**/packages.lock.json
+  #         restoreKeys: $(Agent.OS)|nuget
+  #       displayName: Cache packages
 
-      - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build --publish=true
-        env:
-          NUGET_API_KEY: $(NUGET_API_KEY)
-        displayName: Cake build
+  #     - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build --publish=true
+  #       env:
+  #         NUGET_API_KEY: $(NUGET_API_KEY)
+  #       displayName: Cake build
 
   - job: Linux
     pool:
@@ -59,52 +59,52 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
         displayName: Cake build
 
-  - job: Mac
-    pool:
-      vmImage: macos-latest
-    steps:
-      - checkout: self
-        displayName: Checkout source
+  # - job: Mac
+  #   pool:
+  #     vmImage: macos-latest
+  #   steps:
+  #     - checkout: self
+  #       displayName: Checkout source
 
-      - task: DotNetCoreInstaller@1
-        inputs:
-          version: 3.1.101
-        displayName: Install dotnet
+  #     - task: DotNetCoreInstaller@1
+  #       inputs:
+  #         version: 3.1.101
+  #       displayName: Install dotnet
 
-      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
-        displayName: Touch dotnet
+  #     - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+  #       displayName: Touch dotnet
 
-      - task: Cache@2
-        inputs:
-          path: $(NUGET_PACKAGES)
-          key: $(Agent.OS)|nuget|**/packages.lock.json
-          restoreKeys: $(Agent.OS)|nuget
-        displayName: Cache packages
+  #     - task: Cache@2
+  #       inputs:
+  #         path: $(NUGET_PACKAGES)
+  #         key: $(Agent.OS)|nuget|**/packages.lock.json
+  #         restoreKeys: $(Agent.OS)|nuget
+  #       displayName: Cache packages
 
-      - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
-        displayName: Cake build
+  #     - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
+  #       displayName: Cake build
 
-  - job: Windows
-    pool:
-      vmImage: windows-latest
-    steps:
-      - checkout: self
-        displayName: Checkout source
+  # - job: Windows
+  #   pool:
+  #     vmImage: windows-latest
+  #   steps:
+  #     - checkout: self
+  #       displayName: Checkout source
 
-      - task: DotNetCoreInstaller@1
-        inputs:
-          version: 3.1.101
-        displayName: Install dotnet
+  #     - task: DotNetCoreInstaller@1
+  #       inputs:
+  #         version: 3.1.101
+  #       displayName: Install dotnet
 
-      - pwsh: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
-        displayName: Touch dotnet
+  #     - pwsh: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
+  #       displayName: Touch dotnet
 
-      - task: Cache@2
-        inputs:
-          path: $(NUGET_PACKAGES)
-          key: $(Agent.OS)|nuget|**/packages.lock.json
-          restoreKeys: $(Agent.OS)|nuget
-        displayName: Cache packages
+  #     - task: Cache@2
+  #       inputs:
+  #         path: $(NUGET_PACKAGES)
+  #         key: $(Agent.OS)|nuget|**/packages.lock.json
+  #         restoreKeys: $(Agent.OS)|nuget
+  #       displayName: Cache packages
 
-      - pwsh: dotnet tool restore ; dotnet cake --bootstrap ; dotnet cake --verbosity=verbose --target=build
-        displayName: Cake build
+  #     - pwsh: dotnet tool restore ; dotnet cake --bootstrap ; dotnet cake --verbosity=verbose --target=build
+  #       displayName: Cake build
