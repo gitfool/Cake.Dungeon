@@ -106,5 +106,5 @@ jobs:
           restoreKeys: $(Agent.OS)|nuget
         displayName: Cache packages
 
-      - pwsh: dotnet tool restore ; dotnet cake --bootstrap ; dotnet cake --verbosity=verbose --target=build
+      - pwsh: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
         displayName: Cake build
