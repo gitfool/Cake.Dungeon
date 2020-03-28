@@ -33,7 +33,7 @@ Docker:
 #       prefix: linux-nuget
 #       files: [ packages.lock.json ]
 #   script:
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.200
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.201
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
@@ -46,7 +46,7 @@ Docker:
 #       prefix: nuget
 #       files: [ packages.lock.json ]
 #   script:
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.200
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.201
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
@@ -59,6 +59,6 @@ Windows:
       prefix: windows-nuget
       files: [ packages.lock.json ]
   script:
-    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 3.1.200"'
+    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 3.1.201"'
     - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH" ; New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
     - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build
