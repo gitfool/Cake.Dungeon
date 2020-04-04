@@ -2,11 +2,11 @@ public static class Tasks
 {
     public static CakeTaskBuilder Info { get; set; }
     public static CakeTaskBuilder BuildSolutions { get; set; }
-    public static CakeTaskBuilder UnitTests { get; set; }
     public static CakeTaskBuilder DockerBuild { get; set; }
+    public static CakeTaskBuilder UnitTests { get; set; }
     public static CakeTaskBuilder IntegrationTests { get; set; }
-    public static CakeTaskBuilder StageArtifacts { get; set; }
     public static CakeTaskBuilder NuGetPack { get; set; }
+    public static CakeTaskBuilder StageArtifacts { get; set; }
     public static CakeTaskBuilder PublishArtifacts { get; set; }
     public static CakeTaskBuilder PublishToDocker { get; set; }
     public static CakeTaskBuilder PublishToNuGet { get; set; }
@@ -89,8 +89,24 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     }
 });
 
-Tasks.UnitTests = Task("UnitTests")
+Tasks.DockerBuild = Task("DockerBuild")
     .IsDependentOn("BuildSolutions")
+    .WithCriteria(() => Build.Parameters.RunDockerBuild, "Not run")
+    .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
+    .DoesForEach(() => Build.DockerImages, image =>
+{
+    var settings = new DockerImageBuildSettings
+    {
+        File = image.File,
+        BuildArg = Build.TransformTokens(image.Args),
+        Pull = Build.ToolSettings.DockerBuildPull,
+        Tag = Build.TransformTokens(image.Tags.Select(tag => $"{image.Repository}:{tag}"))
+    };
+    DockerBuild(settings, image.Context);
+});
+
+Tasks.UnitTests = Task("UnitTests")
+    .IsDependentOn("DockerBuild")
     .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
     .Does(() =>
 {
@@ -116,24 +132,7 @@ Tasks.UnitTests = Task("UnitTests")
     }
 });
 
-Tasks.DockerBuild = Task("DockerBuild")
-    .IsDependentOn("BuildSolutions")
-    .WithCriteria(() => Build.Parameters.RunDockerBuild, "Not run")
-    .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
-    .DoesForEach(() => Build.DockerImages, image =>
-{
-    var settings = new DockerImageBuildSettings
-    {
-        File = image.File,
-        BuildArg = Build.TransformTokens(image.Args),
-        Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = Build.TransformTokens(image.Tags.Select(tag => $"{image.Repository}:{tag}"))
-    };
-    DockerBuild(settings, image.Context);
-});
-
 Tasks.IntegrationTests = Task("IntegrationTests")
-    .IsDependentOn("UnitTests")
     .IsDependentOn("DockerBuild")
     .WithCriteria(() => Build.Parameters.RunIntegrationTests, "Not run")
     .Does(() =>
@@ -160,10 +159,6 @@ Tasks.IntegrationTests = Task("IntegrationTests")
         DotNetCoreTest(project.FullPath, settings);
     }
 });
-
-Tasks.StageArtifacts = Task("StageArtifacts")
-    .IsDependentOn("DockerBuild")
-    .IsDependentOn("NuGetPack");
 
 Tasks.NuGetPack = Task("NuGetPack")
     .IsDependentOn("BuildSolutions")
@@ -198,12 +193,15 @@ Tasks.NuGetPack = Task("NuGetPack")
     }
 });
 
+Tasks.StageArtifacts = Task("StageArtifacts")
+    .IsDependentOn("DockerBuild")
+    .IsDependentOn("NuGetPack");
+
 Tasks.PublishArtifacts = Task("PublishArtifacts")
     .IsDependentOn("PublishToDocker")
     .IsDependentOn("PublishToNuGet");
 
 Tasks.PublishToDocker = Task("PublishToDocker")
-    .IsDependentOn("IntegrationTests")
     .IsDependentOn("DockerBuild")
     .WithCriteria(() => Build.Parameters.RunPublishToDocker, "Not run")
     .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
@@ -233,7 +231,6 @@ Tasks.PublishToDocker = Task("PublishToDocker")
 });
 
 Tasks.PublishToNuGet = Task("PublishToNuGet")
-    .IsDependentOn("IntegrationTests")
     .IsDependentOn("NuGetPack")
     .WithCriteria(() => Build.Parameters.RunPublishToNuGet, "Not run")
     .WithCriteria(() => Build.Credentials.NuGet.IsConfigured && Build.ToolSettings.NuGetSource.IsConfigured(), "Not configured")
@@ -287,8 +284,8 @@ Tasks.DockerDeploy = Task("DockerDeploy")
 Tasks.Build = Task("Build")
     .IsDependentOn("Info")
     .IsDependentOn("BuildSolutions")
-    .IsDependentOn("UnitTests")
     .IsDependentOn("DockerBuild")
+    .IsDependentOn("UnitTests")
     .IsDependentOn("IntegrationTests")
     .IsDependentOn("StageArtifacts")
     .IsDependentOn("PublishArtifacts");

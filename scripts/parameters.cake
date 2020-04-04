@@ -19,8 +19,8 @@ public class Parameters
         bool? defaultRun,
         bool? runBuildSolutions,
         bool? runBuildPublish,
-        bool? runUnitTests,
         bool? runDockerBuild,
+        bool? runUnitTests,
         bool? runIntegrationTests,
         bool? runNuGetPack,
         bool? runPublishToDocker,
@@ -43,8 +43,8 @@ public class Parameters
         DefaultRun = defaultRun ?? false;
         RunBuildSolutions = runBuildSolutions ?? DefaultRun;
         RunBuildPublish = runBuildPublish ?? DefaultRun;
-        RunUnitTests = runUnitTests ?? DefaultRun;
         RunDockerBuild = runDockerBuild ?? DefaultRun;
+        RunUnitTests = runUnitTests ?? DefaultRun;
         RunIntegrationTests = runIntegrationTests ?? DefaultRun;
         RunNuGetPack = runNuGetPack ?? DefaultRun;
         RunPublishToDocker = runPublishToDocker ?? DefaultRun;
@@ -68,8 +68,8 @@ public class Parameters
     public bool DefaultRun { get; }
     public bool RunBuildSolutions { get; }
     public bool RunBuildPublish { get; }
-    public bool RunUnitTests { get; }
     public bool RunDockerBuild { get; }
+    public bool RunUnitTests { get; }
     public bool RunIntegrationTests { get; }
     public bool RunNuGetPack { get; }
     public bool RunPublishToDocker { get; }
