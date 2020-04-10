@@ -122,6 +122,7 @@ Tasks.UnitTests = Task("UnitTests")
     var settings = new DotNetCoreTestSettings
     {
         Configuration = Build.Parameters.Configuration,
+        EnvironmentVariables = Build.ToEnvVars(),
         Logger = Build.ToolSettings.UnitTestsLogger,
         NoBuild = true,
         NoRestore = true
