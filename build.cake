@@ -3,7 +3,6 @@
 Build.SetParameters
 (
     title: "Cake.Dungeon",
-    configuration: "Release",
 
     defaultLog: true,
 
