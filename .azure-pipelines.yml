@@ -1,7 +1,13 @@
 trigger:
-  - "**"
+  branches:
+    include:
+      - "**"
+    exclude:
+      - "dependabot/**"
 pr:
-  - master
+  branches:
+    include:
+      - master
 
 variables:
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: true

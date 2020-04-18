@@ -1,9 +1,12 @@
 name: Build
 on:
   push:
-    branches: [ "**" ]
+    branches:
+      - "**"
+      - "!dependabot/**"
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
   repository_dispatch:
 
 env:
