@@ -7,6 +7,7 @@ workflow:
 variables:
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: "true"
   DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_NOLOGO: "true"
   DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
   GIT_DEPTH: 0
   NUGET_PACKAGES: $CI_PROJECT_DIR/.nuget/packages
@@ -34,8 +35,8 @@ Docker:
 #       prefix: linux-nuget
 #       files: [ packages.lock.json ]
 #   script:
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.201
-#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.300
+#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Mac:
@@ -47,8 +48,8 @@ Docker:
 #       prefix: nuget
 #       files: [ packages.lock.json ]
 #   script:
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.201
-#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH && touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.300
+#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 Windows:
@@ -60,6 +61,6 @@ Windows:
       prefix: windows-nuget
       files: [ packages.lock.json ]
   script:
-    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 3.1.201"'
-    - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH" ; New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
+    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 3.1.300"'
+    - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH"
     - dotnet tool restore ; dotnet cake --bootstrap --verbosity=verbose ; dotnet cake --verbosity=verbose --target=build

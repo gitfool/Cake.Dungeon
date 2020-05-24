@@ -12,6 +12,7 @@ on:
 env:
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
   DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
   NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
@@ -27,9 +28,6 @@ jobs:
 
       - name: Fetch unshallow
         run: git fetch --prune --tags --unshallow
-
-      - name: Touch dotnet
-        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
 
       - name: Cache packages
         uses: actions/cache@v1
@@ -53,10 +51,7 @@ jobs:
       - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.201
-
-      - name: Touch dotnet
-        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+          dotnet-version: 3.1.300
 
       - name: Cache packages
         uses: actions/cache@v1
@@ -80,10 +75,7 @@ jobs:
       - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.201
-
-      - name: Touch dotnet
-        run: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
+          dotnet-version: 3.1.300
 
       - name: Cache packages
         uses: actions/cache@v1
@@ -107,10 +99,7 @@ jobs:
       - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.201
-
-      - name: Touch dotnet
-        run: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
+          dotnet-version: 3.1.300
 
       - name: Cache packages
         uses: actions/cache@v1

@@ -12,6 +12,7 @@ pr:
 variables:
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
   DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: 2
   NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
@@ -24,9 +25,6 @@ jobs:
     steps:
       - checkout: self
         displayName: Checkout source
-
-      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
-        displayName: Touch dotnet
 
       - task: Cache@2
         inputs:
@@ -49,11 +47,8 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.201
+          version: 3.1.300
         displayName: Install dotnet
-
-      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
-        displayName: Touch dotnet
 
       - task: Cache@2
         inputs:
@@ -74,11 +69,8 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.201
+          version: 3.1.300
         displayName: Install dotnet
-
-      - bash: touch "$HOME/.dotnet/$(dotnet --version).dotnetFirstUseSentinel"
-        displayName: Touch dotnet
 
       - task: Cache@2
         inputs:
@@ -99,11 +91,8 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.201
+          version: 3.1.300
         displayName: Install dotnet
-
-      - pwsh: New-Item -Force "$env:USERPROFILE/.dotnet/$(dotnet --version).dotnetFirstUseSentinel" | Out-Null
-        displayName: Touch dotnet
 
       - task: Cache@2
         inputs:
