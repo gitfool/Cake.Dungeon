@@ -29,10 +29,10 @@ jobs:
           fetch-depth: 0
 
       - name: Cache packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
@@ -52,10 +52,10 @@ jobs:
           dotnet-version: 3.1.300
 
       - name: Cache packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
@@ -75,10 +75,10 @@ jobs:
           dotnet-version: 3.1.300
 
       - name: Cache packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
@@ -98,10 +98,10 @@ jobs:
           dotnet-version: 3.1.300
 
       - name: Cache packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
