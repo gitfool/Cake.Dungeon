@@ -102,7 +102,8 @@ public class Builder
         string[] integrationTestProjectPatterns = null,
         string[] nuGetProjectPatterns = null,
 
-        bool? buildBinaryLoggerEnabled = null, // tool settings
+        bool? dotNetNoLogo = null, // tool settings
+        bool? buildBinaryLoggerEnabled = null,
         bool? buildEmbedAllSources = null,
         int? buildMaxCpuCount = null,
         bool? buildRestoreLockedMode = null,
@@ -178,6 +179,7 @@ public class Builder
 
         ToolSettings = new ToolSettings(
             this,
+            dotNetNoLogo,
             buildBinaryLoggerEnabled,
             buildEmbedAllSources,
             buildMaxCpuCount,

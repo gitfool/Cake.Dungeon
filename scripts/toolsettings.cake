@@ -3,6 +3,7 @@ public class ToolSettings
     public ToolSettings(
         Builder build,
 
+        bool? dotNetNoLogo,
         bool? buildBinaryLoggerEnabled,
         bool? buildEmbedAllSources,
         int? buildMaxCpuCount,
@@ -16,6 +17,8 @@ public class ToolSettings
         bool? nuGetPushSkipDuplicate,
         string nuGetSource)
     {
+        DotNetNoLogo = dotNetNoLogo ?? build.Context.Argument("dotnet-no-logo", build.Context.EnvironmentVariable("CAKE_DOTNET_NO_LOGO", false));
+
         BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? build.Context.Argument("build-binary-logger-enabled", build.Context.EnvironmentVariable("CAKE_BUILD_BINARY_LOGGER_ENABLED", false));
         BuildEmbedAllSources = buildEmbedAllSources ?? build.Context.Argument("build-embed-all-sources", build.Context.EnvironmentVariable("CAKE_BUILD_EMBED_ALL_SOURCES", false));
         BuildMaxCpuCount = buildMaxCpuCount ?? build.Context.Argument("build-max-cpu-count", build.Context.EnvironmentVariable("CAKE_BUILD_MAX_CPU_COUNT", (int?)null));
@@ -32,6 +35,8 @@ public class ToolSettings
         NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? build.Context.Argument("nuget-push-skip-duplicate", build.Context.EnvironmentVariable("CAKE_NUGET_PUSH_SKIP_DUPLICATE", false));
         NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
     }
+
+    public bool DotNetNoLogo { get; }
 
     public bool BuildBinaryLoggerEnabled { get; }
     public bool BuildEmbedAllSources { get; }

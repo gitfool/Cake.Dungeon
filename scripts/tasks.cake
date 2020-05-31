@@ -54,7 +54,8 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     var buildSettings = new DotNetCoreBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
-        MSBuildSettings = msbuildSettings
+        MSBuildSettings = msbuildSettings,
+        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
     };
     foreach (var solution in solutions)
     {
@@ -81,7 +82,8 @@ Tasks.BuildSolutions = Task("BuildSolutions")
         Configuration = Build.Parameters.Configuration,
         MSBuildSettings = msbuildSettings,
         NoBuild = true,
-        NoRestore = true
+        NoRestore = true,
+        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
     };
     foreach (var project in projects)
     {
@@ -125,7 +127,8 @@ Tasks.UnitTests = Task("UnitTests")
         EnvironmentVariables = Build.ToEnvVars(),
         Logger = Build.ToolSettings.UnitTestsLogger,
         NoBuild = true,
-        NoRestore = true
+        NoRestore = true,
+        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
     };
     foreach (var project in projects)
     {
@@ -153,7 +156,8 @@ Tasks.IntegrationTests = Task("IntegrationTests")
         EnvironmentVariables = Build.ToEnvVars(),
         Logger = Build.ToolSettings.IntegrationTestsLogger,
         NoBuild = true,
-        NoRestore = true
+        NoRestore = true,
+        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
     };
     foreach (var project in projects)
     {
@@ -186,7 +190,8 @@ Tasks.NuGetPack = Task("NuGetPack")
         MSBuildSettings = msbuildSettings,
         NoBuild = true,
         NoRestore = true,
-        OutputDirectory = Build.Directories.ArtifactsNuGet
+        OutputDirectory = Build.Directories.ArtifactsNuGet,
+        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
     };
     foreach (var project in projects)
     {

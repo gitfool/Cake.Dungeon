@@ -7,7 +7,7 @@ public static string Redact(this string value) => value != null ? "****" : value
 
 public static string ToEnvVar(this string value)
 {
-    value = Regex.Replace(value, @"(?<=A)ppVeyor|(?<=G)itHub|(?<=G)itLab|(?<=M)yGet|(?<=N)uGet|(?<=S)emVer|(?<=T)eamCity|(?<=U)serName", match => match.Value.ToLowerInvariant()); // compound values
+    value = Regex.Replace(value, @"(?<=A)ppVeyor|(?<=D)otNet|(?<=G)itHub|(?<=G)itLab|(?<=M)yGet|(?<=N)uGet|(?<=S)emVer|(?<=T)eamCity|(?<=U)serName", match => match.Value.ToLowerInvariant()); // compound values
     value = Regex.Replace(value, @"(?<=[a-z])(?=[A-Z])|(?<=[A-Za-z])\.(?=[A-Z])", "_").ToUpperInvariant(); // split values
     return Regex.Replace(value, @"\['?(.+?)'?\]", "_$1"); // indexed values
 }
