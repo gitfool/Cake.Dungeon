@@ -41,6 +41,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
 
     var msbuildSettings = new DotNetCoreMSBuildSettings
     {
+        BinaryLogger = new MSBuildBinaryLoggerSettings { Enabled = Build.ToolSettings.BuildBinaryLoggerEnabled },
         MaxCpuCount = Build.ToolSettings.BuildMaxCpuCount,
         TreatAllWarningsAs = Build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default
     }
@@ -53,8 +54,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     var buildSettings = new DotNetCoreBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
-        MSBuildSettings = msbuildSettings,
-        ArgumentCustomization = args => { if (Build.ToolSettings.BuildBinaryLoggerEnabled) args.Append("-binarylogger"); return args; }
+        MSBuildSettings = msbuildSettings
     };
     foreach (var solution in solutions)
     {
@@ -249,8 +249,8 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     var settings = new DotNetCoreNuGetPushSettings
     {
         ApiKey = Build.Credentials.NuGet.ApiKey,
-        Source = Build.ToolSettings.NuGetSource,
-        ArgumentCustomization = args => { if (Build.ToolSettings.NuGetPushSkipDuplicate) args.Append("--skip-duplicate"); return args; }
+        SkipDuplicate = Build.ToolSettings.NuGetPushSkipDuplicate,
+        Source = Build.ToolSettings.NuGetSource
     };
     foreach (var package in packages)
     {
