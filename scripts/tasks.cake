@@ -251,11 +251,31 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
         return;
     }
 
+    if (Build.Credentials.NuGet.UserName.IsConfigured() && Build.Credentials.NuGet.Password.IsConfigured())
+    {
+        var sourceSettings = new DotNetCoreNuGetSourceSettings
+        {
+            UserName = Build.Credentials.NuGet.UserName,
+            Password = Build.Credentials.NuGet.Password,
+            StorePasswordInClearText = true,
+            Source = Build.ToolSettings.NuGetSource,
+            ConfigFile = Build.ToolSettings.NuGetSourceConfigFile
+        };
+        if (!DotNetCoreNuGetHasSource(Build.ToolSettings.NuGetSourceName, sourceSettings))
+        {
+            DotNetCoreNuGetAddSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+        }
+        else
+        {
+            DotNetCoreNuGetUpdateSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+        }
+    }
+
     var settings = new DotNetCoreNuGetPushSettings
     {
         ApiKey = Build.Credentials.NuGet.ApiKey,
-        SkipDuplicate = Build.ToolSettings.NuGetPushSkipDuplicate,
-        Source = Build.ToolSettings.NuGetSource
+        Source = Build.ToolSettings.NuGetSource,
+        SkipDuplicate = Build.ToolSettings.NuGetPushSkipDuplicate
     };
     foreach (var package in packages)
     {

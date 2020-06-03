@@ -115,6 +115,8 @@ public class Builder
         bool? nuGetPackSymbols = null,
         bool? nuGetPushSkipDuplicate = null,
         string nuGetSource = null,
+        string nuGetSourceName = null,
+        string nuGetSourceConfigFile = null,
 
         DockerImage[] dockerImages = null, // docker images
         DockerDeployer[] dockerDeployers = null) // docker deployers
@@ -191,7 +193,9 @@ public class Builder
             dockerPushLatest,
             nuGetPackSymbols,
             nuGetPushSkipDuplicate,
-            nuGetSource);
+            nuGetSource,
+            nuGetSourceName,
+            nuGetSourceConfigFile);
 
         DockerImages = dockerImages;
         DockerDeployers = dockerDeployers;

@@ -15,7 +15,9 @@ public class ToolSettings
         bool? dockerPushLatest,
         bool? nuGetPackSymbols,
         bool? nuGetPushSkipDuplicate,
-        string nuGetSource)
+        string nuGetSource,
+        string nuGetSourceName,
+        string nuGetSourceConfigFile)
     {
         DotNetNoLogo = dotNetNoLogo ?? build.Context.Argument("dotnet-no-logo", build.Context.EnvironmentVariable("CAKE_DOTNET_NO_LOGO", false));
 
@@ -34,6 +36,8 @@ public class ToolSettings
         NuGetPackSymbols = nuGetPackSymbols ?? build.Context.Argument("nuget-pack-symbols", build.Context.EnvironmentVariable("CAKE_NUGET_PACK_SYMBOLS", false));
         NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? build.Context.Argument("nuget-push-skip-duplicate", build.Context.EnvironmentVariable("CAKE_NUGET_PUSH_SKIP_DUPLICATE", false));
         NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
+        NuGetSourceName = nuGetSourceName ?? build.Context.Argument("nuget-source-name", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE_NAME", build.Context.EnvironmentVariable("NUGET_SOURCE_NAME", "nuget.org")));
+        NuGetSourceConfigFile = nuGetSourceConfigFile ?? build.Context.Argument("nuget-source-config-file", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE_CONFIG_FILE", build.Context.EnvironmentVariable("NUGET_SOURCE_CONFIG_FILE")));
     }
 
     public bool DotNetNoLogo { get; }
@@ -53,4 +57,6 @@ public class ToolSettings
     public bool NuGetPackSymbols { get; }
     public bool NuGetPushSkipDuplicate { get; }
     public string NuGetSource { get; }
+    public string NuGetSourceName { get; }
+    public string NuGetSourceConfigFile { get; }
 }
