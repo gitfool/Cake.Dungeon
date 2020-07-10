@@ -45,6 +45,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
         MaxCpuCount = Build.ToolSettings.BuildMaxCpuCount,
         TreatAllWarningsAs = Build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default
     }
+        .WithProperty("ContinuousIntegrationBuild", (!Build.Version.IsLocal).ToString().ToLower())
         .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLower())
         .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLower())
         .WithProperty("Version", Build.Version.AssemblyVersion)
