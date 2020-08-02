@@ -49,7 +49,7 @@ jobs:
       - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: 3.1.302
 
       - name: Cache packages
         uses: actions/cache@v2
@@ -72,7 +72,7 @@ jobs:
       - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: 3.1.302
 
       - name: Cache packages
         uses: actions/cache@v2
@@ -95,7 +95,7 @@ jobs:
       - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: 3.1.302
 
       - name: Cache packages
         uses: actions/cache@v2
