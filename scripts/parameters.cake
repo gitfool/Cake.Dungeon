@@ -22,6 +22,7 @@ public class Parameters
         bool? runDockerBuild,
         bool? runUnitTests,
         bool? runIntegrationTests,
+        bool? runTestCoverageReports,
         bool? runNuGetPack,
         bool? runPublishToDocker,
         bool? runPublishToNuGet,
@@ -46,6 +47,7 @@ public class Parameters
         RunDockerBuild = runDockerBuild ?? DefaultRun;
         RunUnitTests = runUnitTests ?? DefaultRun;
         RunIntegrationTests = runIntegrationTests ?? DefaultRun;
+        RunTestCoverageReports = runTestCoverageReports ?? DefaultRun;
         RunNuGetPack = runNuGetPack ?? DefaultRun;
         RunPublishToDocker = runPublishToDocker ?? DefaultRun;
         RunPublishToNuGet = runPublishToNuGet ?? DefaultRun;
@@ -71,6 +73,7 @@ public class Parameters
     public bool RunDockerBuild { get; }
     public bool RunUnitTests { get; }
     public bool RunIntegrationTests { get; }
+    public bool RunTestCoverageReports { get; }
     public bool RunNuGetPack { get; }
     public bool RunPublishToDocker { get; }
     public bool RunPublishToNuGet { get; }

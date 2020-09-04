@@ -5,21 +5,21 @@ public class Directories
         DirectoryPath root,
         DirectoryPath source,
         DirectoryPath artifacts,
-        DirectoryPath artifactsNuGet,
-        DirectoryPath artifactsTests)
+        DirectoryPath artifactsTests,
+        DirectoryPath artifactsNuGet)
     {
         Root = root ?? context.MakeAbsolute(context.Directory("./"));
         Source = source ?? Root.Combine("Source");
         Artifacts = artifacts ?? Root.Combine("Artifacts");
-        ArtifactsNuGet = artifactsNuGet ?? Artifacts.Combine("NuGet");
         ArtifactsTests = artifactsTests ?? Artifacts.Combine("Tests");
+        ArtifactsNuGet = artifactsNuGet ?? Artifacts.Combine("NuGet");
     }
 
     public DirectoryPath Root { get; }
     public DirectoryPath Source { get; }
     public DirectoryPath Artifacts { get; }
-    public DirectoryPath ArtifactsNuGet { get; }
     public DirectoryPath ArtifactsTests { get; }
+    public DirectoryPath ArtifactsNuGet { get; }
 }
 
 public class Files

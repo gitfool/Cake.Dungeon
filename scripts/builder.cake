@@ -78,6 +78,7 @@ public class Builder
         bool? runDockerBuild = null,
         bool? runUnitTests = null,
         bool? runIntegrationTests = null,
+        bool? runTestCoverageReports = null,
         bool? runNuGetPack = null,
         bool? runPublishToDocker = null,
         bool? runPublishToNuGet = null,
@@ -93,13 +94,14 @@ public class Builder
         DirectoryPath rootDirectory = null, // directories
         DirectoryPath sourceDirectory = null,
         DirectoryPath artifactsDirectory = null,
-        DirectoryPath artifactsNuGetDirectory = null,
         DirectoryPath artifactsTestsDirectory = null,
+        DirectoryPath artifactsNuGetDirectory = null,
 
         string[] buildSolutionPatterns = null, // patterns
         string[] buildPublishProjectPatterns = null,
         string[] unitTestProjectPatterns = null,
         string[] integrationTestProjectPatterns = null,
+        string[] testCoverageReportPatterns = null,
         string[] nuGetProjectPatterns = null,
 
         bool? dotNetNoLogo = null, // tool settings
@@ -108,8 +110,17 @@ public class Builder
         int? buildMaxCpuCount = null,
         bool? buildRestoreLockedMode = null,
         bool? buildTreatWarningsAsErrors = null,
-        string unitTestsLogger = null,
-        string integrationTestsLogger = null,
+        string[] unitTestCollectors = null,
+        string[] unitTestLoggers = null,
+        string[] unitTestRunSettings = null,
+        FilePath unitTestRunSettingsFile = null,
+        string[] integrationTestCollectors = null,
+        string[] integrationTestLoggers = null,
+        string[] integrationTestRunSettings = null,
+        FilePath integrationTestRunSettingsFile = null,
+        string[] testCoverageReportAssemblyFilters = null,
+        string[] testCoverageReportClassFilters = null,
+        string[] testCoverageReportTypes = null,
         bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
         bool? nuGetPackSymbols = null,
@@ -143,6 +154,7 @@ public class Builder
             runDockerBuild,
             runUnitTests,
             runIntegrationTests,
+            runTestCoverageReports,
             runNuGetPack,
             runPublishToDocker,
             runPublishToNuGet,
@@ -165,8 +177,8 @@ public class Builder
             rootDirectory,
             sourceDirectory,
             artifactsDirectory,
-            artifactsNuGetDirectory,
-            artifactsTestsDirectory);
+            artifactsTestsDirectory,
+            artifactsNuGetDirectory);
 
         Files = new Files(
             Context,
@@ -177,6 +189,7 @@ public class Builder
             buildPublishProjectPatterns,
             unitTestProjectPatterns,
             integrationTestProjectPatterns,
+            testCoverageReportPatterns,
             nuGetProjectPatterns);
 
         ToolSettings = new ToolSettings(
@@ -187,8 +200,17 @@ public class Builder
             buildMaxCpuCount,
             buildRestoreLockedMode,
             buildTreatWarningsAsErrors,
-            unitTestsLogger,
-            integrationTestsLogger,
+            unitTestCollectors,
+            unitTestLoggers,
+            unitTestRunSettings,
+            unitTestRunSettingsFile,
+            integrationTestCollectors,
+            integrationTestLoggers,
+            integrationTestRunSettings,
+            integrationTestRunSettingsFile,
+            testCoverageReportAssemblyFilters,
+            testCoverageReportClassFilters,
+            testCoverageReportTypes,
             dockerBuildPull,
             dockerPushLatest,
             nuGetPackSymbols,

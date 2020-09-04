@@ -9,8 +9,17 @@ public class ToolSettings
         int? buildMaxCpuCount,
         bool? buildRestoreLockedMode,
         bool? buildTreatWarningsAsErrors,
-        string unitTestsLogger,
-        string integrationTestsLogger,
+        string[] unitTestCollectors,
+        string[] unitTestLoggers,
+        string[] unitTestRunSettings,
+        FilePath unitTestRunSettingsFile,
+        string[] integrationTestCollectors,
+        string[] integrationTestLoggers,
+        string[] integrationTestRunSettings,
+        FilePath integrationTestRunSettingsFile,
+        string[] testCoverageReportAssemblyFilters,
+        string[] testCoverageReportClassFilters,
+        string[] testCoverageReportTypes,
         bool? dockerBuildPull,
         bool? dockerPushLatest,
         bool? nuGetPackSymbols,
@@ -19,25 +28,34 @@ public class ToolSettings
         string nuGetSourceName,
         string nuGetSourceConfigFile)
     {
-        DotNetNoLogo = dotNetNoLogo ?? build.Context.Argument("dotnet-no-logo", build.Context.EnvironmentVariable("CAKE_DOTNET_NO_LOGO", false));
+        DotNetNoLogo = dotNetNoLogo ?? false;
 
-        BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? build.Context.Argument("build-binary-logger-enabled", build.Context.EnvironmentVariable("CAKE_BUILD_BINARY_LOGGER_ENABLED", false));
-        BuildEmbedAllSources = buildEmbedAllSources ?? build.Context.Argument("build-embed-all-sources", build.Context.EnvironmentVariable("CAKE_BUILD_EMBED_ALL_SOURCES", false));
-        BuildMaxCpuCount = buildMaxCpuCount ?? build.Context.Argument("build-max-cpu-count", build.Context.EnvironmentVariable("CAKE_BUILD_MAX_CPU_COUNT", (int?)null));
-        BuildRestoreLockedMode = buildRestoreLockedMode ?? build.Context.Argument("build-restore-locked-mode", build.Context.EnvironmentVariable("CAKE_BUILD_RESTORE_LOCKED_MODE", false));
-        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? build.Context.Argument("build-treat-warnings-as-errors", build.Context.EnvironmentVariable("CAKE_BUILD_TREAT_WARNINGS_AS_ERRORS", false));
+        BuildBinaryLoggerEnabled = buildBinaryLoggerEnabled ?? false;
+        BuildEmbedAllSources = buildEmbedAllSources ?? false;
+        BuildMaxCpuCount = buildMaxCpuCount;
+        BuildRestoreLockedMode = buildRestoreLockedMode ?? false;
+        BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? false;
 
-        UnitTestsLogger = unitTestsLogger ?? build.Context.Argument("unit-tests-logger", build.Context.EnvironmentVariable("CAKE_UNIT_TESTS_LOGGER", "console;verbosity=minimal"));
-        IntegrationTestsLogger = integrationTestsLogger ?? build.Context.Argument("integration-tests-logger", build.Context.EnvironmentVariable("CAKE_INTEGRATION_TESTS_LOGGER", "console;verbosity=minimal"));
+        UnitTestCollectors = unitTestCollectors;
+        UnitTestLoggers = unitTestLoggers ?? new[] { "console;verbosity=detailed" };
+        UnitTestRunSettings = unitTestRunSettings;
+        UnitTestRunSettingsFile = unitTestRunSettingsFile;
+        IntegrationTestCollectors = integrationTestCollectors;
+        IntegrationTestLoggers = integrationTestLoggers ?? new[] { "console;verbosity=detailed" };
+        IntegrationTestRunSettings = integrationTestRunSettings;
+        IntegrationTestRunSettingsFile = integrationTestRunSettingsFile;
+        TestCoverageReportAssemblyFilters = testCoverageReportAssemblyFilters;
+        TestCoverageReportClassFilters = testCoverageReportClassFilters;
+        TestCoverageReportTypes = testCoverageReportTypes ?? new[] { "TextSummary" };
 
-        DockerBuildPull = dockerBuildPull ?? build.Context.Argument("docker-build-pull", build.Context.EnvironmentVariable("CAKE_DOCKER_BUILD_PULL", false));
-        DockerPushLatest = dockerPushLatest ?? build.Context.Argument("docker-push-latest", build.Context.EnvironmentVariable("CAKE_DOCKER_PUSH_LATEST", build.Version.IsRelease));
+        DockerBuildPull = dockerBuildPull ?? false;
+        DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
 
-        NuGetPackSymbols = nuGetPackSymbols ?? build.Context.Argument("nuget-pack-symbols", build.Context.EnvironmentVariable("CAKE_NUGET_PACK_SYMBOLS", false));
-        NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? build.Context.Argument("nuget-push-skip-duplicate", build.Context.EnvironmentVariable("CAKE_NUGET_PUSH_SKIP_DUPLICATE", false));
-        NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json")));
-        NuGetSourceName = nuGetSourceName ?? build.Context.Argument("nuget-source-name", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE_NAME", build.Context.EnvironmentVariable("NUGET_SOURCE_NAME", "nuget.org")));
-        NuGetSourceConfigFile = nuGetSourceConfigFile ?? build.Context.Argument("nuget-source-config-file", build.Context.EnvironmentVariable("CAKE_NUGET_SOURCE_CONFIG_FILE", build.Context.EnvironmentVariable("NUGET_SOURCE_CONFIG_FILE")));
+        NuGetPackSymbols = nuGetPackSymbols ?? false;
+        NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? false;
+        NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json"));
+        NuGetSourceName = nuGetSourceName ?? build.Context.Argument("nuget-source-name", build.Context.EnvironmentVariable("NUGET_SOURCE_NAME", "nuget.org"));
+        NuGetSourceConfigFile = nuGetSourceConfigFile ?? build.Context.Argument("nuget-source-config-file", build.Context.EnvironmentVariable("NUGET_SOURCE_CONFIG_FILE"));
     }
 
     public bool DotNetNoLogo { get; }
@@ -48,8 +66,17 @@ public class ToolSettings
     public bool BuildRestoreLockedMode { get; }
     public bool BuildTreatWarningsAsErrors { get; }
 
-    public string UnitTestsLogger { get; }
-    public string IntegrationTestsLogger { get; }
+    public string[] UnitTestCollectors { get; }
+    public string[] UnitTestLoggers { get; }
+    public string[] UnitTestRunSettings { get; }
+    public FilePath UnitTestRunSettingsFile { get; }
+    public string[] IntegrationTestCollectors { get; }
+    public string[] IntegrationTestLoggers { get; }
+    public string[] IntegrationTestRunSettings { get; }
+    public FilePath IntegrationTestRunSettingsFile { get; }
+    public string[] TestCoverageReportAssemblyFilters { get; }
+    public string[] TestCoverageReportClassFilters { get; }
+    public string[] TestCoverageReportTypes { get; }
 
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }

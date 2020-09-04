@@ -5,6 +5,7 @@ public static class Tasks
     public static CakeTaskBuilder DockerBuild { get; set; }
     public static CakeTaskBuilder UnitTests { get; set; }
     public static CakeTaskBuilder IntegrationTests { get; set; }
+    public static CakeTaskBuilder TestCoverageReports { get; set; }
     public static CakeTaskBuilder NuGetPack { get; set; }
     public static CakeTaskBuilder StageArtifacts { get; set; }
     public static CakeTaskBuilder PublishArtifacts { get; set; }
@@ -27,6 +28,9 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     .WithCriteria(() => Build.Parameters.RunBuildSolutions, "Not run")
     .Does(() =>
 {
+    CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/bin").FullPath);
+    CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/obj").FullPath);
+
     var solutionPatterns = Build.Patterns.BuildSolutions
         .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var solutions = GetFiles(solutionPatterns);
@@ -35,9 +39,6 @@ Tasks.BuildSolutions = Task("BuildSolutions")
         Warning("Build solutions not found");
         return;
     }
-
-    CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/bin").FullPath);
-    CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/obj").FullPath);
 
     var msbuildSettings = new DotNetCoreMSBuildSettings
     {
@@ -122,17 +123,50 @@ Tasks.UnitTests = Task("UnitTests")
         return;
     }
 
-    var settings = new DotNetCoreTestSettings
-    {
-        Configuration = Build.Parameters.Configuration,
-        EnvironmentVariables = Build.ToEnvVars(),
-        Logger = Build.ToolSettings.UnitTestsLogger,
-        NoBuild = true,
-        NoRestore = true,
-        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
-    };
     foreach (var project in projects)
     {
+        var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
+        CleanDirectory(artifactsTestsProjectDirectory);
+
+        var settings = new DotNetCoreTestSettings
+        {
+            Configuration = Build.Parameters.Configuration,
+            EnvironmentVariables = Build.ToEnvVars(),
+            Logger = Build.ToolSettings.UnitTestLoggers?.FirstOrDefault(),
+            NoBuild = true,
+            NoRestore = true,
+            ResultsDirectory = artifactsTestsProjectDirectory,
+            Settings = Build.ToolSettings.UnitTestRunSettingsFile,
+            ArgumentCustomization = args =>
+            {
+                if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo");
+                if (Build.ToolSettings.UnitTestCollectors != null)
+                {
+                    foreach (var collector in Build.ToolSettings.UnitTestCollectors)
+                    {
+                        args.Append("--collect");
+                        args.AppendQuoted(collector);
+                    }
+                }
+                if (Build.ToolSettings.UnitTestLoggers != null)
+                {
+                    foreach (var logger in Build.ToolSettings.UnitTestLoggers.Skip(1))
+                    {
+                        args.Append("--logger");
+                        args.AppendQuoted(logger);
+                    }
+                }
+                if (Build.ToolSettings.UnitTestRunSettings != null)
+                {
+                    args.Append("--");
+                    foreach (var runSetting in Build.ToolSettings.UnitTestRunSettings)
+                    {
+                        args.AppendQuoted(runSetting);
+                    }
+                }
+                return args;
+            }
+        };
         DotNetCoreTest(project.FullPath, settings);
     }
 });
@@ -151,19 +185,84 @@ Tasks.IntegrationTests = Task("IntegrationTests")
         return;
     }
 
-    var settings = new DotNetCoreTestSettings
-    {
-        Configuration = Build.Parameters.Configuration,
-        EnvironmentVariables = Build.ToEnvVars(),
-        Logger = Build.ToolSettings.IntegrationTestsLogger,
-        NoBuild = true,
-        NoRestore = true,
-        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
-    };
     foreach (var project in projects)
     {
+        var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
+        CleanDirectory(artifactsTestsProjectDirectory);
+
+        var settings = new DotNetCoreTestSettings
+        {
+            Configuration = Build.Parameters.Configuration,
+            EnvironmentVariables = Build.ToEnvVars(),
+            Logger = Build.ToolSettings.IntegrationTestLoggers?.FirstOrDefault(),
+            NoBuild = true,
+            NoRestore = true,
+            ResultsDirectory = artifactsTestsProjectDirectory,
+            Settings = Build.ToolSettings.IntegrationTestRunSettingsFile,
+            ArgumentCustomization = args =>
+            {
+                if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo");
+                if (Build.ToolSettings.IntegrationTestCollectors != null)
+                {
+                    foreach (var collector in Build.ToolSettings.IntegrationTestCollectors)
+                    {
+                        args.Append("--collect");
+                        args.AppendQuoted(collector);
+                    }
+                }
+                if (Build.ToolSettings.IntegrationTestLoggers != null)
+                {
+                    foreach (var logger in Build.ToolSettings.IntegrationTestLoggers.Skip(1))
+                    {
+                        args.Append("--logger");
+                        args.AppendQuoted(logger);
+                    }
+                }
+                if (Build.ToolSettings.IntegrationTestRunSettings != null)
+                {
+                    args.Append("--");
+                    foreach (var runSetting in Build.ToolSettings.IntegrationTestRunSettings)
+                    {
+                        args.AppendQuoted(runSetting);
+                    }
+                }
+                return args;
+            }
+        };
         DotNetCoreTest(project.FullPath, settings);
     }
+});
+
+Tasks.TestCoverageReports = Task("TestCoverageReports")
+    .IsDependentOn("UnitTests")
+    .IsDependentOn("IntegrationTests")
+    .WithCriteria(() => Build.Parameters.RunTestCoverageReports, "Not run")
+    .Does(() =>
+{
+    DeleteFiles(Build.Directories.ArtifactsTests.CombineWithFilePath("*.*").FullPath);
+
+    var patterns = Build.Patterns.TestCoverageReports
+        .Select(pattern => Build.Directories.ArtifactsTests.CombineWithFilePath(pattern).FullPath).ToArray();
+    var reports = GetFiles(patterns);
+    if (!reports.Any())
+    {
+        Warning("Test coverage reports not found");
+        return;
+    }
+
+    var settings = new ReportGeneratorSettings
+    {
+        AssemblyFilters = Build.ToolSettings.TestCoverageReportAssemblyFilters,
+        ClassFilters = Build.ToolSettings.TestCoverageReportClassFilters,
+        ReportTypes = Build.ToolSettings.TestCoverageReportTypes.Select(Enum.Parse<ReportGeneratorReportType>).ToArray(),
+        ToolPath = Context.Tools.Resolve("reportgenerator"), // workaround tool resolution
+        Verbosity = ReportGeneratorVerbosity.Info
+    };
+    ReportGenerator(reports, Build.Directories.ArtifactsTests, settings);
+
+    var summary = FileReadText($"{Build.Directories.ArtifactsTests}/Summary.txt");
+    Information("");
+    Information(summary);
 });
 
 Tasks.NuGetPack = Task("NuGetPack")
@@ -171,6 +270,8 @@ Tasks.NuGetPack = Task("NuGetPack")
     .WithCriteria(() => Build.Parameters.RunNuGetPack, "Not run")
     .Does(() =>
 {
+    CleanDirectory(Build.Directories.ArtifactsNuGet);
+
     var patterns = Build.Patterns.NuGetProjects
         .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var projects = GetFiles(patterns);
@@ -179,8 +280,6 @@ Tasks.NuGetPack = Task("NuGetPack")
         Warning("NuGet projects not found");
         return;
     }
-
-    CleanDirectory(Build.Directories.ArtifactsNuGet);
 
     var msbuildSettings = new DotNetCoreMSBuildSettings()
         .WithProperty("PackageVersion", Build.Version.FullSemVer);
@@ -314,6 +413,7 @@ Tasks.Build = Task("Build")
     .IsDependentOn("DockerBuild")
     .IsDependentOn("UnitTests")
     .IsDependentOn("IntegrationTests")
+    .IsDependentOn("TestCoverageReports")
     .IsDependentOn("StageArtifacts")
     .IsDependentOn("PublishArtifacts");
 
