@@ -74,7 +74,7 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
     static bool IsLeafType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
-        return type.IsPrimitive || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
+        return type.IsPrimitive || type.IsEnum || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
             type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(Uri) ||
             type == typeof(DirectoryPath) || type == typeof(FilePath) || // cake primitives
             (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) && // list
