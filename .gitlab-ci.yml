@@ -37,6 +37,9 @@ Linux:
   script:
     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.401
     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
+    # Workaround missing GitVersion native dependency
+    - dotnet tool install GitVersion.Tool --tool-path tools --version 5.3.7
+    - export LD_LIBRARY_PATH=$(pwd)/tools/.store/gitversion.tool/5.3.7/gitversion.tool/5.3.7/tools/netcoreapp3.1/any/runtimes/debian.9-x64/native/
     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Mac:
