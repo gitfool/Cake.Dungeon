@@ -26,18 +26,18 @@ Docker:
   script:
     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
-# Linux:
-#   stage: Build
-#   tags: [ shared, linux ]
-#   cache:
-#     paths: [ $NUGET_PACKAGES ]
-#     key:
-#       prefix: linux-nuget
-#       files: [ packages.lock.json ]
-#   script:
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.401
-#     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
-#     - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
+Linux:
+  stage: Build
+  tags: [ shared, linux ]
+  cache:
+    paths: [ $NUGET_PACKAGES ]
+    key:
+      prefix: linux-nuget
+      files: [ packages.lock.json ]
+  script:
+    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.401
+    - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
+    - dotnet tool restore && dotnet cake --bootstrap --verbosity=verbose && dotnet cake --verbosity=verbose --target=build
 
 # Mac:
 #   stage: Build
