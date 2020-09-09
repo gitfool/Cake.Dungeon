@@ -45,7 +45,7 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.401
+          version: 3.1.402
         displayName: Install dotnet
 
       - task: Cache@2
@@ -67,7 +67,7 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.401
+          version: 3.1.402
         displayName: Install dotnet
 
       - task: Cache@2
@@ -89,7 +89,7 @@ jobs:
 
       - task: DotNetCoreInstaller@1
         inputs:
-          version: 3.1.401
+          version: 3.1.402
         displayName: Install dotnet
 
       - task: Cache@2
