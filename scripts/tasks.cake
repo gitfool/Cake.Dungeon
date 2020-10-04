@@ -57,7 +57,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     {
         Configuration = Build.Parameters.Configuration,
         MSBuildSettings = msbuildSettings,
-        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
+        NoLogo = Build.ToolSettings.DotNetNoLogo
     };
     foreach (var solution in solutions)
     {
@@ -83,9 +83,9 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     {
         Configuration = Build.Parameters.Configuration,
         MSBuildSettings = msbuildSettings,
+        NoLogo = Build.ToolSettings.DotNetNoLogo,
         NoBuild = true,
-        NoRestore = true,
-        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
+        NoRestore = true
     };
     foreach (var project in projects)
     {
@@ -128,46 +128,20 @@ Tasks.UnitTests = Task("UnitTests")
         var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
         CleanDirectory(artifactsTestsProjectDirectory);
 
+        var arguments = Build.ToolSettings.UnitTestRunSettings.ToProcessArguments();
         var settings = new DotNetCoreTestSettings
         {
             Configuration = Build.Parameters.Configuration,
             EnvironmentVariables = Build.ToEnvVars(),
-            Logger = Build.ToolSettings.UnitTestLoggers?.FirstOrDefault(),
+            Collectors = Build.ToolSettings.UnitTestCollectors,
+            Loggers = Build.ToolSettings.UnitTestLoggers,
+            NoLogo = Build.ToolSettings.DotNetNoLogo,
             NoBuild = true,
             NoRestore = true,
             ResultsDirectory = artifactsTestsProjectDirectory,
-            Settings = Build.ToolSettings.UnitTestRunSettingsFile,
-            ArgumentCustomization = args =>
-            {
-                if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo");
-                if (Build.ToolSettings.UnitTestCollectors != null)
-                {
-                    foreach (var collector in Build.ToolSettings.UnitTestCollectors)
-                    {
-                        args.Append("--collect");
-                        args.AppendQuoted(collector);
-                    }
-                }
-                if (Build.ToolSettings.UnitTestLoggers != null)
-                {
-                    foreach (var logger in Build.ToolSettings.UnitTestLoggers.Skip(1))
-                    {
-                        args.Append("--logger");
-                        args.AppendQuoted(logger);
-                    }
-                }
-                if (Build.ToolSettings.UnitTestRunSettings != null)
-                {
-                    args.Append("--");
-                    foreach (var runSetting in Build.ToolSettings.UnitTestRunSettings)
-                    {
-                        args.AppendQuoted(runSetting);
-                    }
-                }
-                return args;
-            }
+            Settings = Build.ToolSettings.UnitTestRunSettingsFile
         };
-        DotNetCoreTest(project.FullPath, settings);
+        DotNetCoreTest(project.FullPath, arguments, settings);
     }
 });
 
@@ -190,46 +164,20 @@ Tasks.IntegrationTests = Task("IntegrationTests")
         var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
         CleanDirectory(artifactsTestsProjectDirectory);
 
+        var arguments = Build.ToolSettings.IntegrationTestRunSettings.ToProcessArguments();
         var settings = new DotNetCoreTestSettings
         {
             Configuration = Build.Parameters.Configuration,
             EnvironmentVariables = Build.ToEnvVars(),
-            Logger = Build.ToolSettings.IntegrationTestLoggers?.FirstOrDefault(),
+            Collectors = Build.ToolSettings.IntegrationTestCollectors,
+            Loggers = Build.ToolSettings.IntegrationTestLoggers,
+            NoLogo = Build.ToolSettings.DotNetNoLogo,
             NoBuild = true,
             NoRestore = true,
             ResultsDirectory = artifactsTestsProjectDirectory,
-            Settings = Build.ToolSettings.IntegrationTestRunSettingsFile,
-            ArgumentCustomization = args =>
-            {
-                if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo");
-                if (Build.ToolSettings.IntegrationTestCollectors != null)
-                {
-                    foreach (var collector in Build.ToolSettings.IntegrationTestCollectors)
-                    {
-                        args.Append("--collect");
-                        args.AppendQuoted(collector);
-                    }
-                }
-                if (Build.ToolSettings.IntegrationTestLoggers != null)
-                {
-                    foreach (var logger in Build.ToolSettings.IntegrationTestLoggers.Skip(1))
-                    {
-                        args.Append("--logger");
-                        args.AppendQuoted(logger);
-                    }
-                }
-                if (Build.ToolSettings.IntegrationTestRunSettings != null)
-                {
-                    args.Append("--");
-                    foreach (var runSetting in Build.ToolSettings.IntegrationTestRunSettings)
-                    {
-                        args.AppendQuoted(runSetting);
-                    }
-                }
-                return args;
-            }
+            Settings = Build.ToolSettings.IntegrationTestRunSettingsFile
         };
-        DotNetCoreTest(project.FullPath, settings);
+        DotNetCoreTest(project.FullPath, arguments, settings);
     }
 });
 
@@ -288,10 +236,10 @@ Tasks.NuGetPack = Task("NuGetPack")
         Configuration = Build.Parameters.Configuration,
         IncludeSymbols = Build.ToolSettings.NuGetPackSymbols,
         MSBuildSettings = msbuildSettings,
+        NoLogo = Build.ToolSettings.DotNetNoLogo,
         NoBuild = true,
         NoRestore = true,
-        OutputDirectory = Build.Directories.ArtifactsNuGet,
-        ArgumentCustomization = args => { if (Build.ToolSettings.DotNetNoLogo) args.Append("--nologo"); return args; }
+        OutputDirectory = Build.Directories.ArtifactsNuGet
     };
     foreach (var project in projects)
     {

@@ -1,3 +1,4 @@
+using Cake.Core.IO.Arguments;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -16,6 +17,16 @@ public static Dictionary<string, string> ToEnvVars(this Builder build) =>
     _buildEnvVars ??= build.ToTokens()
         .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)")) // filter tokens
         .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
+
+public static ProcessArgumentBuilder ToProcessArguments(this IEnumerable<string> values)
+{
+    var builder = new ProcessArgumentBuilder();
+    foreach (var value in values)
+    {
+        builder.Append(new TextArgument(value));
+    }
+    return builder;
+}
 
 public static Dictionary<string, object> ToTokens(this Builder build) =>
     _buildTokens ??= build.ToTokens("Build")

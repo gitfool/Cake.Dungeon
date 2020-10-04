@@ -31,7 +31,7 @@ jobs:
           key: $(Agent.OS)|nuget|.config/dotnet-tools.json,**/packages.lock.json
           restoreKeys: $(Agent.OS)|nuget
 
-      - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
+      - bash: dotnet tool restore && dotnet cake --verbosity=verbose --target=build
         displayName: Cake build
 
   - job: Linux
@@ -53,7 +53,7 @@ jobs:
           key: $(Agent.OS)|nuget|.config/dotnet-tools.json,**/packages.lock.json
           restoreKeys: $(Agent.OS)|nuget
 
-      - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
+      - bash: dotnet tool restore && dotnet cake --verbosity=verbose --target=build
         displayName: Cake build
 
   - job: Mac
@@ -75,7 +75,7 @@ jobs:
           key: $(Agent.OS)|nuget|.config/dotnet-tools.json,**/packages.lock.json
           restoreKeys: $(Agent.OS)|nuget
 
-      - bash: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
+      - bash: dotnet tool restore && dotnet cake --verbosity=verbose --target=build
         displayName: Cake build
 
   - job: Windows
@@ -97,5 +97,5 @@ jobs:
           key: $(Agent.OS)|nuget|.config/dotnet-tools.json,**/packages.lock.json
           restoreKeys: $(Agent.OS)|nuget
 
-      - pwsh: dotnet tool restore && dotnet cake --bootstrap && dotnet cake --verbosity=verbose --target=build
+      - pwsh: dotnet tool restore && dotnet cake --verbosity=verbose --target=build
         displayName: Cake build
