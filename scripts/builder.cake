@@ -12,10 +12,7 @@ public class Builder
 
     public void Info()
     {
-        var secrets = typeof(Environment)
-            .GetProperties()
-            .Select(property => property.GetValue(Environment))
-            .ToList();
+        var secrets = typeof(Environment).GetProperties().Select(property => property.GetValue(Environment)).ToArray();
         var variables = Context.EnvironmentVariables()
             .OrderBy(entry => entry.Key)
             .ToDictionary(entry => entry.Key, entry => secrets.Contains(entry.Key) ? entry.Value.Redact() : entry.Value); // redact secrets
@@ -123,6 +120,7 @@ public class Builder
         string[] testCoverageReportTypes = null,
         bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
+        bool? dockerPushSkipDuplicate = null,
         bool? nuGetPackSymbols = null,
         bool? nuGetPushSkipDuplicate = null,
         string nuGetSource = null,
@@ -213,6 +211,7 @@ public class Builder
             testCoverageReportTypes,
             dockerBuildPull,
             dockerPushLatest,
+            dockerPushSkipDuplicate,
             nuGetPackSymbols,
             nuGetPushSkipDuplicate,
             nuGetSource,

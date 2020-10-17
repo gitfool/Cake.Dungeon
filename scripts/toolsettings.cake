@@ -22,6 +22,7 @@ public class ToolSettings
         string[] testCoverageReportTypes,
         bool? dockerBuildPull,
         bool? dockerPushLatest,
+        bool? dockerPushSkipDuplicate,
         bool? nuGetPackSymbols,
         bool? nuGetPushSkipDuplicate,
         string nuGetSource,
@@ -50,6 +51,7 @@ public class ToolSettings
 
         DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
+        DockerPushSkipDuplicate = dockerPushSkipDuplicate ?? false;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
         NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? false;
@@ -80,6 +82,7 @@ public class ToolSettings
 
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
+    public bool DockerPushSkipDuplicate { get; }
 
     public bool NuGetPackSymbols { get; }
     public bool NuGetPushSkipDuplicate { get; }

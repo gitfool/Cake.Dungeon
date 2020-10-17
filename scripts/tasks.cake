@@ -31,8 +31,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/bin").FullPath);
     CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/obj").FullPath);
 
-    var solutionPatterns = Build.Patterns.BuildSolutions
-        .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var solutionPatterns = Build.Patterns.BuildSolutions.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var solutions = GetFiles(solutionPatterns);
     if (!solutions.Any())
     {
@@ -70,8 +69,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     }
     Information("...");
 
-    var projectPatterns = Build.Patterns.BuildPublishProjects
-        .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var projectPatterns = Build.Patterns.BuildPublishProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var projects = GetFiles(projectPatterns);
     if (!projects.Any())
     {
@@ -114,8 +112,7 @@ Tasks.UnitTests = Task("UnitTests")
     .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
     .Does(() =>
 {
-    var patterns = Build.Patterns.UnitTestProjects
-        .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.UnitTestProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -150,8 +147,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
     .WithCriteria(() => Build.Parameters.RunIntegrationTests, "Not run")
     .Does(() =>
 {
-    var patterns = Build.Patterns.IntegrationTestProjects
-        .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -189,8 +185,7 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
 {
     DeleteFiles(Build.Directories.ArtifactsTests.CombineWithFilePath("*.*").FullPath);
 
-    var patterns = Build.Patterns.TestCoverageReports
-        .Select(pattern => Build.Directories.ArtifactsTests.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.TestCoverageReports.Select(pattern => Build.Directories.ArtifactsTests.CombineWithFilePath(pattern).FullPath).ToArray();
     var reports = GetFiles(patterns);
     if (!reports.Any())
     {
@@ -220,8 +215,7 @@ Tasks.NuGetPack = Task("NuGetPack")
 {
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
-    var patterns = Build.Patterns.NuGetProjects
-        .Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.NuGetProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -263,24 +257,30 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
     .DoesForEach(() => Build.DockerImages, image =>
 {
-    var tags = Build.TransformTokens(image.Tags)
+    var references = Build.TransformTokens(image.Tags)
         .Where(tag => tag != "latest" || Build.ToolSettings.DockerPushLatest)
-        .Select(tag =>
-        {
-            var local = $"{image.Repository}:{tag}";
-            var remote = image.Registry.IsConfigured() ? $"{image.Registry}/{image.Repository}:{tag}" : local;
-            return (tag != "latest" && DockerImageExists(remote))
-                ? throw new InvalidOperationException($"Docker image {remote} already exists")
-                : new { Local = local, Remote = remote };
-        }).ToArray(); // eager check any image exists
+        .Select(tag => image.ToReference(Context, tag))
+        .ToArray();
 
-    foreach (var tag in tags)
+    foreach (var reference in references)
     {
-        if (tag.Local != tag.Remote)
+        if (reference.Exists)
         {
-            DockerTag(tag.Local, tag.Remote);
+            if (reference.Tag != "latest" && !Build.ToolSettings.DockerPushSkipDuplicate)
+            {
+                throw new InvalidOperationException($"Docker image {reference.Target} already exists");
+            }
+            if (reference.Tag != "latest" || references.All(reference => reference.Exists))
+            {
+                Information($"Skipping docker image {reference.Target} already exists");
+                continue;
+            }
         }
-        DockerPush(tag.Remote);
+        if (reference.Source != reference.Target)
+        {
+            DockerTag(reference.Source, reference.Target);
+        }
+        DockerPush(reference.Target);
     }
 });
 
