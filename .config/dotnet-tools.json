@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "cake.tool": {
-      "version": "1.0.0-alpha0077",
+      "version": "1.0.0-alpha0148",
       "commands": [
         "dotnet-cake"
       ]
