@@ -5,6 +5,6 @@
 #addin nuget:?package=Cake.Incubator&version=5.1.0
 
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=4.8.0
-#tool dotnet:?package=GitVersion.Tool&version=5.3.7
+#tool dotnet:?package=GitVersion.Tool&version=5.5.0
 
 var Build = new Builder(BuildSystem, Context, target => RunTarget(target));
