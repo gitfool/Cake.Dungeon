@@ -125,7 +125,7 @@ Tasks.UnitTests = Task("UnitTests")
         var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
         CleanDirectory(artifactsTestsProjectDirectory);
 
-        var arguments = Build.ToolSettings.UnitTestRunSettings?.ToProcessArguments();
+        var arguments = Build.ToolSettings.UnitTestRunSettings.ToProcessArguments();
         var settings = new DotNetCoreTestSettings
         {
             Configuration = Build.Parameters.Configuration,
@@ -160,7 +160,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
         var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
         CleanDirectory(artifactsTestsProjectDirectory);
 
-        var arguments = Build.ToolSettings.IntegrationTestRunSettings?.ToProcessArguments();
+        var arguments = Build.ToolSettings.IntegrationTestRunSettings.ToProcessArguments();
         var settings = new DotNetCoreTestSettings
         {
             Configuration = Build.Parameters.Configuration,
