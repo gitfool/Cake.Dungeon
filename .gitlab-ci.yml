@@ -35,7 +35,7 @@ Linux:
       prefix: linux-nuget
       files: [ packages.lock.json ]
   script:
-    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 5.0.102
+    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 5.0.103
     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
     - dotnet tool restore && dotnet cake --verbosity=verbose --target=build
 
@@ -48,7 +48,7 @@ Linux:
 #       prefix: nuget
 #       files: [ packages.lock.json ]
 #   script:
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 5.0.102
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 5.0.103
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --verbosity=verbose --target=build
 
@@ -61,6 +61,6 @@ Windows:
       prefix: windows-nuget
       files: [ packages.lock.json ]
   script:
-    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 5.0.102"'
+    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 5.0.103"'
     - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH"
     - dotnet tool restore ; dotnet cake --verbosity=verbose --target=build
