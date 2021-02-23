@@ -1,4 +1,4 @@
-#module nuget:?package=Cake.DotNetTool.Module&version=0.4.0
+#module nuget:?package=Cake.DotNetTool.Module&version=1.0.1
 
 #addin nuget:?package=Cake.Docker&version=1.0.0
 #addin nuget:?package=Cake.FileHelpers&version=3.3.0
