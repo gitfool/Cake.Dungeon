@@ -1,7 +1,7 @@
 #module nuget:?package=Cake.DotNetTool.Module&version=1.0.1
 
 #addin nuget:?package=Cake.Docker&version=1.0.0
-#addin nuget:?package=Cake.FileHelpers&version=3.3.0
+#addin nuget:?package=Cake.FileHelpers&version=4.0.0
 #addin nuget:?package=Cake.Incubator&version=5.1.0
 
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=4.8.6
