@@ -198,7 +198,6 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
         AssemblyFilters = Build.ToolSettings.TestCoverageReportAssemblyFilters,
         ClassFilters = Build.ToolSettings.TestCoverageReportClassFilters,
         ReportTypes = Build.ToolSettings.TestCoverageReportTypes.Select(Enum.Parse<ReportGeneratorReportType>).ToArray(),
-        ToolPath = Context.Tools.Resolve("reportgenerator"), // workaround tool resolution
         Verbosity = ReportGeneratorVerbosity.Info
     };
     ReportGenerator(reports, Build.Directories.ArtifactsTests, settings);
