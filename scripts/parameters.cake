@@ -1,21 +1,19 @@
+#load builder.cake
+
 public class Parameters
 {
     public Parameters(
         Builder build,
-
         string title,
         string target,
         string configuration,
-
         bool? publish,
         bool? deploy,
         string deployEnvironment,
-
         bool? defaultLog,
         bool? logEnvironment,
         bool? logBuildSystem,
         bool? logContext,
-
         bool? defaultRun,
         bool? runBuildSolutions,
         bool? runBuildPublish,

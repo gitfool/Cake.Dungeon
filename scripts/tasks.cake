@@ -1,3 +1,6 @@
+#load bootstrap.cake
+#load builder.cake
+
 public static class Tasks
 {
     public static CakeTaskBuilder Info { get; set; }

@@ -1,3 +1,6 @@
+#load environment.cake
+#load extensions.cake
+
 public class Credentials
 {
     public Credentials(ICakeContext context, Environment environment)

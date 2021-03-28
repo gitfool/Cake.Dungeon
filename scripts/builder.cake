@@ -1,3 +1,14 @@
+#load credentials.cake
+#load docker.cake
+#load environment.cake
+#load extensions.cake
+#load parameters.cake
+#load paths.cake
+#load patterns.cake
+#load tasks.cake
+#load toolsettings.cake
+#load version.cake
+
 public class Builder
 {
     public Builder(BuildSystem buildSystem, ICakeContext context, Action<string> runTarget)
@@ -18,7 +29,7 @@ public class Builder
             .ToDictionary(entry => entry.Key, entry => secrets.Contains(entry.Key) ? entry.Value.Redact() : entry.Value); // redact secrets
 
         var provider = (BuildSystem.Provider & BuildProvider.AzurePipelinesHosted) != 0 ? "AzurePipelines" : BuildSystem.Provider.ToString();
-        var properties = this.ToTokens()
+        var properties = ToTokens()
             .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"Build.BuildSystem.{provider}.")) ||
                 (Parameters.LogContext && entry.Key.StartsWith("Build.Context.")) ||
                 (Parameters.DefaultLog && !entry.Key.StartsWith("Build.BuildSystem.") && !entry.Key.StartsWith("Build.Context.")))
@@ -59,16 +70,13 @@ public class Builder
         string title = null, // general
         string target = null,
         string configuration = null,
-
         bool? publish = null,
         bool? deploy = null,
         string deployEnvironment = null,
-
         bool? defaultLog = null,
         bool? logEnvironment = null,
         bool? logBuildSystem = null,
         bool? logContext = null,
-
         bool? defaultRun = null,
         bool? runBuildSolutions = null,
         bool? runBuildPublish = null,
@@ -132,20 +140,16 @@ public class Builder
     {
         Parameters = new Parameters(
             this,
-
             title,
             target,
             configuration,
-
             publish,
             deploy,
             deployEnvironment,
-
             defaultLog,
             logEnvironment,
             logBuildSystem,
             logContext,
-
             defaultRun,
             runBuildSolutions,
             runBuildPublish,
@@ -224,12 +228,21 @@ public class Builder
         return this;
     }
 
+    public Dictionary<string, string> ToEnvVars() =>
+        _envVars ??= ToTokens()
+            .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)")) // filter tokens
+            .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
+
+    public Dictionary<string, object> ToTokens() =>
+        _tokens ??= this.ToTokens("Build")
+            .ToDictionary(entry => entry.Key, entry => entry.Value);
+
     public string[] TransformTokens(IEnumerable<string> strings) =>
-        strings?.Select(text => Context.TransformText(text, "{{", "}}").WithTokens(this.ToTokens()).ToString()).ToArray();
+        strings?.Select(text => Context.TransformText(text, "{{", "}}").WithTokens(ToTokens()).ToString()).ToArray();
 
     public void TransformTokens(FilePath source, FilePath destination) =>
         Context.TransformTextFile(source, "{{", "}}")
-            .WithTokens(this.ToTokens())
+            .WithTokens(ToTokens())
             .Save(destination);
 
     private void SetVersion()
@@ -256,4 +269,9 @@ public class Builder
     public Version Version { get; private set; }
 
     private readonly Action<string> _runTarget;
+
+    private Dictionary<string, string> _envVars;
+    private Dictionary<string, object> _tokens;
 }
+
+var Build = new Builder(BuildSystem, Context, target => RunTarget(target));

@@ -12,15 +12,6 @@ public static string ToEnvVar(this string value)
     return Regex.Replace(value, @"\['?(.+?)'?\]", "_$1"); // indexed values
 }
 
-public static Dictionary<string, string> ToEnvVars(this Builder build) =>
-    _buildEnvVars ??= build.ToTokens()
-        .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)")) // filter tokens
-        .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
-
-public static Dictionary<string, object> ToTokens(this Builder build) =>
-    _buildTokens ??= build.ToTokens("Build")
-        .ToDictionary(entry => entry.Key, entry => entry.Value);
-
 public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj, string prefix = null)
 {
     static IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
@@ -111,6 +102,3 @@ public static string ToValueString(this object value)
 }
 
 public static string TrimTrailingWhitespace(this string value) => Regex.Replace(value, @"[ \t]+(\r?\n|$)", "$1", RegexOptions.Multiline);
-
-private static Dictionary<string, string> _buildEnvVars;
-private static Dictionary<string, object> _buildTokens;

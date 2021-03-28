@@ -1,4 +1,4 @@
-#load scripts/*.cake
+#load scripts/builder.cake
 
 Build.SetParameters
 (

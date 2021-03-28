@@ -1,8 +1,9 @@
+#load builder.cake
+
 public class ToolSettings
 {
     public ToolSettings(
         Builder build,
-
         bool? dotNetNoLogo,
         bool? buildBinaryLoggerEnabled,
         bool? buildEmbedAllSources,
