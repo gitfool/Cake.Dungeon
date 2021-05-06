@@ -46,7 +46,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v1.8.0
         with:
           dotnet-version: 5.0.202
 
@@ -69,7 +69,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v1.8.0
         with:
           dotnet-version: 5.0.202
 
@@ -92,7 +92,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v1.8.0
         with:
           dotnet-version: 5.0.202
 
