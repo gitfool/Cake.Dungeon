@@ -231,6 +231,7 @@ Tasks.NuGetPack = Task("NuGetPack")
     {
         Configuration = Build.Parameters.Configuration,
         IncludeSymbols = Build.ToolSettings.NuGetPackSymbols,
+        SymbolPackageFormat = Build.ToolSettings.NuGetPackSymbolsFormat,
         MSBuildSettings = msbuildSettings,
         NoLogo = Build.ToolSettings.DotNetNoLogo,
         NoBuild = true,

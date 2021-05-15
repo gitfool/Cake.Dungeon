@@ -25,6 +25,7 @@ public class ToolSettings
         bool? dockerPushLatest,
         bool? dockerPushSkipDuplicate,
         bool? nuGetPackSymbols,
+        string nuGetPackSymbolsFormat,
         bool? nuGetPushSkipDuplicate,
         string nuGetSource,
         string nuGetSourceName,
@@ -55,6 +56,7 @@ public class ToolSettings
         DockerPushSkipDuplicate = dockerPushSkipDuplicate ?? false;
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
+        NuGetPackSymbolsFormat = nuGetPackSymbolsFormat;
         NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? false;
         NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json"));
         NuGetSourceName = nuGetSourceName ?? build.Context.Argument("nuget-source-name", build.Context.EnvironmentVariable("NUGET_SOURCE_NAME", "nuget.org"));
@@ -86,6 +88,7 @@ public class ToolSettings
     public bool DockerPushSkipDuplicate { get; }
 
     public bool NuGetPackSymbols { get; }
+    public string NuGetPackSymbolsFormat { get; }
     public bool NuGetPushSkipDuplicate { get; }
     public string NuGetSource { get; }
     public string NuGetSourceName { get; }
