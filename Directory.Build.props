@@ -5,7 +5,6 @@
     <Description>A playground for Cake build scripts.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/gitfool/Cake.Dungeon</PackageProjectUrl>
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageTags>Cake;Build;Scripts</PackageTags>
 
@@ -23,5 +22,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="NuGetizer" Version="0.7.0" PrivateAssets="All" />
   </ItemGroup>
 </Project>
