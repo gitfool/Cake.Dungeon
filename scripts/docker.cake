@@ -22,11 +22,11 @@ public class DockerImage
 
     public bool IsConfigured => Repository.IsConfigured() && Context.IsConfigured() && Tags != null && Tags.All(tag => tag.IsConfigured());
 
-    public DockerImageReference ToReference(ICakeContext context, string tag)
+    public DockerImageReference ToReference(ICakeContext context, string tag, bool latest)
     {
         var source = $"{Repository}:{tag}";
         var target = Registry.IsConfigured() ? $"{Registry}/{Repository}:{tag}" : source;
-        var exists = tag == "latest" || context.DockerManifestExists(target);
+        var exists = latest || context.DockerManifestExists(target);
         return new DockerImageReference { Tag = tag, Source = source, Target = target, Exists = exists };
     }
 }

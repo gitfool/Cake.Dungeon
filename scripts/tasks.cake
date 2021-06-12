@@ -261,19 +261,19 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .DoesForEach(() => Build.DockerImages, image =>
 {
     var references = Build.TransformTokens(image.Tags)
-        .Where(tag => tag != "latest" || Build.ToolSettings.DockerPushLatest)
-        .Select(tag => image.ToReference(Context, tag))
+        .Where(tag => !Build.ToolSettings.DockerTagsLatest.Contains(tag) || Build.ToolSettings.DockerPushLatest)
+        .Select(tag => image.ToReference(Context, tag, Build.ToolSettings.DockerTagsLatest.Contains(tag)))
         .ToArray();
 
     foreach (var reference in references)
     {
         if (reference.Exists)
         {
-            if (reference.Tag != "latest" && !Build.ToolSettings.DockerPushSkipDuplicate)
+            if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) && !Build.ToolSettings.DockerPushSkipDuplicate)
             {
                 throw new InvalidOperationException($"Docker image {reference.Target} already exists");
             }
-            if (reference.Tag != "latest" || references.All(reference => reference.Exists))
+            if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) || references.All(reference => reference.Exists))
             {
                 Information($"Skipping docker image {reference.Target} already exists");
                 continue;

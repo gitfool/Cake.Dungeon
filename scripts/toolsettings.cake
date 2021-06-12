@@ -24,6 +24,7 @@ public class ToolSettings
         bool? dockerBuildPull,
         bool? dockerPushLatest,
         bool? dockerPushSkipDuplicate,
+        string[] dockerTagsLatest,
         bool? nuGetPackSymbols,
         string nuGetPackSymbolsFormat,
         bool? nuGetPushSkipDuplicate,
@@ -54,6 +55,7 @@ public class ToolSettings
         DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
         DockerPushSkipDuplicate = dockerPushSkipDuplicate ?? false;
+        DockerTagsLatest = dockerTagsLatest ?? new[] { "latest" };
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
         NuGetPackSymbolsFormat = nuGetPackSymbolsFormat;
@@ -86,6 +88,7 @@ public class ToolSettings
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
     public bool DockerPushSkipDuplicate { get; }
+    public string[] DockerTagsLatest { get; }
 
     public bool NuGetPackSymbols { get; }
     public string NuGetPackSymbolsFormat { get; }
