@@ -65,33 +65,6 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     {
         DotNetCoreBuild(solution.FullPath, buildSettings);
     }
-
-    if (!Build.Parameters.RunBuildPublish)
-    {
-        return;
-    }
-    Information("...");
-
-    var projectPatterns = Build.Patterns.BuildPublishProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
-    var projects = GetFiles(projectPatterns);
-    if (!projects.Any())
-    {
-        Warning("Build publish projects not found");
-        return;
-    }
-
-    var publishSettings = new DotNetCorePublishSettings
-    {
-        Configuration = Build.Parameters.Configuration,
-        MSBuildSettings = msbuildSettings,
-        NoLogo = Build.ToolSettings.DotNetNoLogo,
-        NoBuild = true,
-        NoRestore = true
-    };
-    foreach (var project in projects)
-    {
-        DotNetCorePublish(project.FullPath, publishSettings);
-    }
 });
 
 Tasks.DockerBuild = Task("DockerBuild")

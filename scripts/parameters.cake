@@ -16,7 +16,6 @@ public class Parameters
         bool? logContext,
         bool? defaultRun,
         bool? runBuildSolutions,
-        bool? runBuildPublish,
         bool? runDockerBuild,
         bool? runUnitTests,
         bool? runIntegrationTests,
@@ -41,7 +40,6 @@ public class Parameters
 
         DefaultRun = defaultRun ?? false;
         RunBuildSolutions = runBuildSolutions ?? DefaultRun;
-        RunBuildPublish = runBuildPublish ?? DefaultRun;
         RunDockerBuild = runDockerBuild ?? DefaultRun;
         RunUnitTests = runUnitTests ?? DefaultRun;
         RunIntegrationTests = runIntegrationTests ?? DefaultRun;
@@ -67,7 +65,6 @@ public class Parameters
 
     public bool DefaultRun { get; }
     public bool RunBuildSolutions { get; }
-    public bool RunBuildPublish { get; }
     public bool RunDockerBuild { get; }
     public bool RunUnitTests { get; }
     public bool RunIntegrationTests { get; }

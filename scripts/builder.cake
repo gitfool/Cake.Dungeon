@@ -79,7 +79,6 @@ public class Builder
         bool? logContext = null,
         bool? defaultRun = null,
         bool? runBuildSolutions = null,
-        bool? runBuildPublish = null,
         bool? runDockerBuild = null,
         bool? runUnitTests = null,
         bool? runIntegrationTests = null,
@@ -103,7 +102,6 @@ public class Builder
         DirectoryPath artifactsNuGetDirectory = null,
 
         string[] buildSolutionPatterns = null, // patterns
-        string[] buildPublishProjectPatterns = null,
         string[] unitTestProjectPatterns = null,
         string[] integrationTestProjectPatterns = null,
         string[] testCoverageReportPatterns = null,
@@ -154,7 +152,6 @@ public class Builder
             logContext,
             defaultRun,
             runBuildSolutions,
-            runBuildPublish,
             runDockerBuild,
             runUnitTests,
             runIntegrationTests,
@@ -190,7 +187,6 @@ public class Builder
 
         Patterns = new Patterns(
             buildSolutionPatterns,
-            buildPublishProjectPatterns,
             unitTestProjectPatterns,
             integrationTestProjectPatterns,
             testCoverageReportPatterns,
