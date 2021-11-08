@@ -31,11 +31,11 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     .WithCriteria(() => Build.Parameters.RunBuildSolutions, "Not run")
     .Does(() =>
 {
-    CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/bin").FullPath);
-    CleanDirectories(Build.Directories.Source.CombineWithFilePath("**/obj").FullPath);
+    CleanDirectories($"{Build.Directories.Source}/**/bin");
+    CleanDirectories($"{Build.Directories.Source}/**/obj");
 
-    var solutionPatterns = Build.Patterns.BuildSolutions.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
-    var solutions = GetFiles(solutionPatterns);
+    var patterns = Build.Patterns.BuildSolutions.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
+    var solutions = GetFiles(patterns);
     if (!solutions.Any())
     {
         Warning("Build solutions not found");
@@ -45,17 +45,17 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     var msbuildSettings = new DotNetCoreMSBuildSettings
     {
         BinaryLogger = new MSBuildBinaryLoggerSettings { Enabled = Build.ToolSettings.BuildBinaryLoggerEnabled },
+        ContinuousIntegrationBuild = !Build.Version.IsLocal,
         MaxCpuCount = Build.ToolSettings.BuildMaxCpuCount,
-        TreatAllWarningsAs = Build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default
+        TreatAllWarningsAs = Build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default,
+        Version = Build.Version.AssemblyVersion,
+        FileVersion = Build.Version.AssemblyFileVersion,
+        InformationalVersion = Build.Version.InformationalVersion,
+        PackageVersion = Build.Version.FullSemVer
     }
-        .WithProperty("ContinuousIntegrationBuild", (!Build.Version.IsLocal).ToString().ToLower())
         .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLower())
-        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLower())
-        .WithProperty("Version", Build.Version.AssemblyVersion)
-        .WithProperty("FileVersion", Build.Version.AssemblyFileVersion)
-        .WithProperty("InformationalVersion", Build.Version.InformationalVersion)
-        .WithProperty("PackageVersion", Build.Version.FullSemVer);
-    var buildSettings = new DotNetCoreBuildSettings
+        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLower());
+    var buildSettings = new DotNetBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
         MSBuildSettings = msbuildSettings,
@@ -63,7 +63,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     };
     foreach (var solution in solutions)
     {
-        DotNetCoreBuild(solution.FullPath, buildSettings);
+        DotNetBuild(solution.FullPath, buildSettings);
     }
 });
 
@@ -88,7 +88,7 @@ Tasks.UnitTests = Task("UnitTests")
     .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
     .Does(() =>
 {
-    var patterns = Build.Patterns.UnitTestProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.UnitTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -102,7 +102,7 @@ Tasks.UnitTests = Task("UnitTests")
         CleanDirectory(artifactsTestsProjectDirectory);
 
         var arguments = Build.ToolSettings.UnitTestRunSettings.ToProcessArguments();
-        var settings = new DotNetCoreTestSettings
+        var settings = new DotNetTestSettings
         {
             Configuration = Build.Parameters.Configuration,
             EnvironmentVariables = Build.ToEnvVars(),
@@ -114,7 +114,7 @@ Tasks.UnitTests = Task("UnitTests")
             ResultsDirectory = artifactsTestsProjectDirectory,
             Settings = Build.ToolSettings.UnitTestRunSettingsFile
         };
-        DotNetCoreTest(project.FullPath, arguments, settings);
+        DotNetTest(project.FullPath, arguments, settings);
     }
 });
 
@@ -123,7 +123,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
     .WithCriteria(() => Build.Parameters.RunIntegrationTests, "Not run")
     .Does(() =>
 {
-    var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -137,7 +137,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
         CleanDirectory(artifactsTestsProjectDirectory);
 
         var arguments = Build.ToolSettings.IntegrationTestRunSettings.ToProcessArguments();
-        var settings = new DotNetCoreTestSettings
+        var settings = new DotNetTestSettings
         {
             Configuration = Build.Parameters.Configuration,
             EnvironmentVariables = Build.ToEnvVars(),
@@ -149,7 +149,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
             ResultsDirectory = artifactsTestsProjectDirectory,
             Settings = Build.ToolSettings.IntegrationTestRunSettingsFile
         };
-        DotNetCoreTest(project.FullPath, arguments, settings);
+        DotNetTest(project.FullPath, arguments, settings);
     }
 });
 
@@ -159,9 +159,9 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
     .WithCriteria(() => Build.Parameters.RunTestCoverageReports, "Not run")
     .Does(() =>
 {
-    DeleteFiles(Build.Directories.ArtifactsTests.CombineWithFilePath("*.*").FullPath);
+    DeleteFiles($"{Build.Directories.ArtifactsTests}/*.*");
 
-    var patterns = Build.Patterns.TestCoverageReports.Select(pattern => Build.Directories.ArtifactsTests.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.TestCoverageReports.Select(pattern => $"{Build.Directories.ArtifactsTests}/{pattern}").ToArray();
     var reports = GetFiles(patterns);
     if (!reports.Any())
     {
@@ -190,7 +190,7 @@ Tasks.NuGetPack = Task("NuGetPack")
 {
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
-    var patterns = Build.Patterns.NuGetProjects.Select(pattern => Build.Directories.Source.CombineWithFilePath(pattern).FullPath).ToArray();
+    var patterns = Build.Patterns.NuGetProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -198,14 +198,12 @@ Tasks.NuGetPack = Task("NuGetPack")
         return;
     }
 
-    var msbuildSettings = new DotNetCoreMSBuildSettings()
-        .WithProperty("PackageVersion", Build.Version.FullSemVer);
-    var settings = new DotNetCorePackSettings
+    var settings = new DotNetPackSettings
     {
         Configuration = Build.Parameters.Configuration,
         IncludeSymbols = Build.ToolSettings.NuGetPackSymbols,
         SymbolPackageFormat = Build.ToolSettings.NuGetPackSymbolsFormat,
-        MSBuildSettings = msbuildSettings,
+        MSBuildSettings = new DotNetCoreMSBuildSettings { PackageVersion = Build.Version.FullSemVer },
         NoLogo = Build.ToolSettings.DotNetNoLogo,
         NoBuild = true,
         NoRestore = true,
@@ -213,7 +211,7 @@ Tasks.NuGetPack = Task("NuGetPack")
     };
     foreach (var project in projects)
     {
-        DotNetCorePack(project.FullPath, settings);
+        DotNetPack(project.FullPath, settings);
     }
 });
 
@@ -268,7 +266,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
     .Does(() =>
 {
-    var packages = GetFiles(Build.Directories.ArtifactsNuGet.CombineWithFilePath("**/*.nupkg").FullPath);
+    var packages = GetFiles($"{Build.Directories.ArtifactsNuGet}/**/*.nupkg");
     if (!packages.Any())
     {
         Warning("NuGet packages not found");
@@ -277,7 +275,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
 
     if (Build.Credentials.NuGet.UserName.IsConfigured() && Build.Credentials.NuGet.Password.IsConfigured())
     {
-        var sourceSettings = new DotNetCoreNuGetSourceSettings
+        var sourceSettings = new DotNetNuGetSourceSettings
         {
             UserName = Build.Credentials.NuGet.UserName,
             Password = Build.Credentials.NuGet.Password,
@@ -285,17 +283,17 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
             Source = Build.ToolSettings.NuGetSource,
             ConfigFile = Build.ToolSettings.NuGetSourceConfigFile
         };
-        if (!DotNetCoreNuGetHasSource(Build.ToolSettings.NuGetSourceName, sourceSettings))
+        if (!DotNetNuGetHasSource(Build.ToolSettings.NuGetSourceName, sourceSettings))
         {
-            DotNetCoreNuGetAddSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            DotNetNuGetAddSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
         }
         else
         {
-            DotNetCoreNuGetUpdateSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            DotNetNuGetUpdateSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
         }
     }
 
-    var settings = new DotNetCoreNuGetPushSettings
+    var settings = new DotNetNuGetPushSettings
     {
         ApiKey = Build.Credentials.NuGet.ApiKey,
         Source = Build.ToolSettings.NuGetSource,
@@ -303,7 +301,7 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
     };
     foreach (var package in packages)
     {
-        DotNetCoreNuGetPush(package.FullPath, settings);
+        DotNetNuGetPush(package.FullPath, settings);
     }
 });
 
