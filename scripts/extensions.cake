@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -16,32 +17,27 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
 {
     static IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)
     {
-        if (value == null || IsLeafType(value.GetType()) ||
-            (value is Array emptyArray && emptyArray.Length == 0) ||
-            (value is List<string> emptyStringList && emptyStringList.Count == 0) ||
-            (value is Dictionary<string, string> emptyStringDict && emptyStringDict.Count == 0))
+        var type = value != null ? Nullable.GetUnderlyingType(value.GetType()) ?? value.GetType() : null;
+        if (value == null || IsLeafType(type) || value is ICollection { Count: 0 })
         {
             yield return Enumerable.Repeat(new KeyValuePair<string, object>(key, value), 1);
         }
-        else if (value is Array array) // unroll array tokens
+        else if (value is IList list) // unroll list tokens
         {
-            for (var i = 0; i < array.Length; i++)
+            for (var i = 0; i < list.Count; i++)
             {
-                yield return GetTokens($"{key}[{i}]", array.GetValue(i)).SelectMany(tokens => tokens);
+                yield return GetTokens($"{key}[{i}]", list[i]).SelectMany(tokens => tokens);
             }
         }
-        else if (value is List<string> stringList) // unroll string list tokens
+        else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) && type.GetGenericArguments()[0] == typeof(string)) // unroll string dictionary tokens
         {
-            for (var i = 0; i < stringList.Count; i++)
+            var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(type.GetGenericArguments());
+            foreach (var entry in (IEnumerable)value)
             {
-                yield return GetTokens($"{key}[{i}]", stringList[i]).SelectMany(tokens => tokens);
-            }
-        }
-        else if (value is Dictionary<string, string> stringDict) // unroll string dictionary tokens
-        {
-            foreach (var entry in stringDict)
-            {
-                yield return GetTokens($"{key}['{entry.Key}']", entry.Value).SelectMany(tokens => tokens);
+                var entryKey = keyValueType.InvokeMember("Key", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty, null, entry, null) as string;
+                var entryValue = keyValueType.InvokeMember("Value", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty, null, entry, null);
+                var asProperty = Regex.IsMatch(entryKey, @"^[A-Z][A-Za-z]*$");
+                yield return GetTokens(asProperty ? $"{key}.{entryKey}" : $"{key}['{entryKey}']", entryValue).SelectMany(tokens => tokens);
             }
         }
         else
@@ -62,17 +58,11 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
         }
     }
 
-    static bool IsLeafType(Type type)
-    {
-        type = Nullable.GetUnderlyingType(type) ?? type;
-        return type.IsPrimitive || type.IsEnum || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
-            type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(Uri) ||
-            type == typeof(DirectoryPath) || type == typeof(FilePath) || // cake primitives
-            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) && // list
-                type.GetGenericArguments()[0] != typeof(string)) ||
-            (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) && // dictionary
-                (type.GetGenericArguments()[0] != typeof(string) || type.GetGenericArguments()[1] != typeof(string)));
-    }
+    static bool IsLeafType(Type type) =>
+        type.IsPrimitive || type.IsEnum || type == typeof(decimal) || type == typeof(string) || type == typeof(byte[]) || // extended primitives
+        type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(Uri) ||
+        type == typeof(DirectoryPath) || type == typeof(FilePath) || // cake primitives
+        type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) && type.GetGenericArguments()[0] != typeof(string); // non-string dictionary
 
     return obj?.GetType()
         .GetProperties()
@@ -92,11 +82,9 @@ public static string ToValueString(this object value)
         null => "(null)",
         bool boolean => boolean.ToString().ToLower(),
         string { Length: 0 } => @"""""",
-        Array { Length: 0 } => "[]",
-        List<string> { Count: 0 } => "[]",
-        Dictionary<string, string> { Count: 0 } => "{}",
-        _ when type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>) => "[...]", // roll-up list
-        _ when type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) => "{...}", // roll-up dictionary
+        IList { Count: 0 } => "[]",
+        IDictionary { Count: 0 } => "{}",
+        _ when type is { IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Dictionary<,>) => "{...}", // roll-up non-string dictionary
         _ => value.ToString()
     };
 }
