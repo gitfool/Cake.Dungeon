@@ -1,11 +1,9 @@
 trigger:
   branches:
-    include:
-      - master
+    include: [ master ]
 pr:
   branches:
-    include:
-      - master
+    include: [ master ]
 
 variables:
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: true
@@ -15,14 +13,15 @@ variables:
   NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 jobs:
-  - job: Docker
-    dependsOn: [Linux, Mac, Windows]
+  - job: BuildDocker
+    dependsOn: [ BuildLinux, BuildMac, BuildWindows ]
     pool:
       vmImage: ubuntu-latest
     container: dockfool/cake-docker:latest
     steps:
       - checkout: self
         displayName: Checkout source
+        submodules: true
 
       - task: Cache@2
         displayName: Cache packages
@@ -34,12 +33,13 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --verbosity=verbose
         displayName: Cake build
 
-  - job: Linux
+  - job: BuildLinux
     pool:
       vmImage: ubuntu-latest
     steps:
       - checkout: self
         displayName: Checkout source
+        submodules: true
 
       - task: UseDotNet@2
         displayName: Install dotnet
@@ -56,12 +56,13 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --verbosity=verbose
         displayName: Cake build
 
-  - job: Mac
+  - job: BuildMac
     pool:
       vmImage: macos-latest
     steps:
       - checkout: self
         displayName: Checkout source
+        submodules: true
 
       - task: UseDotNet@2
         displayName: Install dotnet
@@ -78,12 +79,13 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --verbosity=verbose
         displayName: Cake build
 
-  - job: Windows
+  - job: BuildWindows
     pool:
       vmImage: windows-latest
     steps:
       - checkout: self
         displayName: Checkout source
+        submodules: true
 
       - task: UseDotNet@2
         displayName: Install dotnet

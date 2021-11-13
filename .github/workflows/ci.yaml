@@ -1,11 +1,9 @@
-name: Build
+name: CI
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
   pull_request:
-    branches:
-      - master
+    branches: [ master ]
   workflow_dispatch:
 
 env:
@@ -17,8 +15,8 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  Docker:
-    needs: [ Linux, Mac, Windows ]
+  BuildDocker:
+    needs: [ BuildLinux, BuildMac, BuildWindows ]
     runs-on: ubuntu-latest
     container: dockfool/cake-docker:latest
     steps:
@@ -26,6 +24,7 @@ jobs:
         uses: actions/checkout@v2.4.0
         with:
           fetch-depth: 0
+          submodules: true
 
       - name: Cache packages
         uses: actions/cache@v2.1.6
@@ -37,13 +36,14 @@ jobs:
       - name: Cake build
         run: dotnet tool restore && dotnet cake --verbosity=verbose --publish=true
 
-  Linux:
+  BuildLinux:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v2.4.0
         with:
           fetch-depth: 0
+          submodules: true
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v1.8.2
@@ -60,13 +60,14 @@ jobs:
       - name: Cake build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
-  Mac:
+  BuildMac:
     runs-on: macos-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v2.4.0
         with:
           fetch-depth: 0
+          submodules: true
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v1.8.2
@@ -83,13 +84,14 @@ jobs:
       - name: Cake build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
-  Windows:
+  BuildWindows:
     runs-on: windows-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v2.4.0
         with:
           fetch-depth: 0
+          submodules: true
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v1.8.2
