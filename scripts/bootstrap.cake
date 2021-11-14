@@ -3,4 +3,4 @@
 #addin nuget:?package=Cake.Incubator&version=6.0.0
 
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.0.0
-#tool dotnet:?package=GitVersion.Tool&version=5.7.0
+#tool dotnet:?package=GitVersion.Tool&version=5.8.0
