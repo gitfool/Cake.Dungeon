@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Reflection;
-using System.Text.RegularExpressions;
+#load bootstrap.cake
 
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 

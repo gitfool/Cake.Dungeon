@@ -1,5 +1,4 @@
-#load environment.cake
-#load extensions.cake
+#load bootstrap.cake
 
 public class Credentials
 {

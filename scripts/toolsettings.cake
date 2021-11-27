@@ -1,4 +1,4 @@
-#load builder.cake
+#load bootstrap.cake
 
 public class ToolSettings
 {
@@ -24,6 +24,7 @@ public class ToolSettings
         bool? dockerBuildPull,
         bool? dockerPushLatest,
         bool? dockerPushSkipDuplicate,
+        string[] dockerTagsDefault,
         string[] dockerTagsLatest,
         bool? nuGetPackSymbols,
         string nuGetPackSymbolsFormat,
@@ -55,6 +56,7 @@ public class ToolSettings
         DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
         DockerPushSkipDuplicate = dockerPushSkipDuplicate ?? false;
+        DockerTagsDefault = dockerTagsDefault ?? new[] { build.Version.SemVer, "latest" };
         DockerTagsLatest = dockerTagsLatest ?? new[] { "latest" };
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
@@ -88,6 +90,7 @@ public class ToolSettings
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
     public bool DockerPushSkipDuplicate { get; }
+    public string[] DockerTagsDefault { get; }
     public string[] DockerTagsLatest { get; }
 
     public bool NuGetPackSymbols { get; }

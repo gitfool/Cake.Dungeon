@@ -1,13 +1,4 @@
-#load credentials.cake
-#load docker.cake
-#load environment.cake
-#load extensions.cake
-#load parameters.cake
-#load paths.cake
-#load patterns.cake
-#load tasks.cake
-#load toolsettings.cake
-#load version.cake
+#load bootstrap.cake
 
 public class Builder
 {
@@ -126,6 +117,7 @@ public class Builder
         bool? dockerBuildPull = null,
         bool? dockerPushLatest = null,
         bool? dockerPushSkipDuplicate = null,
+        string[] dockerTagsDefault = null,
         string[] dockerTagsLatest = null,
         bool? nuGetPackSymbols = null,
         string nuGetPackSymbolsFormat = null,
@@ -213,6 +205,7 @@ public class Builder
             dockerBuildPull,
             dockerPushLatest,
             dockerPushSkipDuplicate,
+            dockerTagsDefault,
             dockerTagsLatest,
             nuGetPackSymbols,
             nuGetPackSymbolsFormat,
@@ -236,8 +229,13 @@ public class Builder
         _tokens ??= this.ToTokens("Build")
             .ToDictionary(entry => entry.Key, entry => entry.Value);
 
-    public string[] TransformTokens(IEnumerable<string> strings) =>
-        strings?.Select(text => Context.TransformText(text, "{{", "}}").WithTokens(ToTokens()).ToString()).ToArray();
+    public void TransformTokens(FilePathCollection files)
+    {
+        foreach (var file in files)
+        {
+            TransformTokens(file, file);
+        }
+    }
 
     public void TransformTokens(FilePath source, FilePath destination) =>
         Context.TransformTextFile(source, "{{", "}}")
@@ -272,5 +270,3 @@ public class Builder
     private Dictionary<string, string> _envVars;
     private Dictionary<string, object> _tokens;
 }
-
-var Build = new Builder(BuildSystem, Context, target => RunTarget(target));

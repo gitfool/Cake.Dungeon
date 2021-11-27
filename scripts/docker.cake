@@ -1,5 +1,4 @@
 #load bootstrap.cake
-#load extensions.cake
 
 public class DockerImage
 {
@@ -10,7 +9,7 @@ public class DockerImage
         Context = context ?? ".";
         File = file;
         Args = args;
-        Tags = tags ?? new[] { "{{ Build.Version.SemVer }}", "latest" };
+        Tags = tags;
     }
 
     public string Registry { get; set; }
@@ -20,12 +19,12 @@ public class DockerImage
     public string[] Args { get; set; }
     public string[] Tags { get; set; }
 
-    public bool IsConfigured => Repository.IsConfigured() && Context.IsConfigured() && Tags != null && Tags.All(tag => tag.IsConfigured());
+    public bool IsConfigured => Repository.IsConfigured() && Context.IsConfigured() && (Tags == null || Tags.All(tag => tag.IsConfigured()));
 
     public DockerImageReference ToReference(ICakeContext context, string tag, bool latest)
     {
         var source = $"{Repository}:{tag}";
-        var target = Registry.IsConfigured() ? $"{Registry}/{Repository}:{tag}" : source;
+        var target = Registry.IsConfigured() ? $"{Registry}/{source}" : source;
         var exists = latest || context.DockerManifestExists(target);
         return new DockerImageReference { Tag = tag, Source = source, Target = target, Exists = exists };
     }

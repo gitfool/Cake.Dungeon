@@ -1,5 +1,4 @@
 #load bootstrap.cake
-#load builder.cake
 
 public static class Tasks
 {
@@ -76,9 +75,9 @@ Tasks.DockerBuild = Task("DockerBuild")
     var settings = new DockerImageBuildSettings
     {
         File = image.File,
-        BuildArg = Build.TransformTokens(image.Args),
+        BuildArg = image.Args,
         Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = Build.TransformTokens(image.Tags.Select(tag => $"{image.Repository}:{tag}"))
+        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
     };
     DockerBuild(settings, image.Context);
 });
@@ -231,7 +230,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
     .DoesForEach(() => Build.DockerImages, image =>
 {
-    var references = Build.TransformTokens(image.Tags)
+    var references = (image.Tags ?? Build.ToolSettings.DockerTagsDefault)
         .Where(tag => !Build.ToolSettings.DockerTagsLatest.Contains(tag) || Build.ToolSettings.DockerPushLatest)
         .Select(tag => image.ToReference(Context, tag, Build.ToolSettings.DockerTagsLatest.Contains(tag)))
         .ToArray();
@@ -321,12 +320,11 @@ Tasks.DockerDeploy = Task("DockerDeploy")
 
     var settings = new DockerContainerRunSettings
     {
-        Env = Build.TransformTokens(deployer.Environment),
-        Volume = Build.TransformTokens(deployer.Volumes),
+        Env = deployer.Environment,
+        Volume = deployer.Volumes,
         Tty = true
     };
-    var args = Build.TransformTokens(deployer.Args);
-    DockerRunWithoutResult(settings, image, args?[0], args?[1..]);
+    DockerRunWithoutResult(settings, image, deployer.Args?[0], deployer.Args?[1..]);
 });
 
 Tasks.Build = Task("Build")
