@@ -41,7 +41,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
         return;
     }
 
-    var msbuildSettings = new DotNetCoreMSBuildSettings
+    var msbuildSettings = new DotNetMSBuildSettings
     {
         BinaryLogger = new MSBuildBinaryLoggerSettings { Enabled = Build.ToolSettings.BuildBinaryLoggerEnabled },
         ContinuousIntegrationBuild = !Build.Version.IsLocal,
@@ -202,7 +202,7 @@ Tasks.NuGetPack = Task("NuGetPack")
         Configuration = Build.Parameters.Configuration,
         IncludeSymbols = Build.ToolSettings.NuGetPackSymbols,
         SymbolPackageFormat = Build.ToolSettings.NuGetPackSymbolsFormat,
-        MSBuildSettings = new DotNetCoreMSBuildSettings { PackageVersion = Build.Version.FullSemVer },
+        MSBuildSettings = new DotNetMSBuildSettings { PackageVersion = Build.Version.FullSemVer },
         NoLogo = Build.ToolSettings.DotNetNoLogo,
         NoBuild = true,
         NoRestore = true,
