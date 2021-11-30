@@ -30,7 +30,7 @@ public class Parameters
         Configuration = configuration ?? build.Context.Argument("configuration", build.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
 
         Publish = publish ?? build.Context.Argument("publish", build.Context.EnvironmentVariable("CAKE_PUBLISH", false));
-        Deploy = deploy ?? build.Context.Argument("deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", true));
+        Deploy = deploy ?? build.Context.Argument("deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", Target.Equals("Deploy", StringComparison.OrdinalIgnoreCase)));
         DeployEnvironment = deployEnvironment ?? build.Context.Argument("deploy-environment", build.Context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
 
         DefaultLog = defaultLog ?? build.Context.Argument("default-log", build.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
