@@ -13,8 +13,8 @@ variables:
   NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 jobs:
-  - job: BuildDocker
-    dependsOn: [ BuildLinux, BuildMac, BuildWindows ]
+  - job: build_docker
+    dependsOn: [ build_linux, build_mac, build_windows ]
     pool:
       vmImage: ubuntu-latest
     container: dockfool/cake-docker:latest
@@ -33,7 +33,7 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --verbosity=verbose
         displayName: Cake build
 
-  - job: BuildLinux
+  - job: build_linux
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -56,7 +56,7 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --verbosity=verbose
         displayName: Cake build
 
-  - job: BuildMac
+  - job: build_mac
     pool:
       vmImage: macos-latest
     steps:
@@ -79,7 +79,7 @@ jobs:
       - bash: dotnet tool restore && dotnet cake --verbosity=verbose
         displayName: Cake build
 
-  - job: BuildWindows
+  - job: build_windows
     pool:
       vmImage: windows-latest
     steps:

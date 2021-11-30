@@ -1,11 +1,11 @@
-name: Dependabot
+name: dependabot
 on:
   schedule:
     - cron: '0 5 * * *'
   workflow_dispatch:
 
 jobs:
-  Cake:
+  cake:
     runs-on: ubuntu-latest
     steps:
       - name: Check dependencies

@@ -13,10 +13,10 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   NUGET_PACKAGES: $CI_PROJECT_DIR/.nuget/packages
 
-stages: [ Build ]
+stages: [ build ]
 
-Docker:
-  stage: Build
+docker:
+  stage: build
   tags: [ shared, linux, docker ]
   image: dockfool/cake-docker:latest
   cache:
@@ -27,8 +27,8 @@ Docker:
   script:
     - dotnet tool restore && dotnet cake --verbosity=verbose
 
-Linux:
-  stage: Build
+linux:
+  stage: build
   tags: [ shared, linux ]
   cache:
     paths: [ $NUGET_PACKAGES ]
@@ -40,8 +40,8 @@ Linux:
     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
     - dotnet tool restore && dotnet cake --verbosity=verbose
 
-# Mac:
-#   stage: Build
+# mac:
+#   stage: build
 #   tags: [ shared, macos ]
 #   cache:
 #     paths: [ $NUGET_PACKAGES ]
@@ -53,8 +53,8 @@ Linux:
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --verbosity=verbose
 
-Windows:
-  stage: Build
+windows:
+  stage: build
   tags: [ shared-windows, windows ]
   cache:
     paths: [ $NUGET_PACKAGES ]

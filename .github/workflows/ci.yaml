@@ -1,4 +1,4 @@
-name: CI
+name: ci
 on:
   push:
     branches: [ master ]
@@ -15,8 +15,8 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  BuildDocker:
-    needs: [ BuildLinux, BuildMac, BuildWindows ]
+  build-docker:
+    needs: [ build-linux, build-mac, build-windows ]
     runs-on: ubuntu-latest
     container: dockfool/cake-docker:latest
     steps:
@@ -36,7 +36,7 @@ jobs:
       - name: Cake build
         run: dotnet tool restore && dotnet cake --verbosity=verbose --publish=true
 
-  BuildLinux:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -60,7 +60,7 @@ jobs:
       - name: Cake build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
-  BuildMac:
+  build-mac:
     runs-on: macos-latest
     steps:
       - name: Checkout source
@@ -84,7 +84,7 @@ jobs:
       - name: Cake build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
-  BuildWindows:
+  build-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout source
