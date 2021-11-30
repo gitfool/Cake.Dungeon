@@ -34,7 +34,13 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
+        id: cake-build
         run: dotnet tool restore && dotnet cake --verbosity=verbose --publish=true
+
+      - name: Show outputs
+        run: |
+          # steps.cake-build.outputs.build
+          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
 
   build-linux:
     runs-on: ubuntu-latest
@@ -58,7 +64,13 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
+        id: cake-build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
+
+      - name: Show outputs
+        run: |
+          # steps.cake-build.outputs.build
+          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
 
   build-mac:
     runs-on: macos-latest
@@ -82,7 +94,13 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
+        id: cake-build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
+
+      - name: Show outputs
+        run: |
+          # steps.cake-build.outputs.build
+          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
 
   build-windows:
     runs-on: windows-latest
@@ -106,4 +124,10 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Cake build
+        id: cake-build
         run: dotnet tool restore && dotnet cake --verbosity=verbose
+
+      - name: Show outputs
+        run: |
+          # steps.cake-build.outputs.build
+          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"

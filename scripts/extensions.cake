@@ -11,6 +11,10 @@ public static string ToEnvVar(this string value)
     return Regex.Replace(value, @"\['?(.+?)'?\]", "_$1"); // indexed values
 }
 
+public static string ToJson(this object obj, bool writeIndented = false) => ToJson(obj, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = writeIndented });
+
+public static string ToJson(this object obj, JsonSerializerOptions options) => JsonSerializer.Serialize(obj, options);
+
 public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj, string prefix = null)
 {
     static IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetTokens(string key, object value)

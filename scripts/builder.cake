@@ -14,6 +14,11 @@ public class Builder
 
     public void Info()
     {
+        if (BuildSystem.IsRunningOnGitHubActions)
+        {
+            Context.Information($"::set-output name=build::{ToJson()}");
+        }
+
         var secrets = typeof(Environment).GetProperties().Select(property => property.GetValue(Environment)).ToArray();
         var variables = Context.EnvironmentVariables()
             .OrderBy(entry => entry.Key)
@@ -222,8 +227,11 @@ public class Builder
 
     public Dictionary<string, string> ToEnvVars() =>
         _envVars ??= ToTokens()
-            .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)")) // filter tokens
+            .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)"))
             .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
+
+    public string ToJson() =>
+        new { Parameters = new { Parameters.Title, Parameters.Configuration, Parameters.Publish, Parameters.Deploy, Parameters.DeployEnvironment }, Version }.ToJson();
 
     public Dictionary<string, object> ToTokens() =>
         _tokens ??= this.ToTokens("Build")

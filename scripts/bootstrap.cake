@@ -19,6 +19,23 @@
 
 using System.Collections;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+
+TaskSetup(context =>
+{
+    if (BuildSystem.IsRunningOnGitHubActions)
+    {
+        Information($"::group::{context.Task.Name}");
+    }
+});
+
+TaskTeardown(context =>
+{
+    if (BuildSystem.IsRunningOnGitHubActions)
+    {
+        Information($"::endgroup::{context.Task.Name}");
+    }
+});
 
 var Build = new Builder(BuildSystem, Context, target => RunTarget(target));
