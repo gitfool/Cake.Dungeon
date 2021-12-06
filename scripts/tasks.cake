@@ -158,7 +158,8 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
     .WithCriteria(() => Build.Parameters.RunTestCoverageReports, "Not run")
     .Does(() =>
 {
-    DeleteFiles($"{Build.Directories.ArtifactsTests}/*.*");
+    var artifactsTestsCoverageDirectory = Build.Directories.ArtifactsTests.Combine("Coverage");
+    CleanDirectory(artifactsTestsCoverageDirectory);
 
     var patterns = Build.Patterns.TestCoverageReports.Select(pattern => $"{Build.Directories.ArtifactsTests}/{pattern}").ToArray();
     var reports = GetFiles(patterns);
@@ -175,9 +176,9 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
         ReportTypes = Build.ToolSettings.TestCoverageReportTypes.Select(Enum.Parse<ReportGeneratorReportType>).ToArray(),
         Verbosity = ReportGeneratorVerbosity.Info
     };
-    ReportGenerator(reports, Build.Directories.ArtifactsTests, settings);
+    ReportGenerator(reports, artifactsTestsCoverageDirectory, settings);
 
-    var summary = FileReadText($"{Build.Directories.ArtifactsTests}/Summary.txt");
+    var summary = FileReadText($"{artifactsTestsCoverageDirectory}/Summary.txt");
     Information("");
     Information(summary);
 });

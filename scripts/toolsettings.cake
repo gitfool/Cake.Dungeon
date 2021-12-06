@@ -51,7 +51,7 @@ public class ToolSettings
         IntegrationTestRunSettingsFile = integrationTestRunSettingsFile;
         TestCoverageReportAssemblyFilters = testCoverageReportAssemblyFilters;
         TestCoverageReportClassFilters = testCoverageReportClassFilters;
-        TestCoverageReportTypes = testCoverageReportTypes ?? new[] { "TextSummary" };
+        TestCoverageReportTypes = testCoverageReportTypes ?? new[] { "Cobertura", "TextSummary" };
 
         DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
