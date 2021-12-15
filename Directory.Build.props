@@ -6,7 +6,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageTags>Cake;Build;Scripts</PackageTags>
+    <PackageTags>cake;build;recipe;script;cake-build;cake-recipe</PackageTags>
 
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
