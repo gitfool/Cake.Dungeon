@@ -44,7 +44,7 @@ jobs:
       - task: UseDotNet@2
         displayName: Install dotnet
         inputs:
-          version: 6.0.100
+          version: 6.0.101
 
       - task: Cache@2
         displayName: Cache packages
@@ -67,7 +67,7 @@ jobs:
       - task: UseDotNet@2
         displayName: Install dotnet
         inputs:
-          version: 6.0.100
+          version: 6.0.101
 
       - task: Cache@2
         displayName: Cache packages
@@ -90,7 +90,7 @@ jobs:
       - task: UseDotNet@2
         displayName: Install dotnet
         inputs:
-          version: 6.0.100
+          version: 6.0.101
 
       - task: Cache@2
         displayName: Cache packages
