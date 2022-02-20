@@ -72,14 +72,19 @@ Tasks.DockerBuild = Task("DockerBuild")
     .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
     .DoesForEach(() => Build.DockerImages, image =>
 {
-    var settings = new DockerImageBuildSettings
+    var settings = new DockerBuildXBuildSettings
     {
         File = image.File,
         BuildArg = image.Args,
         Pull = Build.ToolSettings.DockerBuildPull,
         Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
     };
-    DockerBuild(settings, image.Context);
+    if (BuildSystem.IsRunningOnGitHubActions)
+    {
+        settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+        settings.CacheTo = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+    }
+    DockerBuildXBuild(settings, image.Context);
 });
 
 Tasks.UnitTests = Task("UnitTests")
