@@ -3,7 +3,7 @@
 #addin nuget:?package=Cake.Incubator&version=7.0.0
 
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.0.4
-#tool dotnet:?package=GitVersion.Tool&version=5.8.1
+#tool dotnet:?package=GitVersion.Tool&version=5.8.2
 
 #load builder.cake
 #load credentials.cake
