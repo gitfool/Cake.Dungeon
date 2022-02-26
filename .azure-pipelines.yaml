@@ -44,6 +44,7 @@ jobs:
       - task: UseDotNet@2
         displayName: Install dotnet
         inputs:
+          # renovate: datasource=docker depName=dotnet-sdk lookupName=mcr.microsoft.com/dotnet/sdk
           version: 6.0.101
 
       - task: Cache@2
@@ -67,6 +68,7 @@ jobs:
       - task: UseDotNet@2
         displayName: Install dotnet
         inputs:
+          # renovate: datasource=docker depName=dotnet-sdk lookupName=mcr.microsoft.com/dotnet/sdk
           version: 6.0.101
 
       - task: Cache@2
@@ -90,6 +92,7 @@ jobs:
       - task: UseDotNet@2
         displayName: Install dotnet
         inputs:
+          # renovate: datasource=docker depName=dotnet-sdk lookupName=mcr.microsoft.com/dotnet/sdk
           version: 6.0.101
 
       - task: Cache@2
