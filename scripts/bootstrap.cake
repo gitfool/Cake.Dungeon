@@ -2,7 +2,7 @@
 #addin nuget:?package=Cake.FileHelpers&version=5.0.0
 #addin nuget:?package=Cake.Incubator&version=7.0.0
 
-#tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.1.0
+#tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.1.1
 #tool dotnet:?package=GitVersion.Tool&version=5.9.0
 
 #load builder.cake
