@@ -311,7 +311,7 @@ Tasks.DeployArtifacts = Task("DeployArtifacts")
 
 Tasks.DockerDeploy = Task("DockerDeploy")
     .WithCriteria(() => Build.Parameters.RunDockerDeploy, "Not run")
-    .WithCriteria(() => Build.Parameters.Title.IsConfigured() && Build.DockerDeployers != null && Build.DockerDeployers.All(deployer => deployer.IsConfigured), "Not configured")
+    .WithCriteria(() => Build.DockerDeployers != null && Build.DockerDeployers.All(deployer => deployer.IsConfigured), "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not public")
     .WithCriteria(() => Build.Parameters.Deploy, "Not deployer")
     .DoesForEach(() => Build.DockerDeployers, deployer =>
