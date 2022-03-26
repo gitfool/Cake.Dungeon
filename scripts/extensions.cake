@@ -81,7 +81,7 @@ public static string ToValueString(this object value)
     return value switch
     {
         null => "(null)",
-        bool boolean => boolean.ToString().ToLower(),
+        bool boolean => boolean.ToString().ToLowerInvariant(),
         string { Length: 0 } => @"""""",
         IList { Count: 0 } => "[]",
         IDictionary { Count: 0 } => "{}",

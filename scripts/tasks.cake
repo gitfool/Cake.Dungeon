@@ -52,8 +52,8 @@ Tasks.BuildSolutions = Task("BuildSolutions")
         InformationalVersion = Build.Version.InformationalVersion,
         PackageVersion = Build.Version.FullSemVer
     }
-        .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLower())
-        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLower());
+        .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLowerInvariant())
+        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLowerInvariant());
     var buildSettings = new DotNetBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
