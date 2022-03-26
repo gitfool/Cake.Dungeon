@@ -10,6 +10,7 @@ public class Parameters
         bool? publish,
         bool? deploy,
         string deployEnvironment,
+        string redactRegex,
         bool? defaultLog,
         bool? logEnvironment,
         bool? logBuildSystem,
@@ -32,6 +33,8 @@ public class Parameters
         Publish = publish ?? build.Context.Argument("publish", build.Context.EnvironmentVariable("CAKE_PUBLISH", false));
         Deploy = deploy ?? build.Context.Argument("deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", Target.Equals("Deploy", StringComparison.OrdinalIgnoreCase)));
         DeployEnvironment = deployEnvironment ?? build.Context.Argument("deploy-environment", build.Context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
+
+        RedactRegex = redactRegex ?? build.Context.Argument("redact-regex", build.Context.EnvironmentVariable("CAKE_REDACT_REGEX", @"Api_?Key|Password|Secret|Token"));
 
         DefaultLog = defaultLog ?? build.Context.Argument("default-log", build.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
         LogEnvironment = logEnvironment ?? build.Context.Argument("log-environment", build.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
@@ -57,6 +60,8 @@ public class Parameters
     public bool Publish { get; }
     public bool Deploy { get; }
     public string DeployEnvironment { get; }
+
+    public string RedactRegex { get; }
 
     public bool DefaultLog { get; }
     public bool LogEnvironment { get; }

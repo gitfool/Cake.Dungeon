@@ -2,7 +2,7 @@
 
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 
-public static string Redact(this string value) => value != null ? "****" : value;
+public static string Redact(this string value) => !string.IsNullOrEmpty(value) ? "[REDACTED]" : value;
 
 public static string ToEnvVar(this string value)
 {

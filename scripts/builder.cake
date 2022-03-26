@@ -14,22 +14,17 @@ public class Builder
 
     public void Info()
     {
-        if (BuildSystem.IsRunningOnGitHubActions)
-        {
-            Context.Information($"::set-output name=build::{ToJson()}");
-        }
+        bool IsRedacted(string value) => Regex.IsMatch(value, Parameters.RedactRegex, RegexOptions.IgnoreCase);
 
-        var secrets = typeof(Environment).GetProperties().Select(property => property.GetValue(Environment)).ToArray();
         var variables = Context.EnvironmentVariables()
             .OrderBy(entry => entry.Key)
-            .ToDictionary(entry => entry.Key, entry => secrets.Contains(entry.Key) ? entry.Value.Redact() : entry.Value); // redact secrets
+            .ToDictionary(entry => entry.Key, entry => IsRedacted(entry.Key) ? entry.Value.Redact() : entry.Value);
 
         var properties = ToTokens()
             .Where(entry => (Parameters.LogBuildSystem && entry.Key.StartsWith($"Build.BuildSystem.{BuildSystem.Provider}.")) ||
                 (Parameters.LogContext && entry.Key.StartsWith("Build.Context.")) ||
                 (Parameters.DefaultLog && !entry.Key.StartsWith("Build.BuildSystem.") && !entry.Key.StartsWith("Build.Context.")))
-            .ToDictionary(entry => entry.Key.Substring(6), entry => entry.Key.StartsWith("Build.Credentials.") && !entry.Key.EndsWith(".IsConfigured")
-                ? entry.Value?.ToString()?.Redact() : entry.Value); // redact secrets
+            .ToDictionary(entry => entry.Key.Substring(6), entry => IsRedacted(entry.Key) ? entry.Value?.ToString()?.Redact() : entry.Value);
 
         var padding = variables.Keys.Concat(properties.Keys).Select(key => key.Length).Max() + 4;
 
@@ -54,6 +49,11 @@ public class Builder
             }
             Context.Information(string.Concat(property.Key.PadRight(padding), property.Value.ToValueString()));
         }
+
+        if (BuildSystem.IsRunningOnGitHubActions)
+        {
+            Context.Information($"::set-output name=build::{ToJson()}");
+        }
     }
 
     public void Run()
@@ -68,6 +68,7 @@ public class Builder
         bool? publish = null,
         bool? deploy = null,
         string deployEnvironment = null,
+        string redactRegex = null,
         bool? defaultLog = null,
         bool? logEnvironment = null,
         bool? logBuildSystem = null,
@@ -82,13 +83,6 @@ public class Builder
         bool? runPublishToDocker = null,
         bool? runPublishToNuGet = null,
         bool? runDockerDeploy = null,
-
-        string gitHubTokenVariable = null, // environment
-        string gitHubUserNameVariable = null,
-        string gitHubPasswordVariable = null,
-        string nuGetApiKeyVariable = null,
-        string nuGetUserNameVariable = null,
-        string nuGetPasswordVariable = null,
 
         DirectoryPath rootDirectory = null, // directories
         DirectoryPath sourceDirectory = null,
@@ -142,6 +136,7 @@ public class Builder
             publish,
             deploy,
             deployEnvironment,
+            redactRegex,
             defaultLog,
             logEnvironment,
             logBuildSystem,
@@ -157,17 +152,8 @@ public class Builder
             runPublishToNuGet,
             runDockerDeploy);
 
-        Environment = new Environment(
-            gitHubTokenVariable,
-            gitHubUserNameVariable,
-            gitHubPasswordVariable,
-            nuGetApiKeyVariable,
-            nuGetUserNameVariable,
-            nuGetPasswordVariable);
-
         Credentials = new Credentials(
-            Context,
-            Environment);
+            Context);
 
         Directories = new Directories(
             Context,
@@ -262,7 +248,6 @@ public class Builder
     public ICakeContext Context { get; }
 
     public Parameters Parameters { get; private set; }
-    public Environment Environment { get; private set; }
     public Credentials Credentials { get; private set; }
     public Directories Directories { get; private set; }
     public Files Files { get; private set; }

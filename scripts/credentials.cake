@@ -2,17 +2,17 @@
 
 public class Credentials
 {
-    public Credentials(ICakeContext context, Environment environment)
+    public Credentials(ICakeContext context)
     {
         GitHub = new GitHubCredentials(
-            context.EnvironmentVariable(environment.GitHubToken),
-            context.EnvironmentVariable(environment.GitHubUserName),
-            context.EnvironmentVariable(environment.GitHubPassword));
+            context.EnvironmentVariable("GITHUB_TOKEN"),
+            context.EnvironmentVariable("GITHUB_USERNAME"),
+            context.EnvironmentVariable("GITHUB_PASSWORD"));
 
         NuGet = new NuGetCredentials(
-            context.EnvironmentVariable(environment.NuGetApiKey),
-            context.EnvironmentVariable(environment.NuGetUserName),
-            context.EnvironmentVariable(environment.NuGetPassword));
+            context.EnvironmentVariable("NUGET_API_KEY"),
+            context.EnvironmentVariable("NUGET_USERNAME"),
+            context.EnvironmentVariable("NUGET_PASSWORD"));
     }
 
     public GitHubCredentials GitHub { get; }

@@ -8,7 +8,6 @@
 #load builder.cake
 #load credentials.cake
 #load docker.cake
-#load environment.cake
 #load extensions.cake
 #load parameters.cake
 #load paths.cake
