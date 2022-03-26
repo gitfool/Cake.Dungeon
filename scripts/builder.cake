@@ -225,13 +225,14 @@ public class Builder
         return this;
     }
 
+    public string ToJson() =>
+        _json ??= new { Parameters = new { Parameters.Title, Parameters.Configuration, Parameters.Publish, Parameters.Deploy, Parameters.DeployEnvironment }, Version }
+            .ToJson(JsonSerializerDefaults.Web);
+
     public Dictionary<string, string> ToEnvVars() =>
         _envVars ??= ToTokens()
             .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)"))
             .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
-
-    public string ToJson() =>
-        new { Parameters = new { Parameters.Title, Parameters.Configuration, Parameters.Publish, Parameters.Deploy, Parameters.DeployEnvironment }, Version }.ToJson();
 
     public Dictionary<string, object> ToTokens() =>
         _tokens ??= this.ToTokens("Build")
@@ -275,6 +276,7 @@ public class Builder
 
     private readonly Action<string> _runTarget;
 
+    private string _json;
     private Dictionary<string, string> _envVars;
     private Dictionary<string, object> _tokens;
 }
