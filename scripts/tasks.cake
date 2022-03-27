@@ -83,6 +83,7 @@ Tasks.DockerBuild = Task("DockerBuild")
     {
         settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
         settings.CacheTo = new[] { $"type=gha,mode=max,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+        settings.ArgumentCustomization = args => args.Append("--load");
     }
     DockerBuildXBuild(settings, image.Context);
 });
