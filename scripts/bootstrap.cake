@@ -4,7 +4,7 @@
 #tool dotnet:?package=GitVersion.Tool&version=5.11.1
 
 #load aliases.cake
-#load builder.cake
+#load build.cake
 #load credentials.cake
 #load docker.cake
 #load extensions.cake
@@ -20,10 +20,12 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
+var build = new Build(Context, target => RunTarget(target));
+
+Setup<Build>(context => build);
+
 if (BuildSystem.IsRunningOnGitHubActions)
 {
-    TaskSetup(context => BuildSystem.GitHubActions.Commands.StartGroup(context.Task.Name));
-    TaskTeardown(context => BuildSystem.GitHubActions.Commands.EndGroup());
+    TaskSetup<Build>((context, build) => BuildSystem.GitHubActions.Commands.StartGroup(context.Task.Name));
+    TaskTeardown<Build>((context, build) => BuildSystem.GitHubActions.Commands.EndGroup());
 }
-
-var Build = new Builder(BuildSystem, Context, target => RunTarget(target));

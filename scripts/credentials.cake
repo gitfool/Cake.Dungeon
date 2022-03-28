@@ -1,6 +1,6 @@
 #load bootstrap.cake
 
-public class Credentials
+public sealed class Credentials
 {
     public Credentials(ICakeContext context)
     {
@@ -19,7 +19,7 @@ public class Credentials
     public NuGetCredentials NuGet { get; }
 }
 
-public class GitHubCredentials
+public sealed class GitHubCredentials
 {
     public GitHubCredentials(string token, string userName, string password)
     {
@@ -35,7 +35,7 @@ public class GitHubCredentials
     public bool IsConfigured => Token.IsConfigured() || (UserName.IsConfigured() && Password.IsConfigured());
 }
 
-public class NuGetCredentials
+public sealed class NuGetCredentials
 {
     public NuGetCredentials(string apiKey, string userName, string password)
     {

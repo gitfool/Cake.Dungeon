@@ -1,4 +1,4 @@
-public class Patterns
+public sealed class Patterns
 {
     public Patterns(
         string[] buildSolutions,

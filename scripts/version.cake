@@ -1,4 +1,4 @@
-public class Version
+public sealed class Version
 {
     public Version(BuildSystem buildSystem, ICakeContext context)
     {

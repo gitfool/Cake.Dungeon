@@ -1,6 +1,6 @@
 #load bootstrap.cake
 
-public class Parameters
+public sealed class Parameters
 {
     public Parameters(
         ICakeContext context,

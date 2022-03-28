@@ -1,4 +1,4 @@
-public class Directories
+public sealed class Directories
 {
     public Directories(
         ICakeContext context,
@@ -25,7 +25,7 @@ public class Directories
     public DirectoryPath ArtifactsNuGet { get; }
 }
 
-public class Files
+public sealed class Files
 {
     public Files(
         ICakeContext context,

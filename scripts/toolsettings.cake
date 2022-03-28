@@ -1,6 +1,6 @@
 #load bootstrap.cake
 
-public class ToolSettings
+public sealed class ToolSettings
 {
     public ToolSettings(
         ICakeContext context,

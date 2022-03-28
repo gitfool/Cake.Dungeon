@@ -1,6 +1,6 @@
 #load scripts/bootstrap.cake
 
-Build.SetParameters
+build.SetParameters
 (
     title: "Cake.Dungeon",
 
@@ -10,9 +10,9 @@ Build.SetParameters
     runNuGetPack: true,
     runPublishToNuGet: true,
 
-    sourceDirectory: Build.Directories.Root,
+    sourceDirectory: build.Directories.Root,
 
     nuGetPushSkipDuplicate: true
 );
 
-Build.Run();
+build.Run();

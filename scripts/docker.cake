@@ -1,6 +1,6 @@
 #load bootstrap.cake
 
-public class DockerImage
+public sealed class DockerImage
 {
     public DockerImage(string registry = null, string repository = null, string context = null, string file = null, string target = null, string[] args = null, string[] tags = null, string[] platforms = null)
     {
@@ -35,7 +35,7 @@ public class DockerImage
     }
 }
 
-public class DockerImageReference
+public sealed class DockerImageReference
 {
     public string Tag { get; set; }
     public string Source { get; set; }
@@ -43,7 +43,7 @@ public class DockerImageReference
     public bool Exists { get; set; }
 }
 
-public class DockerDeployer
+public sealed class DockerDeployer
 {
     public DockerDeployer(string registry = null, string repository = null, string tag = null, string[] environment = null, string[] volumes = null, string[] args = null)
     {

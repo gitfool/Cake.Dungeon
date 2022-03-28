@@ -20,20 +20,20 @@ public static class Tasks
 }
 
 Tasks.Info = Task("Info")
-    .Does(() =>
+    .Does<Build>(build =>
 {
-    Build.Info();
+    build.Info();
 });
 
 Tasks.BuildSolutions = Task("BuildSolutions")
     .IsDependentOn("Info")
-    .WithCriteria(() => Build.Parameters.RunBuildSolutions, "Not run")
-    .Does(() =>
+    .WithCriteria<Build>(build => build.Parameters.RunBuildSolutions, "Not run")
+    .Does<Build>(build =>
 {
-    CleanDirectories($"{Build.Directories.Source}/**/bin");
-    CleanDirectories($"{Build.Directories.Source}/**/obj");
+    CleanDirectories($"{build.Directories.Source}/**/bin");
+    CleanDirectories($"{build.Directories.Source}/**/obj");
 
-    var patterns = Build.Patterns.BuildSolutions.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var patterns = build.Patterns.BuildSolutions.Select(pattern => $"{build.Directories.Source}/{pattern}");
     var solutions = GetFiles(patterns);
     if (!solutions.Any())
     {
@@ -43,22 +43,22 @@ Tasks.BuildSolutions = Task("BuildSolutions")
 
     var msbuildSettings = new DotNetMSBuildSettings
     {
-        BinaryLogger = new MSBuildBinaryLoggerSettings { Enabled = Build.ToolSettings.BuildBinaryLoggerEnabled },
-        ContinuousIntegrationBuild = !Build.Version.IsLocal,
-        MaxCpuCount = Build.ToolSettings.BuildMaxCpuCount,
-        TreatAllWarningsAs = Build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default,
-        Version = Build.Version.AssemblyVersion,
-        FileVersion = Build.Version.AssemblyFileVersion,
-        InformationalVersion = Build.Version.InformationalVersion,
-        PackageVersion = Build.Version.SemVer
+        BinaryLogger = new MSBuildBinaryLoggerSettings { Enabled = build.ToolSettings.BuildBinaryLoggerEnabled },
+        ContinuousIntegrationBuild = !build.Version.IsLocal,
+        MaxCpuCount = build.ToolSettings.BuildMaxCpuCount,
+        TreatAllWarningsAs = build.ToolSettings.BuildTreatWarningsAsErrors ? MSBuildTreatAllWarningsAs.Error : MSBuildTreatAllWarningsAs.Default,
+        Version = build.Version.AssemblyVersion,
+        FileVersion = build.Version.AssemblyFileVersion,
+        InformationalVersion = build.Version.InformationalVersion,
+        PackageVersion = build.Version.SemVer
     }
-        .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToValueString())
-        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToValueString());
+        .WithProperty("EmbedAllSources", build.ToolSettings.BuildEmbedAllSources.ToValueString())
+        .WithProperty("RestoreLockedMode", build.ToolSettings.BuildRestoreLockedMode.ToValueString());
     var buildSettings = new DotNetBuildSettings
     {
-        Configuration = Build.Parameters.Configuration,
+        Configuration = build.Parameters.Configuration,
         MSBuildSettings = msbuildSettings,
-        NoLogo = Build.ToolSettings.DotNetNoLogo
+        NoLogo = build.ToolSettings.DotNetNoLogo
     };
     foreach (var solution in solutions)
     {
@@ -68,23 +68,23 @@ Tasks.BuildSolutions = Task("BuildSolutions")
 
 Tasks.DockerBuild = Task("DockerBuild")
     .IsDependentOn("BuildSolutions")
-    .WithCriteria(() => Build.Parameters.RunDockerBuild, "Not run")
-    .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
-    .DoesForEach(() => Build.DockerImages, image =>
+    .WithCriteria<Build>(build => build.Parameters.RunDockerBuild, "Not run")
+    .WithCriteria<Build>(build => build.DockerImages != null && build.DockerImages.All(image => image.IsConfigured), "Not configured")
+    .DoesForEach<Build, DockerImage>(build => build.DockerImages, (build, image) =>
 {
     var settings = new DockerBuildXBuildSettings
     {
         File = image.File,
         Target = image.Target,
         BuildArg = image.Args,
-        Load = Build.ToolSettings.DockerBuildLoad,
-        Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
+        Load = build.ToolSettings.DockerBuildLoad,
+        Pull = build.ToolSettings.DockerBuildPull,
+        Tag = (image.Tags ?? build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
         settings.Platform = image.Platforms;
-        if (Build.ToolSettings.DockerBuildCache)
+        if (build.ToolSettings.DockerBuildCache)
         {
             settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
             settings.CacheTo = new[] { $"type=gha,mode=max,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
@@ -95,10 +95,10 @@ Tasks.DockerBuild = Task("DockerBuild")
 
 Tasks.UnitTests = Task("UnitTests")
     .IsDependentOn("DockerBuild")
-    .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
-    .Does(() =>
+    .WithCriteria<Build>(build => build.Parameters.RunUnitTests, "Not run")
+    .Does<Build>(build =>
 {
-    var patterns = Build.Patterns.UnitTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var patterns = build.Patterns.UnitTestProjects.Select(pattern => $"{build.Directories.Source}/{pattern}");
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -108,21 +108,21 @@ Tasks.UnitTests = Task("UnitTests")
 
     foreach (var project in projects)
     {
-        var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
+        var artifactsTestsProjectDirectory = build.Directories.ArtifactsTests.Combine(build.Directories.Source.GetRelativePath(project.GetDirectory()));
         CleanDirectory(artifactsTestsProjectDirectory);
 
-        var arguments = Build.ToolSettings.UnitTestRunSettings.ToProcessArguments();
+        var arguments = build.ToolSettings.UnitTestRunSettings.ToProcessArguments();
         var settings = new DotNetTestSettings
         {
-            Configuration = Build.Parameters.Configuration,
-            EnvironmentVariables = Build.ToEnvVars(),
-            Collectors = Build.ToolSettings.UnitTestCollectors,
-            Loggers = Build.ToolSettings.UnitTestLoggers,
-            NoLogo = Build.ToolSettings.DotNetNoLogo,
+            Configuration = build.Parameters.Configuration,
+            EnvironmentVariables = build.ToEnvVars(),
+            Collectors = build.ToolSettings.UnitTestCollectors,
+            Loggers = build.ToolSettings.UnitTestLoggers,
+            NoLogo = build.ToolSettings.DotNetNoLogo,
             NoBuild = true,
             NoRestore = true,
             ResultsDirectory = artifactsTestsProjectDirectory,
-            Settings = Build.ToolSettings.UnitTestRunSettingsFile
+            Settings = build.ToolSettings.UnitTestRunSettingsFile
         };
         DotNetTest(project.FullPath, arguments, settings);
     }
@@ -130,10 +130,10 @@ Tasks.UnitTests = Task("UnitTests")
 
 Tasks.IntegrationTests = Task("IntegrationTests")
     .IsDependentOn("DockerBuild")
-    .WithCriteria(() => Build.Parameters.RunIntegrationTests, "Not run")
-    .Does(() =>
+    .WithCriteria<Build>(build => build.Parameters.RunIntegrationTests, "Not run")
+    .Does<Build>(build =>
 {
-    var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var patterns = build.Patterns.IntegrationTestProjects.Select(pattern => $"{build.Directories.Source}/{pattern}");
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -143,21 +143,21 @@ Tasks.IntegrationTests = Task("IntegrationTests")
 
     foreach (var project in projects)
     {
-        var artifactsTestsProjectDirectory = Build.Directories.ArtifactsTests.Combine(Build.Directories.Source.GetRelativePath(project.GetDirectory()));
+        var artifactsTestsProjectDirectory = build.Directories.ArtifactsTests.Combine(build.Directories.Source.GetRelativePath(project.GetDirectory()));
         CleanDirectory(artifactsTestsProjectDirectory);
 
-        var arguments = Build.ToolSettings.IntegrationTestRunSettings.ToProcessArguments();
+        var arguments = build.ToolSettings.IntegrationTestRunSettings.ToProcessArguments();
         var settings = new DotNetTestSettings
         {
-            Configuration = Build.Parameters.Configuration,
-            EnvironmentVariables = Build.ToEnvVars(),
-            Collectors = Build.ToolSettings.IntegrationTestCollectors,
-            Loggers = Build.ToolSettings.IntegrationTestLoggers,
-            NoLogo = Build.ToolSettings.DotNetNoLogo,
+            Configuration = build.Parameters.Configuration,
+            EnvironmentVariables = build.ToEnvVars(),
+            Collectors = build.ToolSettings.IntegrationTestCollectors,
+            Loggers = build.ToolSettings.IntegrationTestLoggers,
+            NoLogo = build.ToolSettings.DotNetNoLogo,
             NoBuild = true,
             NoRestore = true,
             ResultsDirectory = artifactsTestsProjectDirectory,
-            Settings = Build.ToolSettings.IntegrationTestRunSettingsFile
+            Settings = build.ToolSettings.IntegrationTestRunSettingsFile
         };
         DotNetTest(project.FullPath, arguments, settings);
     }
@@ -166,13 +166,13 @@ Tasks.IntegrationTests = Task("IntegrationTests")
 Tasks.TestCoverageReports = Task("TestCoverageReports")
     .IsDependentOn("UnitTests")
     .IsDependentOn("IntegrationTests")
-    .WithCriteria(() => Build.Parameters.RunTestCoverageReports, "Not run")
-    .Does(() =>
+    .WithCriteria<Build>(build => build.Parameters.RunTestCoverageReports, "Not run")
+    .Does<Build>(build =>
 {
-    var artifactsTestsCoverageDirectory = Build.Directories.ArtifactsTests.Combine("Coverage");
+    var artifactsTestsCoverageDirectory = build.Directories.ArtifactsTests.Combine("Coverage");
     CleanDirectory(artifactsTestsCoverageDirectory);
 
-    var patterns = Build.Patterns.TestCoverageReports.Select(pattern => $"{Build.Directories.ArtifactsTests}/{pattern}");
+    var patterns = build.Patterns.TestCoverageReports.Select(pattern => $"{build.Directories.ArtifactsTests}/{pattern}");
     var reports = GetFiles(patterns);
     if (!reports.Any())
     {
@@ -182,9 +182,9 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
 
     var settings = new ReportGeneratorSettings
     {
-        AssemblyFilters = Build.ToolSettings.TestCoverageReportAssemblyFilters,
-        ClassFilters = Build.ToolSettings.TestCoverageReportClassFilters,
-        ReportTypes = Build.ToolSettings.TestCoverageReportTypes.Select(Enum.Parse<ReportGeneratorReportType>).ToArray(),
+        AssemblyFilters = build.ToolSettings.TestCoverageReportAssemblyFilters,
+        ClassFilters = build.ToolSettings.TestCoverageReportClassFilters,
+        ReportTypes = build.ToolSettings.TestCoverageReportTypes.Select(Enum.Parse<ReportGeneratorReportType>).ToArray(),
         Verbosity = ReportGeneratorVerbosity.Info
     };
     ReportGenerator(reports, artifactsTestsCoverageDirectory, settings);
@@ -196,12 +196,12 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
 
 Tasks.NuGetPack = Task("NuGetPack")
     .IsDependentOn("BuildSolutions")
-    .WithCriteria(() => Build.Parameters.RunNuGetPack, "Not run")
-    .Does(() =>
+    .WithCriteria<Build>(build => build.Parameters.RunNuGetPack, "Not run")
+    .Does<Build>(build =>
 {
-    CleanDirectory(Build.Directories.ArtifactsNuGet);
+    CleanDirectory(build.Directories.ArtifactsNuGet);
 
-    var patterns = Build.Patterns.NuGetProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var patterns = build.Patterns.NuGetProjects.Select(pattern => $"{build.Directories.Source}/{pattern}");
     var projects = GetFiles(patterns);
     if (!projects.Any())
     {
@@ -211,14 +211,14 @@ Tasks.NuGetPack = Task("NuGetPack")
 
     var settings = new DotNetPackSettings
     {
-        Configuration = Build.Parameters.Configuration,
-        IncludeSymbols = Build.ToolSettings.NuGetPackSymbols,
-        SymbolPackageFormat = Build.ToolSettings.NuGetPackSymbolsFormat,
-        MSBuildSettings = new DotNetMSBuildSettings { PackageVersion = Build.Version.SemVer },
-        NoLogo = Build.ToolSettings.DotNetNoLogo,
+        Configuration = build.Parameters.Configuration,
+        IncludeSymbols = build.ToolSettings.NuGetPackSymbols,
+        SymbolPackageFormat = build.ToolSettings.NuGetPackSymbolsFormat,
+        MSBuildSettings = new DotNetMSBuildSettings { PackageVersion = build.Version.SemVer },
+        NoLogo = build.ToolSettings.DotNetNoLogo,
         NoBuild = true,
         NoRestore = true,
-        OutputDirectory = Build.Directories.ArtifactsNuGet
+        OutputDirectory = build.Directories.ArtifactsNuGet
     };
     foreach (var project in projects)
     {
@@ -236,15 +236,15 @@ Tasks.PublishArtifacts = Task("PublishArtifacts")
 
 Tasks.PublishToDocker = Task("PublishToDocker")
     .IsDependentOn("DockerBuild")
-    .WithCriteria(() => Build.Parameters.RunPublishToDocker, "Not run")
-    .WithCriteria(() => Build.DockerImages != null && Build.DockerImages.All(image => image.IsConfigured), "Not configured")
-    .WithCriteria(() => Build.Version.IsPublic, "Not public")
-    .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
-    .DoesForEach(() => Build.DockerImages, image =>
+    .WithCriteria<Build>(build => build.Parameters.RunPublishToDocker, "Not run")
+    .WithCriteria<Build>(build => build.DockerImages != null && build.DockerImages.All(image => image.IsConfigured), "Not configured")
+    .WithCriteria<Build>(build => build.Version.IsPublic, "Not public")
+    .WithCriteria<Build>(build => build.Parameters.Publish, "Not publisher")
+    .DoesForEach<Build, DockerImage>(build => build.DockerImages, (build, image) =>
 {
-    var references = (image.Tags ?? Build.ToolSettings.DockerTagsDefault)
-        .Where(tag => !Build.ToolSettings.DockerTagsLatest.Contains(tag) || Build.ToolSettings.DockerPushLatest)
-        .Select(tag => image.ToReference(Context, tag, Build.ToolSettings.DockerTagsLatest.Contains(tag)))
+    var references = (image.Tags ?? build.ToolSettings.DockerTagsDefault)
+        .Where(tag => !build.ToolSettings.DockerTagsLatest.Contains(tag) || build.ToolSettings.DockerPushLatest)
+        .Select(tag => image.ToReference(Context, tag, build.ToolSettings.DockerTagsLatest.Contains(tag)))
         .ToArray();
 
     var tags = references
@@ -252,11 +252,11 @@ Tasks.PublishToDocker = Task("PublishToDocker")
         {
             if (reference.Exists)
             {
-                if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) && !Build.ToolSettings.DockerPushSkipDuplicate)
+                if (!build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) && !build.ToolSettings.DockerPushSkipDuplicate)
                 {
                     throw new InvalidOperationException($"Docker image {reference.Target} already exists");
                 }
-                if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) || references.All(reference => reference.Exists))
+                if (!build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) || references.All(reference => reference.Exists))
                 {
                     Information($"Skipping docker image {reference.Target} already exists");
                     return false;
@@ -284,7 +284,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     if (BuildSystem.IsRunningOnGitHubActions)
     {
         settings.Platform = image.Platforms;
-        if (Build.ToolSettings.DockerBuildCache)
+        if (build.ToolSettings.DockerBuildCache)
         {
             settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
         }
@@ -294,44 +294,44 @@ Tasks.PublishToDocker = Task("PublishToDocker")
 
 Tasks.PublishToNuGet = Task("PublishToNuGet")
     .IsDependentOn("NuGetPack")
-    .WithCriteria(() => Build.Parameters.RunPublishToNuGet, "Not run")
-    .WithCriteria(() => Build.Credentials.NuGet.IsConfigured && Build.ToolSettings.NuGetSource.IsConfigured(), "Not configured")
-    .WithCriteria(() => Build.Version.IsPublic, "Not public")
-    .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
-    .Does(() =>
+    .WithCriteria<Build>(build => build.Parameters.RunPublishToNuGet, "Not run")
+    .WithCriteria<Build>(build => build.Credentials.NuGet.IsConfigured && build.ToolSettings.NuGetSource.IsConfigured(), "Not configured")
+    .WithCriteria<Build>(build => build.Version.IsPublic, "Not public")
+    .WithCriteria<Build>(build => build.Parameters.Publish, "Not publisher")
+    .Does<Build>(build =>
 {
-    var packages = GetFiles($"{Build.Directories.ArtifactsNuGet}/**/*.nupkg");
+    var packages = GetFiles($"{build.Directories.ArtifactsNuGet}/**/*.nupkg");
     if (!packages.Any())
     {
         Warning("NuGet packages not found");
         return;
     }
 
-    if (Build.Credentials.NuGet.UserName.IsConfigured() && Build.Credentials.NuGet.Password.IsConfigured())
+    if (build.Credentials.NuGet.UserName.IsConfigured() && build.Credentials.NuGet.Password.IsConfigured())
     {
         var sourceSettings = new DotNetNuGetSourceSettings
         {
-            UserName = Build.Credentials.NuGet.UserName,
-            Password = Build.Credentials.NuGet.Password,
+            UserName = build.Credentials.NuGet.UserName,
+            Password = build.Credentials.NuGet.Password,
             StorePasswordInClearText = true,
-            Source = Build.ToolSettings.NuGetSource,
-            ConfigFile = Build.ToolSettings.NuGetSourceConfigFile
+            Source = build.ToolSettings.NuGetSource,
+            ConfigFile = build.ToolSettings.NuGetSourceConfigFile
         };
-        if (!DotNetNuGetHasSource(Build.ToolSettings.NuGetSourceName, sourceSettings))
+        if (!DotNetNuGetHasSource(build.ToolSettings.NuGetSourceName, sourceSettings))
         {
-            DotNetNuGetAddSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            DotNetNuGetAddSource(build.ToolSettings.NuGetSourceName, sourceSettings);
         }
         else
         {
-            DotNetNuGetUpdateSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            DotNetNuGetUpdateSource(build.ToolSettings.NuGetSourceName, sourceSettings);
         }
     }
 
     var settings = new DotNetNuGetPushSettings
     {
-        ApiKey = Build.Credentials.NuGet.ApiKey,
-        Source = Build.ToolSettings.NuGetSource,
-        SkipDuplicate = Build.ToolSettings.NuGetPushSkipDuplicate
+        ApiKey = build.Credentials.NuGet.ApiKey,
+        Source = build.ToolSettings.NuGetSource,
+        SkipDuplicate = build.ToolSettings.NuGetPushSkipDuplicate
     };
     foreach (var package in packages)
     {
@@ -344,11 +344,11 @@ Tasks.DeployArtifacts = Task("DeployArtifacts")
     .IsDependentOn("DockerDeploy");
 
 Tasks.DockerDeploy = Task("DockerDeploy")
-    .WithCriteria(() => Build.Parameters.RunDockerDeploy, "Not run")
-    .WithCriteria(() => Build.DockerDeployers != null && Build.DockerDeployers.All(deployer => deployer.IsConfigured), "Not configured")
-    .WithCriteria(() => Build.Version.IsPublic, "Not public")
-    .WithCriteria(() => Build.Parameters.Deploy, "Not deployer")
-    .DoesForEach(() => Build.DockerDeployers, deployer =>
+    .WithCriteria<Build>(build => build.Parameters.RunDockerDeploy, "Not run")
+    .WithCriteria<Build>(build => build.DockerDeployers != null && build.DockerDeployers.All(deployer => deployer.IsConfigured), "Not configured")
+    .WithCriteria<Build>(build => build.Version.IsPublic, "Not public")
+    .WithCriteria<Build>(build => build.Parameters.Deploy, "Not deployer")
+    .DoesForEach<Build, DockerDeployer>(build => build.DockerDeployers, (build, deployer) =>
 {
     var image = deployer.Registry.IsConfigured() ? $"{deployer.Registry}/{deployer.Repository}:{deployer.Tag}" : $"{deployer.Repository}:{deployer.Tag}";
     DockerPull(image);

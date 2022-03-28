@@ -1,10 +1,10 @@
 #load bootstrap.cake
 
-public class Builder
+public sealed class Build
 {
-    public Builder(BuildSystem buildSystem, ICakeContext context, Action<string> runTarget)
+    public Build(ICakeContext context, Action<string> runTarget)
     {
-        BuildSystem = buildSystem;
+        BuildSystem = context.BuildSystem();
         Context = context;
         _runTarget = runTarget;
 
@@ -70,7 +70,7 @@ public class Builder
         _runTarget(Parameters.Target);
     }
 
-    public Builder SetParameters(
+    public void SetParameters(
         string title = null, // general
         string target = null,
         string configuration = null,
@@ -225,8 +225,6 @@ public class Builder
 
         DockerImages = dockerImages;
         DockerDeployers = dockerDeployers;
-
-        return this;
     }
 
     public string ToJson() =>
