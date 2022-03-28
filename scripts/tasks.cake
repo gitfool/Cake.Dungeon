@@ -275,6 +275,10 @@ Tasks.PublishToDocker = Task("PublishToDocker")
         Tag = tags,
         ArgumentCustomization = args => args.Append("--push")
     };
+    if (BuildSystem.IsRunningOnGitHubActions)
+    {
+        settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+    }
     DockerBuildXBuild(settings, image.Context);
 });
 
