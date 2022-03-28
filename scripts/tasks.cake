@@ -77,13 +77,13 @@ Tasks.DockerBuild = Task("DockerBuild")
         File = image.File,
         BuildArg = image.Args,
         Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
+        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray(),
+        ArgumentCustomization = args => { if (Build.ToolSettings.DockerBuildLoad) args.Append("--load"); return args; }
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
         settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
         settings.CacheTo = new[] { $"type=gha,mode=max,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
-        settings.ArgumentCustomization = args => args.Append("--load");
     }
     DockerBuildXBuild(settings, image.Context);
 });
@@ -242,26 +242,40 @@ Tasks.PublishToDocker = Task("PublishToDocker")
         .Select(tag => image.ToReference(Context, tag, Build.ToolSettings.DockerTagsLatest.Contains(tag)))
         .ToArray();
 
-    foreach (var reference in references)
+    var tags = references
+        .Where(reference =>
+        {
+            if (reference.Exists)
+            {
+                if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) && !Build.ToolSettings.DockerPushSkipDuplicate)
+                {
+                    throw new InvalidOperationException($"Docker image {reference.Target} already exists");
+                }
+                if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) || references.All(reference => reference.Exists))
+                {
+                    Information($"Skipping docker image {reference.Target} already exists");
+                    return false;
+                }
+            }
+            return true;
+        })
+        .Select(reference => reference.Target)
+        .ToArray();
+
+    if (!tags.Any())
     {
-        if (reference.Exists)
-        {
-            if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) && !Build.ToolSettings.DockerPushSkipDuplicate)
-            {
-                throw new InvalidOperationException($"Docker image {reference.Target} already exists");
-            }
-            if (!Build.ToolSettings.DockerTagsLatest.Contains(reference.Tag) || references.All(reference => reference.Exists))
-            {
-                Information($"Skipping docker image {reference.Target} already exists");
-                continue;
-            }
-        }
-        if (reference.Source != reference.Target)
-        {
-            DockerTag(reference.Source, reference.Target);
-        }
-        DockerPush(reference.Target);
+        Warning("Docker tags not found");
+        return;
     }
+
+    var settings = new DockerBuildXBuildSettings
+    {
+        File = image.File,
+        BuildArg = image.Args,
+        Tag = tags,
+        ArgumentCustomization = args => args.Append("--push")
+    };
+    DockerBuildXBuild(settings, image.Context);
 });
 
 Tasks.PublishToNuGet = Task("PublishToNuGet")

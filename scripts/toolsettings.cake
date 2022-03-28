@@ -21,6 +21,7 @@ public class ToolSettings
         string[] testCoverageReportAssemblyFilters,
         string[] testCoverageReportClassFilters,
         string[] testCoverageReportTypes,
+        bool? dockerBuildLoad,
         bool? dockerBuildPull,
         bool? dockerPushLatest,
         bool? dockerPushSkipDuplicate,
@@ -53,6 +54,7 @@ public class ToolSettings
         TestCoverageReportClassFilters = testCoverageReportClassFilters;
         TestCoverageReportTypes = testCoverageReportTypes ?? new[] { "Cobertura", "TextSummary" };
 
+        DockerBuildLoad = dockerBuildLoad ?? false;
         DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
         DockerPushSkipDuplicate = dockerPushSkipDuplicate ?? false;
@@ -87,6 +89,7 @@ public class ToolSettings
     public string[] TestCoverageReportClassFilters { get; }
     public string[] TestCoverageReportTypes { get; }
 
+    public bool DockerBuildLoad { get; }
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
     public bool DockerPushSkipDuplicate { get; }
