@@ -76,9 +76,9 @@ Tasks.DockerBuild = Task("DockerBuild")
     {
         File = image.File,
         BuildArg = image.Args,
+        Load = Build.ToolSettings.DockerBuildLoad,
         Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray(),
-        ArgumentCustomization = args => { if (Build.ToolSettings.DockerBuildLoad) args.Append("--load"); return args; }
+        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
@@ -272,8 +272,8 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     {
         File = image.File,
         BuildArg = image.Args,
-        Tag = tags,
-        ArgumentCustomization = args => args.Append("--push")
+        Push = true,
+        Tag = tags
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
