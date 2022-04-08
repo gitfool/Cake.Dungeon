@@ -1,4 +1,4 @@
-#addin nuget:?package=Cake.Docker&version=1.1.1
+#addin nuget:?package=Cake.Docker&version=1.1.2
 #addin nuget:?package=Cake.FileHelpers&version=5.0.0
 #addin nuget:?package=Cake.Incubator&version=7.0.0
 
