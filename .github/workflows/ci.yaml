@@ -27,7 +27,7 @@ jobs:
           submodules: true
 
       - name: Cache packages
-        uses: actions/cache@v3.0.1
+        uses: actions/cache@v3.0.2
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -55,10 +55,10 @@ jobs:
         uses: actions/setup-dotnet@v2.0.0
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-          dotnet-version: 6.0.201
+          dotnet-version: 6.0.202
 
       - name: Cache packages
-        uses: actions/cache@v3.0.1
+        uses: actions/cache@v3.0.2
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -86,10 +86,10 @@ jobs:
         uses: actions/setup-dotnet@v2.0.0
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-          dotnet-version: 6.0.201
+          dotnet-version: 6.0.202
 
       - name: Cache packages
-        uses: actions/cache@v3.0.1
+        uses: actions/cache@v3.0.2
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -117,10 +117,10 @@ jobs:
         uses: actions/setup-dotnet@v2.0.0
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-          dotnet-version: 6.0.201
+          dotnet-version: 6.0.202
 
       - name: Cache packages
-        uses: actions/cache@v3.0.1
+        uses: actions/cache@v3.0.2
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
