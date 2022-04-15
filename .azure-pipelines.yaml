@@ -22,7 +22,7 @@ jobs:
     steps:
       - checkout: self
         displayName: Checkout source
-        submodules: true
+        submodules: recursive
 
       - task: Cache@2
         displayName: Cache packages
@@ -40,7 +40,7 @@ jobs:
     steps:
       - checkout: self
         displayName: Checkout source
-        submodules: true
+        submodules: recursive
 
       - task: UseDotNet@2
         displayName: Install dotnet
@@ -64,7 +64,7 @@ jobs:
     steps:
       - checkout: self
         displayName: Checkout source
-        submodules: true
+        submodules: recursive
 
       - task: UseDotNet@2
         displayName: Install dotnet
@@ -88,7 +88,7 @@ jobs:
     steps:
       - checkout: self
         displayName: Checkout source
-        submodules: true
+        submodules: recursive
 
       - task: UseDotNet@2
         displayName: Install dotnet
