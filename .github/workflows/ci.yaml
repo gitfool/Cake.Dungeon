@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 env:
+  CAKE_SETTINGS_ENABLESCRIPTCACHE: true
   CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
@@ -24,7 +25,7 @@ jobs:
         uses: actions/checkout@v3.0.1
         with:
           fetch-depth: 0
-          submodules: true
+          submodules: recursive
 
       - name: Cache packages
         uses: actions/cache@v3.0.2
@@ -49,7 +50,7 @@ jobs:
         uses: actions/checkout@v3.0.1
         with:
           fetch-depth: 0
-          submodules: true
+          submodules: recursive
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v2.0.0
@@ -80,7 +81,7 @@ jobs:
         uses: actions/checkout@v3.0.1
         with:
           fetch-depth: 0
-          submodules: true
+          submodules: recursive
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v2.0.0
@@ -111,7 +112,7 @@ jobs:
         uses: actions/checkout@v3.0.1
         with:
           fetch-depth: 0
-          submodules: true
+          submodules: recursive
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v2.0.0
