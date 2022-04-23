@@ -22,7 +22,7 @@ jobs:
     container: dockfool/cake-docker:latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.1
+        uses: actions/checkout@v3.0.2
         with:
           fetch-depth: 0
           submodules: recursive
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.1
+        uses: actions/checkout@v3.0.2
         with:
           fetch-depth: 0
           submodules: recursive
@@ -78,7 +78,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.1
+        uses: actions/checkout@v3.0.2
         with:
           fetch-depth: 0
           submodules: recursive
@@ -109,7 +109,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.1
+        uses: actions/checkout@v3.0.2
         with:
           fetch-depth: 0
           submodules: recursive
