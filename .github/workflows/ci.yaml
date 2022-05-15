@@ -41,7 +41,7 @@ jobs:
       - name: Show outputs
         run: |
           # steps.cake-build.outputs.build
-          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
+          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
 
   build-linux:
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
       - name: Show outputs
         run: |
           # steps.cake-build.outputs.build
-          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
+          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
 
   build-mac:
     runs-on: macos-latest
@@ -103,7 +103,7 @@ jobs:
       - name: Show outputs
         run: |
           # steps.cake-build.outputs.build
-          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
+          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
 
   build-windows:
     runs-on: windows-latest
@@ -134,4 +134,4 @@ jobs:
       - name: Show outputs
         run: |
           # steps.cake-build.outputs.build
-          echo "${{ toJson(fromJson(steps.cake-build.outputs.build)) }}"
+          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
