@@ -38,7 +38,7 @@ linux:
       files: [ packages.lock.json ]
   script:
     # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 6.0.300
+    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 6.0.301
     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
     - dotnet tool restore && dotnet cake --verbosity=verbose
 
@@ -52,7 +52,7 @@ linux:
 #       files: [ packages.lock.json ]
 #   script:
 #     # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 6.0.300
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 6.0.301
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --verbosity=verbose
 
@@ -66,6 +66,6 @@ windows:
       files: [ packages.lock.json ]
   script:
     # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 6.0.300"'
+    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 6.0.301"'
     - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH"
     - dotnet tool restore ; dotnet cake --verbosity=verbose
