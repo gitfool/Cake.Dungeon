@@ -82,8 +82,11 @@ Tasks.DockerBuild = Task("DockerBuild")
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
-        settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
-        settings.CacheTo = new[] { $"type=gha,mode=max,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+        if (Build.ToolSettings.DockerBuildCache)
+        {
+            settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+            settings.CacheTo = new[] { $"type=gha,mode=max,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+        }
     }
     DockerBuildXBuild(settings, image.Context);
 });
@@ -277,7 +280,10 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
-        settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+        if (Build.ToolSettings.DockerBuildCache)
+        {
+            settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+        }
     }
     DockerBuildXBuild(settings, image.Context);
 });

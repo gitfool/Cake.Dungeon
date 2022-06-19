@@ -21,6 +21,7 @@ public class ToolSettings
         string[] testCoverageReportAssemblyFilters,
         string[] testCoverageReportClassFilters,
         string[] testCoverageReportTypes,
+        bool? dockerBuildCache,
         bool? dockerBuildLoad,
         bool? dockerBuildPull,
         bool? dockerPushLatest,
@@ -54,6 +55,7 @@ public class ToolSettings
         TestCoverageReportClassFilters = testCoverageReportClassFilters;
         TestCoverageReportTypes = testCoverageReportTypes ?? new[] { "Cobertura", "TextSummary" };
 
+        DockerBuildCache = dockerBuildCache ?? false;
         DockerBuildLoad = dockerBuildLoad ?? false;
         DockerBuildPull = dockerBuildPull ?? false;
         DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
@@ -89,6 +91,7 @@ public class ToolSettings
     public string[] TestCoverageReportClassFilters { get; }
     public string[] TestCoverageReportTypes { get; }
 
+    public bool DockerBuildCache { get; }
     public bool DockerBuildLoad { get; }
     public bool DockerBuildPull { get; }
     public bool DockerPushLatest { get; }
