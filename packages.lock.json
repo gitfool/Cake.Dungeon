@@ -23,9 +23,9 @@
       },
       "NuGetizer": {
         "type": "Direct",
-        "requested": "[0.7.5, )",
-        "resolved": "0.7.5",
-        "contentHash": "RRs9EQc4ZMCUoI8nOxTugv7wor14FBKJMniv0E3Dr9vhtIcBn/Br5gV4gL/yO3Z19kAj8/K3EqB1fARVk6+K0Q=="
+        "requested": "[0.8.0, )",
+        "resolved": "0.8.0",
+        "contentHash": "v9i8zHousx5E1hH778MibYpRumwDsjS2PxBngx81BpxqbdbTDIBJUrc8D5xB9Aw5eS+8Mvkmd/cii47Cj4YbBw=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
