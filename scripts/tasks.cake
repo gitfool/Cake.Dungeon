@@ -82,6 +82,7 @@ Tasks.DockerBuild = Task("DockerBuild")
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
+        settings.Platform = image.Platforms;
         if (Build.ToolSettings.DockerBuildCache)
         {
             settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
@@ -280,6 +281,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
+        settings.Platform = image.Platforms;
         if (Build.ToolSettings.DockerBuildCache)
         {
             settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };

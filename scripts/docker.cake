@@ -2,7 +2,7 @@
 
 public class DockerImage
 {
-    public DockerImage(string registry = null, string repository = null, string context = null, string file = null, string[] args = null, string[] tags = null)
+    public DockerImage(string registry = null, string repository = null, string context = null, string file = null, string[] args = null, string[] tags = null, string[] platforms = null)
     {
         Registry = registry;
         Repository = repository;
@@ -10,6 +10,7 @@ public class DockerImage
         File = file;
         Args = args;
         Tags = tags;
+        Platforms = platforms;
     }
 
     public string Registry { get; set; }
@@ -18,8 +19,10 @@ public class DockerImage
     public string File { get; set; }
     public string[] Args { get; set; }
     public string[] Tags { get; set; }
+    public string[] Platforms { get; set; }
 
-    public bool IsConfigured => Repository.IsConfigured() && Context.IsConfigured() && (Tags == null || Tags.All(tag => tag.IsConfigured()));
+    public bool IsConfigured => Repository.IsConfigured() && Context.IsConfigured() &&
+        (Tags == null || Tags.All(tag => tag.IsConfigured())) && (Platforms == null || Platforms.All(platform => platform.IsConfigured()));
 
     public DockerImageReference ToReference(ICakeContext context, string tag, bool latest)
     {
