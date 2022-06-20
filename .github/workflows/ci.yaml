@@ -39,9 +39,12 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose --publish=true
 
       - name: Show outputs
-        run: |
-          # steps.cake-build.outputs.build
-          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
+        uses: actions/github-script@v6.1.0
+        with:
+          script: |
+            // show outputs
+            const outputs = ${{ steps.cake-build.outputs.build }};
+            console.log(JSON.stringify(outputs, null, 2));
 
   build-linux:
     runs-on: ubuntu-latest
@@ -70,9 +73,12 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        run: |
-          # steps.cake-build.outputs.build
-          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
+        uses: actions/github-script@v6.1.0
+        with:
+          script: |
+            // show outputs
+            const outputs = ${{ steps.cake-build.outputs.build }};
+            console.log(JSON.stringify(outputs, null, 2));
 
   build-mac:
     runs-on: macos-latest
@@ -101,9 +107,12 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        run: |
-          # steps.cake-build.outputs.build
-          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
+        uses: actions/github-script@v6.1.0
+        with:
+          script: |
+            // show outputs
+            const outputs = ${{ steps.cake-build.outputs.build }};
+            console.log(JSON.stringify(outputs, null, 2));
 
   build-windows:
     runs-on: windows-latest
@@ -132,6 +141,9 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        run: |
-          # steps.cake-build.outputs.build
-          echo '${{ toJson(fromJson(steps.cake-build.outputs.build)) }}'
+        uses: actions/github-script@v6.1.0
+        with:
+          script: |
+            // show outputs
+            const outputs = ${{ steps.cake-build.outputs.build }};
+            console.log(JSON.stringify(outputs, null, 2));
