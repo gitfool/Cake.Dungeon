@@ -2,12 +2,13 @@
 
 public class DockerImage
 {
-    public DockerImage(string registry = null, string repository = null, string context = null, string file = null, string[] args = null, string[] tags = null, string[] platforms = null)
+    public DockerImage(string registry = null, string repository = null, string context = null, string file = null, string target = null, string[] args = null, string[] tags = null, string[] platforms = null)
     {
         Registry = registry;
         Repository = repository;
         Context = context ?? ".";
         File = file;
+        Target = target;
         Args = args;
         Tags = tags;
         Platforms = platforms;
@@ -17,6 +18,7 @@ public class DockerImage
     public string Repository { get; set; }
     public string Context { get; set; }
     public string File { get; set; }
+    public string Target { get; set; }
     public string[] Args { get; set; }
     public string[] Tags { get; set; }
     public string[] Platforms { get; set; }

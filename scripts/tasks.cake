@@ -75,6 +75,7 @@ Tasks.DockerBuild = Task("DockerBuild")
     var settings = new DockerBuildXBuildSettings
     {
         File = image.File,
+        Target = image.Target,
         BuildArg = image.Args,
         Load = Build.ToolSettings.DockerBuildLoad,
         Pull = Build.ToolSettings.DockerBuildPull,
@@ -275,6 +276,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
     var settings = new DockerBuildXBuildSettings
     {
         File = image.File,
+        Target = image.Target,
         BuildArg = image.Args,
         Push = true,
         Tag = tags
