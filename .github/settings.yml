@@ -1,7 +1,10 @@
-# https://github.com/probot/settings
+# https://github.com/repository-settings/app
 
 # https://github.com/gitfool/.github/blob/main/.github/settings.yml
 _extends: .github
+
+repository:
+  topics: cake, build, cake-build, cake-recipe, csharp, dotnet
 
 branches:
   - name: main
