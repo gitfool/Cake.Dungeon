@@ -32,7 +32,7 @@ jobs:
           submodules: recursive
 
       - name: Cache packages
-        uses: actions/cache@v3.0.5
+        uses: actions/cache@v3.0.7
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -43,7 +43,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose --publish=true
 
       - name: Show outputs
-        uses: actions/github-script@v6.1.0
+        uses: actions/github-script@v6.1.1
         with:
           script: |
             // show outputs
@@ -63,10 +63,10 @@ jobs:
         uses: actions/setup-dotnet@v2.1.0
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-          dotnet-version: 6.0.302
+          dotnet-version: 6.0.400
 
       - name: Cache packages
-        uses: actions/cache@v3.0.5
+        uses: actions/cache@v3.0.7
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -77,7 +77,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        uses: actions/github-script@v6.1.0
+        uses: actions/github-script@v6.1.1
         with:
           script: |
             // show outputs
@@ -97,10 +97,10 @@ jobs:
         uses: actions/setup-dotnet@v2.1.0
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-          dotnet-version: 6.0.302
+          dotnet-version: 6.0.400
 
       - name: Cache packages
-        uses: actions/cache@v3.0.5
+        uses: actions/cache@v3.0.7
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -111,7 +111,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        uses: actions/github-script@v6.1.0
+        uses: actions/github-script@v6.1.1
         with:
           script: |
             // show outputs
@@ -131,10 +131,10 @@ jobs:
         uses: actions/setup-dotnet@v2.1.0
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
-          dotnet-version: 6.0.302
+          dotnet-version: 6.0.400
 
       - name: Cache packages
-        uses: actions/cache@v3.0.5
+        uses: actions/cache@v3.0.7
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -145,7 +145,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        uses: actions/github-script@v6.1.0
+        uses: actions/github-script@v6.1.1
         with:
           script: |
             // show outputs
