@@ -77,13 +77,13 @@ Tasks.DockerBuild = Task("DockerBuild")
         File = image.File,
         Target = image.Target,
         BuildArg = image.Args,
-        Load = Build.ToolSettings.DockerBuildLoad,
-        Pull = Build.ToolSettings.DockerBuildPull,
-        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray()
+        Tag = (image.Tags ?? Build.ToolSettings.DockerTagsDefault).Select(tag => $"{image.Repository}:{tag}").ToArray(),
+        Platform = image.Platforms,
+        Load = Build.ToolSettings.DockerBuildLoad && image.Platforms is not { Length: > 1 },
+        Pull = Build.ToolSettings.DockerBuildPull
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
-        settings.Platform = image.Platforms;
         if (Build.ToolSettings.DockerBuildCache)
         {
             settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
@@ -91,6 +91,13 @@ Tasks.DockerBuild = Task("DockerBuild")
         }
     }
     DockerBuildXBuild(settings, image.Context);
+
+    if (Build.ToolSettings.DockerBuildLoad && image.Platforms is { Length: > 1 })
+    {
+        settings.Platform = null;
+        settings.Load = true;
+        DockerBuildXBuild(settings, image.Context);
+    }
 });
 
 Tasks.UnitTests = Task("UnitTests")
@@ -279,11 +286,11 @@ Tasks.PublishToDocker = Task("PublishToDocker")
         Target = image.Target,
         BuildArg = image.Args,
         Push = true,
-        Tag = tags
+        Tag = tags,
+        Platform = image.Platforms
     };
     if (BuildSystem.IsRunningOnGitHubActions)
     {
-        settings.Platform = image.Platforms;
         if (Build.ToolSettings.DockerBuildCache)
         {
             settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
