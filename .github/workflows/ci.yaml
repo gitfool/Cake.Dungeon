@@ -60,7 +60,7 @@ jobs:
           submodules: recursive
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v3.0.2
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
           dotnet-version: 6.0.400
@@ -94,7 +94,7 @@ jobs:
           submodules: recursive
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v3.0.2
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
           dotnet-version: 6.0.400
@@ -128,7 +128,7 @@ jobs:
           submodules: recursive
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v3.0.2
         with:
           # renovate: datasource=docker depName=dotnet-sdk packageName=mcr.microsoft.com/dotnet/sdk
           dotnet-version: 6.0.400
