@@ -26,13 +26,13 @@ jobs:
     container: dockfool/cake-docker:latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Cache packages
-        uses: actions/cache@v3.0.8
+        uses: actions/cache@v3.0.11
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -43,7 +43,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose --publish=true
 
       - name: Show outputs
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             // show outputs
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
           submodules: recursive
@@ -63,10 +63,10 @@ jobs:
         uses: actions/setup-dotnet@v3.0.2
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 6.0.400
+          dotnet-version: 6.0.402
 
       - name: Cache packages
-        uses: actions/cache@v3.0.8
+        uses: actions/cache@v3.0.11
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -77,7 +77,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             // show outputs
@@ -88,7 +88,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
           submodules: recursive
@@ -97,10 +97,10 @@ jobs:
         uses: actions/setup-dotnet@v3.0.2
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 6.0.400
+          dotnet-version: 6.0.402
 
       - name: Cache packages
-        uses: actions/cache@v3.0.8
+        uses: actions/cache@v3.0.11
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -111,7 +111,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             // show outputs
@@ -122,7 +122,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
           submodules: recursive
@@ -131,10 +131,10 @@ jobs:
         uses: actions/setup-dotnet@v3.0.2
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 6.0.400
+          dotnet-version: 6.0.402
 
       - name: Cache packages
-        uses: actions/cache@v3.0.8
+        uses: actions/cache@v3.0.11
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -145,7 +145,7 @@ jobs:
         run: dotnet tool restore && dotnet cake --verbosity=verbose
 
       - name: Show outputs
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             // show outputs
