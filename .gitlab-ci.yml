@@ -16,7 +16,7 @@ variables:
 
 stages: [ build ]
 
-docker:
+build-docker:
   stage: build
   tags: [ shared, linux, docker ]
   image: dockfool/cake-docker:latest
@@ -28,7 +28,7 @@ docker:
   script:
     - dotnet tool restore && dotnet cake --verbosity=verbose
 
-linux:
+build-linux:
   stage: build
   tags: [ shared, linux ]
   cache:
@@ -42,7 +42,7 @@ linux:
     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
     - dotnet tool restore && dotnet cake --verbosity=verbose
 
-# mac:
+# build-mac:
 #   stage: build
 #   tags: [ shared, macos ]
 #   cache:
@@ -56,7 +56,7 @@ linux:
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --verbosity=verbose
 
-windows:
+build-windows:
   stage: build
   tags: [ shared-windows, windows ]
   cache:
