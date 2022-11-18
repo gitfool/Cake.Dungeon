@@ -60,10 +60,10 @@ jobs:
           submodules: recursive
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v3.0.2
+        uses: actions/setup-dotnet@v3.0.3
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 6.0.402
+          dotnet-version: 6.0.403
 
       - name: Cache packages
         uses: actions/cache@v3.0.11
@@ -94,10 +94,10 @@ jobs:
           submodules: recursive
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v3.0.2
+        uses: actions/setup-dotnet@v3.0.3
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 6.0.402
+          dotnet-version: 6.0.403
 
       - name: Cache packages
         uses: actions/cache@v3.0.11
@@ -128,10 +128,10 @@ jobs:
           submodules: recursive
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v3.0.2
+        uses: actions/setup-dotnet@v3.0.3
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 6.0.402
+          dotnet-version: 6.0.403
 
       - name: Cache packages
         uses: actions/cache@v3.0.11
