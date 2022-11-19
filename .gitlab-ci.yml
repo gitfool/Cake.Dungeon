@@ -5,8 +5,8 @@ workflow:
     - if: '$CI_PIPELINE_SOURCE == "web"'
 
 variables:
-  CAKE_SETTINGS_ENABLESCRIPTCACHE: "true"
-  CAKE_SETTINGS_SHOWPROCESSCOMMANDLINE: "true"
+  Cake_Settings_EnableScriptCache: "true"
+  Cake_Settings_ShowProcessCommandLine: "true"
   DOTNET_CLI_TELEMETRY_OPTOUT: "true"
   DOTNET_NOLOGO: "true"
   DOTNET_ROLL_FORWARD: Major
