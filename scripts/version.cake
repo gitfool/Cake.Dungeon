@@ -7,7 +7,6 @@ public class Version
     }
 
     public string SemVer => GitVersion.SemVer;
-    public string FullSemVer => GitVersion.FullSemVer;
     public string AssemblyVersion => GitVersion.AssemblySemVer;
     public string AssemblyFileVersion => GitVersion.AssemblySemFileVer;
     public string InformationalVersion => GitVersion.InformationalVersion;
@@ -19,7 +18,7 @@ public class Version
     public bool IsRelease => IsTagged && string.IsNullOrEmpty(GitVersion.PreReleaseTag);
     public bool IsPublic => !IsLocal && !IsPullRequest && (IsPrelease || IsRelease);
 
-    public string Summary => $"{(IsPublic ? "Public " : "")}{(IsPrelease ? "Prelease " : IsRelease ? "Release " : "")}Version {FullSemVer}";
+    public string Summary => $"{(IsPublic ? "Public " : "")}{(IsPrelease ? "Prelease " : IsRelease ? "Release " : "")}Version {InformationalVersion}";
 
     private BuildSystem BuildSystem { get; }
     private GitVersion GitVersion { get; }

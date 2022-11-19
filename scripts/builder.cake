@@ -52,7 +52,17 @@ public class Builder
 
         if (BuildSystem.IsRunningOnGitHubActions)
         {
-            Context.Information($"::set-output name=build::{ToJson()}");
+            BuildSystem.GitHubActions.Commands.SetOutputParameter("json", ToJson());
+            BuildSystem.GitHubActions.Commands.SetOutputParameter("public", Version.IsPublic.ToValueString());
+            BuildSystem.GitHubActions.Commands.SetOutputParameter("version", Version.SemVer);
+        }
+        else if (BuildSystem.IsRunningOnGitLabCI)
+        {
+            Context.EnsureDirectoryExists(Directories.Cake);
+            Context.DeleteFile(Files.CakeOutputs);
+            BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Json", ToJson());
+            BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Public", Version.IsPublic.ToValueString());
+            BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Version", Version.SemVer);
         }
     }
 
@@ -85,10 +95,13 @@ public class Builder
         bool? runDockerDeploy = null,
 
         DirectoryPath rootDirectory = null, // directories
+        DirectoryPath cakeDirectory = null,
         DirectoryPath sourceDirectory = null,
         DirectoryPath artifactsDirectory = null,
         DirectoryPath artifactsTestsDirectory = null,
         DirectoryPath artifactsNuGetDirectory = null,
+
+        FilePath cakeOutputsFile = null, // files
 
         string[] buildSolutionPatterns = null, // patterns
         string[] unitTestProjectPatterns = null,
@@ -160,6 +173,7 @@ public class Builder
         Directories = new Directories(
             Context,
             rootDirectory,
+            cakeDirectory,
             sourceDirectory,
             artifactsDirectory,
             artifactsTestsDirectory,
@@ -167,7 +181,8 @@ public class Builder
 
         Files = new Files(
             Context,
-            Directories);
+            Directories,
+            cakeOutputsFile);
 
         Patterns = new Patterns(
             buildSolutionPatterns,
@@ -222,7 +237,7 @@ public class Builder
     public Dictionary<string, string> ToEnvVars() =>
         _envVars ??= ToTokens()
             .Where(entry => Regex.IsMatch(entry.Key, @"^Build\.(?:(?:Parameters\.(?:Title|Configuration|Publish|Deploy))|Version)"))
-            .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value?.ToString());
+            .ToDictionary(entry => entry.Key.ToEnvVar(), entry => entry.Value.ToValueString());
 
     public Dictionary<string, object> ToTokens() =>
         _tokens ??= this.ToTokens("Build")

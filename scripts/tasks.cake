@@ -33,8 +33,8 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     CleanDirectories($"{Build.Directories.Source}/**/bin");
     CleanDirectories($"{Build.Directories.Source}/**/obj");
 
-    var patterns = Build.Patterns.BuildSolutions.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
-    var solutions = GetFiles(patterns);
+    var patterns = Build.Patterns.BuildSolutions.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var solutions = Context.GetFiles(patterns);
     if (!solutions.Any())
     {
         Warning("Build solutions not found");
@@ -50,10 +50,10 @@ Tasks.BuildSolutions = Task("BuildSolutions")
         Version = Build.Version.AssemblyVersion,
         FileVersion = Build.Version.AssemblyFileVersion,
         InformationalVersion = Build.Version.InformationalVersion,
-        PackageVersion = Build.Version.FullSemVer
+        PackageVersion = Build.Version.SemVer
     }
-        .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToString().ToLowerInvariant())
-        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToString().ToLowerInvariant());
+        .WithProperty("EmbedAllSources", Build.ToolSettings.BuildEmbedAllSources.ToValueString())
+        .WithProperty("RestoreLockedMode", Build.ToolSettings.BuildRestoreLockedMode.ToValueString());
     var buildSettings = new DotNetBuildSettings
     {
         Configuration = Build.Parameters.Configuration,
@@ -98,8 +98,8 @@ Tasks.UnitTests = Task("UnitTests")
     .WithCriteria(() => Build.Parameters.RunUnitTests, "Not run")
     .Does(() =>
 {
-    var patterns = Build.Patterns.UnitTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
-    var projects = GetFiles(patterns);
+    var patterns = Build.Patterns.UnitTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var projects = Context.GetFiles(patterns);
     if (!projects.Any())
     {
         Warning("Unit test projects not found");
@@ -133,8 +133,8 @@ Tasks.IntegrationTests = Task("IntegrationTests")
     .WithCriteria(() => Build.Parameters.RunIntegrationTests, "Not run")
     .Does(() =>
 {
-    var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
-    var projects = GetFiles(patterns);
+    var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var projects = Context.GetFiles(patterns);
     if (!projects.Any())
     {
         Warning("Integration test projects not found");
@@ -172,8 +172,8 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
     var artifactsTestsCoverageDirectory = Build.Directories.ArtifactsTests.Combine("Coverage");
     CleanDirectory(artifactsTestsCoverageDirectory);
 
-    var patterns = Build.Patterns.TestCoverageReports.Select(pattern => $"{Build.Directories.ArtifactsTests}/{pattern}").ToArray();
-    var reports = GetFiles(patterns);
+    var patterns = Build.Patterns.TestCoverageReports.Select(pattern => $"{Build.Directories.ArtifactsTests}/{pattern}");
+    var reports = Context.GetFiles(patterns);
     if (!reports.Any())
     {
         Warning("Test coverage reports not found");
@@ -189,7 +189,7 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
     };
     ReportGenerator(reports, artifactsTestsCoverageDirectory, settings);
 
-    var summary = FileReadText($"{artifactsTestsCoverageDirectory}/Summary.txt");
+    var summary = Context.FileReadText($"{artifactsTestsCoverageDirectory}/Summary.txt");
     Information("");
     Information(summary);
 });
@@ -201,8 +201,8 @@ Tasks.NuGetPack = Task("NuGetPack")
 {
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
-    var patterns = Build.Patterns.NuGetProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}").ToArray();
-    var projects = GetFiles(patterns);
+    var patterns = Build.Patterns.NuGetProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
+    var projects = Context.GetFiles(patterns);
     if (!projects.Any())
     {
         Warning("NuGet projects not found");
@@ -214,7 +214,7 @@ Tasks.NuGetPack = Task("NuGetPack")
         Configuration = Build.Parameters.Configuration,
         IncludeSymbols = Build.ToolSettings.NuGetPackSymbols,
         SymbolPackageFormat = Build.ToolSettings.NuGetPackSymbolsFormat,
-        MSBuildSettings = new DotNetMSBuildSettings { PackageVersion = Build.Version.FullSemVer },
+        MSBuildSettings = new DotNetMSBuildSettings { PackageVersion = Build.Version.SemVer },
         NoLogo = Build.ToolSettings.DotNetNoLogo,
         NoBuild = true,
         NoRestore = true,

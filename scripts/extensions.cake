@@ -1,13 +1,18 @@
 #load bootstrap.cake
 
+public static string FileReadText(this ICakeContext context, FilePath file) =>
+    System.IO.File.ReadAllText(file.MakeAbsolute(context.Environment).FullPath);
+
+public static FilePathCollection GetFiles(this ICakeContext context, IEnumerable<string> patterns) =>
+    new FilePathCollection(patterns.Select(pattern => context.Globber.GetFiles(pattern)).SelectMany(paths => paths));
+
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 
 public static string Redact(this string value) => !string.IsNullOrEmpty(value) ? "[REDACTED]" : value;
 
 public static string ToEnvVar(this string value)
 {
-    value = Regex.Replace(value, @"(?<=A)ppVeyor|(?<=D)otNet|(?<=G)itHub|(?<=G)itLab|(?<=M)yGet|(?<=N)uGet|(?<=S)emVer|(?<=T)eamCity|(?<=U)serName", match => match.Value.ToLowerInvariant()); // compound values
-    value = Regex.Replace(value, @"(?<=[a-z])(?=[A-Z])|(?<=[A-Za-z])\.(?=[A-Z])", "_").ToUpperInvariant(); // split values
+    value = Regex.Replace(value, @"(?<=[A-Za-z])\.(?=[A-Z])", "_"); // nested values
     return Regex.Replace(value, @"\['?(.+?)'?\]", "_$1"); // indexed values
 }
 

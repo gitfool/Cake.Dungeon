@@ -1,6 +1,4 @@
 #addin nuget:?package=Cake.Docker&version=1.1.2
-#addin nuget:?package=Cake.FileHelpers&version=5.0.0
-#addin nuget:?package=Cake.Incubator&version=7.0.0
 
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.1.12
 #tool dotnet:?package=GitVersion.Tool&version=5.11.1
@@ -21,20 +19,10 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-TaskSetup(context =>
+if (BuildSystem.IsRunningOnGitHubActions)
 {
-    if (BuildSystem.IsRunningOnGitHubActions)
-    {
-        Information($"::group::{context.Task.Name}");
-    }
-});
-
-TaskTeardown(context =>
-{
-    if (BuildSystem.IsRunningOnGitHubActions)
-    {
-        Information($"::endgroup::{context.Task.Name}");
-    }
-});
+    TaskSetup(context => Information($"::group::{context.Task.Name}"));
+    TaskTeardown(context => Information($"::endgroup::"));
+}
 
 var Build = new Builder(BuildSystem, Context, target => RunTarget(target));
