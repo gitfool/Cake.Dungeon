@@ -21,8 +21,8 @@ using System.Text.RegularExpressions;
 
 if (BuildSystem.IsRunningOnGitHubActions)
 {
-    TaskSetup(context => Information($"::group::{context.Task.Name}"));
-    TaskTeardown(context => Information($"::endgroup::"));
+    TaskSetup(context => BuildSystem.GitHubActions.Commands.StartGroup(context.Task.Name));
+    TaskTeardown(context => BuildSystem.GitHubActions.Commands.EndGroup());
 }
 
 var Build = new Builder(BuildSystem, Context, target => RunTarget(target));
