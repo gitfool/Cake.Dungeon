@@ -58,8 +58,8 @@ public class Builder
         }
         else if (BuildSystem.IsRunningOnGitLabCI)
         {
+            using var _ = Context.NormalVerbosity();
             Context.EnsureDirectoryExists(Directories.Cake);
-            Context.DeleteFile(Files.CakeOutputs);
             BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Json", ToJson());
             BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Public", Version.IsPublic.ToValueString());
             BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Version", Version.SemVer);
