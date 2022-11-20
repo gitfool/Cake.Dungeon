@@ -3,7 +3,7 @@
 public class ToolSettings
 {
     public ToolSettings(
-        Builder build,
+        ICakeContext context,
         bool? dotNetNoLogo,
         bool? buildBinaryLoggerEnabled,
         bool? buildEmbedAllSources,
@@ -58,17 +58,17 @@ public class ToolSettings
         DockerBuildCache = dockerBuildCache ?? false;
         DockerBuildLoad = dockerBuildLoad ?? false;
         DockerBuildPull = dockerBuildPull ?? false;
-        DockerPushLatest = dockerPushLatest ?? build.Version.IsRelease;
+        DockerPushLatest = dockerPushLatest ?? false;
         DockerPushSkipDuplicate = dockerPushSkipDuplicate ?? false;
-        DockerTagsDefault = dockerTagsDefault ?? new[] { build.Version.SemVer, "latest" };
+        DockerTagsDefault = dockerTagsDefault ?? new[] { "latest" };
         DockerTagsLatest = dockerTagsLatest ?? new[] { "latest" };
 
         NuGetPackSymbols = nuGetPackSymbols ?? false;
         NuGetPackSymbolsFormat = nuGetPackSymbolsFormat;
         NuGetPushSkipDuplicate = nuGetPushSkipDuplicate ?? false;
-        NuGetSource = nuGetSource ?? build.Context.Argument("nuget-source", build.Context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json"));
-        NuGetSourceName = nuGetSourceName ?? build.Context.Argument("nuget-source-name", build.Context.EnvironmentVariable("NUGET_SOURCE_NAME", "nuget.org"));
-        NuGetSourceConfigFile = nuGetSourceConfigFile ?? build.Context.Argument("nuget-source-config-file", build.Context.EnvironmentVariable("NUGET_SOURCE_CONFIG_FILE"));
+        NuGetSource = nuGetSource ?? context.Argument("nuget-source", context.EnvironmentVariable("NUGET_SOURCE", "https://api.nuget.org/v3/index.json"));
+        NuGetSourceName = nuGetSourceName ?? context.Argument("nuget-source-name", context.EnvironmentVariable("NUGET_SOURCE_NAME", "nuget.org"));
+        NuGetSourceConfigFile = nuGetSourceConfigFile ?? context.Argument("nuget-source-config-file", context.EnvironmentVariable("NUGET_SOURCE_CONFIG_FILE"));
     }
 
     public bool DotNetNoLogo { get; }

@@ -58,7 +58,7 @@ public class Builder
         }
         else if (BuildSystem.IsRunningOnGitLabCI)
         {
-            using var _ = Context.NormalVerbosity();
+            using var _ = Context.QuietVerbosity();
             Context.EnsureDirectoryExists(Directories.Cake);
             BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Json", ToJson());
             BuildSystem.GitLabCI.Commands.SetEnvironmentVariable(Files.CakeOutputs, "Cake_Outputs_Public", Version.IsPublic.ToValueString());
@@ -144,7 +144,7 @@ public class Builder
         DockerDeployer[] dockerDeployers = null) // docker deployers
     {
         Parameters = new Parameters(
-            this,
+            Context,
             title,
             target,
             configuration,
@@ -192,7 +192,7 @@ public class Builder
             nuGetProjectPatterns);
 
         ToolSettings = new ToolSettings(
-            this,
+            Context,
             dotNetNoLogo,
             buildBinaryLoggerEnabled,
             buildEmbedAllSources,
@@ -213,9 +213,9 @@ public class Builder
             dockerBuildCache,
             dockerBuildLoad,
             dockerBuildPull,
-            dockerPushLatest,
+            dockerPushLatest ?? Version.IsRelease,
             dockerPushSkipDuplicate,
-            dockerTagsDefault,
+            dockerTagsDefault ?? new[] { Version.SemVer, "latest" },
             dockerTagsLatest,
             nuGetPackSymbols,
             nuGetPackSymbolsFormat,

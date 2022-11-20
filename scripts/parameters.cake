@@ -3,7 +3,7 @@
 public class Parameters
 {
     public Parameters(
-        Builder build,
+        ICakeContext context,
         string title,
         string target,
         string configuration,
@@ -27,19 +27,19 @@ public class Parameters
         bool? runDockerDeploy)
     {
         Title = title ?? throw new ArgumentNullException(nameof(title), @"Set the build title to the ""artifact"" name");
-        Target = target ?? build.Context.Argument("target", build.Context.EnvironmentVariable("CAKE_TARGET", "Build"));
-        Configuration = configuration ?? build.Context.Argument("configuration", build.Context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
+        Target = target ?? context.Argument("target", context.EnvironmentVariable("CAKE_TARGET", "Build"));
+        Configuration = configuration ?? context.Argument("configuration", context.EnvironmentVariable("CAKE_CONFIGURATION", "Release"));
 
-        Publish = publish ?? build.Context.Argument("publish", build.Context.EnvironmentVariable("CAKE_PUBLISH", false));
-        Deploy = deploy ?? build.Context.Argument("deploy", build.Context.EnvironmentVariable("CAKE_DEPLOY", Target.Equals("Deploy", StringComparison.OrdinalIgnoreCase)));
-        DeployEnvironment = deployEnvironment ?? build.Context.Argument("deploy-environment", build.Context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
+        Publish = publish ?? context.Argument("publish", context.EnvironmentVariable("CAKE_PUBLISH", false));
+        Deploy = deploy ?? context.Argument("deploy", context.EnvironmentVariable("CAKE_DEPLOY", Target.Equals("Deploy", StringComparison.OrdinalIgnoreCase)));
+        DeployEnvironment = deployEnvironment ?? context.Argument("deploy-environment", context.EnvironmentVariable("CAKE_DEPLOY_ENVIRONMENT", "CI"));
 
-        RedactRegex = redactRegex ?? build.Context.Argument("redact-regex", build.Context.EnvironmentVariable("CAKE_REDACT_REGEX", @"Api_?Key|Password|Secret|Token"));
+        RedactRegex = redactRegex ?? context.Argument("redact-regex", context.EnvironmentVariable("CAKE_REDACT_REGEX", @"Api_?Key|Password|Secret|Token"));
 
-        DefaultLog = defaultLog ?? build.Context.Argument("default-log", build.Context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
-        LogEnvironment = logEnvironment ?? build.Context.Argument("log-environment", build.Context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
-        LogBuildSystem = logBuildSystem ?? build.Context.Argument("log-build-system", build.Context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
-        LogContext = logContext ?? build.Context.Argument("log-context", build.Context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
+        DefaultLog = defaultLog ?? context.Argument("default-log", context.EnvironmentVariable("CAKE_DEFAULT_LOG", false));
+        LogEnvironment = logEnvironment ?? context.Argument("log-environment", context.EnvironmentVariable("CAKE_LOG_ENVIRONMENT", DefaultLog));
+        LogBuildSystem = logBuildSystem ?? context.Argument("log-build-system", context.EnvironmentVariable("CAKE_LOG_BUILD_SYSTEM", DefaultLog));
+        LogContext = logContext ?? context.Argument("log-context", context.EnvironmentVariable("CAKE_LOG_CONTEXT", DefaultLog));
 
         DefaultRun = defaultRun ?? false;
         RunBuildSolutions = runBuildSolutions ?? DefaultRun;
