@@ -34,7 +34,7 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     CleanDirectories($"{Build.Directories.Source}/**/obj");
 
     var patterns = Build.Patterns.BuildSolutions.Select(pattern => $"{Build.Directories.Source}/{pattern}");
-    var solutions = Context.GetFiles(patterns);
+    var solutions = GetFiles(patterns);
     if (!solutions.Any())
     {
         Warning("Build solutions not found");
@@ -99,7 +99,7 @@ Tasks.UnitTests = Task("UnitTests")
     .Does(() =>
 {
     var patterns = Build.Patterns.UnitTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
-    var projects = Context.GetFiles(patterns);
+    var projects = GetFiles(patterns);
     if (!projects.Any())
     {
         Warning("Unit test projects not found");
@@ -134,7 +134,7 @@ Tasks.IntegrationTests = Task("IntegrationTests")
     .Does(() =>
 {
     var patterns = Build.Patterns.IntegrationTestProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
-    var projects = Context.GetFiles(patterns);
+    var projects = GetFiles(patterns);
     if (!projects.Any())
     {
         Warning("Integration test projects not found");
@@ -173,7 +173,7 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
     CleanDirectory(artifactsTestsCoverageDirectory);
 
     var patterns = Build.Patterns.TestCoverageReports.Select(pattern => $"{Build.Directories.ArtifactsTests}/{pattern}");
-    var reports = Context.GetFiles(patterns);
+    var reports = GetFiles(patterns);
     if (!reports.Any())
     {
         Warning("Test coverage reports not found");
@@ -189,7 +189,7 @@ Tasks.TestCoverageReports = Task("TestCoverageReports")
     };
     ReportGenerator(reports, artifactsTestsCoverageDirectory, settings);
 
-    var summary = Context.FileReadText($"{artifactsTestsCoverageDirectory}/Summary.txt");
+    var summary = FileReadText($"{artifactsTestsCoverageDirectory}/Summary.txt");
     Information("");
     Information(summary);
 });
@@ -202,7 +202,7 @@ Tasks.NuGetPack = Task("NuGetPack")
     CleanDirectory(Build.Directories.ArtifactsNuGet);
 
     var patterns = Build.Patterns.NuGetProjects.Select(pattern => $"{Build.Directories.Source}/{pattern}");
-    var projects = Context.GetFiles(patterns);
+    var projects = GetFiles(patterns);
     if (!projects.Any())
     {
         Warning("NuGet projects not found");

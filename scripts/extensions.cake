@@ -1,11 +1,5 @@
 #load bootstrap.cake
 
-public static string FileReadText(this ICakeContext context, FilePath file) =>
-    System.IO.File.ReadAllText(file.MakeAbsolute(context.Environment).FullPath);
-
-public static FilePathCollection GetFiles(this ICakeContext context, IEnumerable<string> patterns) =>
-    new FilePathCollection(patterns.Select(pattern => context.Globber.GetFiles(pattern)).SelectMany(paths => paths));
-
 public static bool IsConfigured(this string value) => !string.IsNullOrWhiteSpace(value);
 
 public static string Redact(this string value) => !string.IsNullOrEmpty(value) ? "[REDACTED]" : value;

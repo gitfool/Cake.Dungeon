@@ -3,6 +3,7 @@
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.1.12
 #tool dotnet:?package=GitVersion.Tool&version=5.11.1
 
+#load aliases.cake
 #load builder.cake
 #load credentials.cake
 #load docker.cake
