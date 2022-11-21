@@ -64,16 +64,3 @@ public class DockerDeployer
 
     public bool IsConfigured => Repository.IsConfigured() && Tag.IsConfigured() && (Args == null || Args.Length > 0);
 }
-
-private static bool DockerManifestExists(this ICakeContext context, string manifest)
-{
-    try
-    {
-        context.DockerManifestInspect(manifest);
-        return true;
-    }
-    catch (Exception)
-    {
-        return false;
-    }
-}
