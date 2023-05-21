@@ -26,13 +26,13 @@ jobs:
     container: dockfool/cake-docker:latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Cache packages
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
           submodules: recursive
@@ -54,10 +54,10 @@ jobs:
         uses: actions/setup-dotnet@v3.0.3
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 7.0.200
+          dotnet-version: 7.0.302
 
       - name: Cache packages
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -70,7 +70,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
           submodules: recursive
@@ -79,10 +79,10 @@ jobs:
         uses: actions/setup-dotnet@v3.0.3
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 7.0.200
+          dotnet-version: 7.0.302
 
       - name: Cache packages
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
@@ -95,7 +95,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
           submodules: recursive
@@ -104,10 +104,10 @@ jobs:
         uses: actions/setup-dotnet@v3.0.3
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 7.0.200
+          dotnet-version: 7.0.302
 
       - name: Cache packages
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: ${{ runner.os }}-nuget-${{ hashFiles('.config/dotnet-tools.json', '**/packages.lock.json') }}
