@@ -29,6 +29,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+          show-progress: false
           submodules: recursive
 
       - name: Cache packages
@@ -48,6 +49,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+          show-progress: false
           submodules: recursive
 
       - name: Install dotnet
@@ -73,6 +75,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+          show-progress: false
           submodules: recursive
 
       - name: Install dotnet
@@ -98,6 +101,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+          show-progress: false
           submodules: recursive
 
       - name: Install dotnet
