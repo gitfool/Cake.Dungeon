@@ -30,8 +30,11 @@ Tasks.BuildSolutions = Task("BuildSolutions")
     .WithCriteria(() => Build.Parameters.RunBuildSolutions, "Not run")
     .Does(() =>
 {
-    CleanDirectories($"{Build.Directories.Source}/**/bin", info => !info.Path.Segments.Contains("node_modules", StringComparer.OrdinalIgnoreCase));
-    CleanDirectories($"{Build.Directories.Source}/**/obj");
+    if (!Build.ToolSettings.BuildSkipClean)
+    {
+        CleanDirectories($"{Build.Directories.Source}/**/bin", info => !info.Path.Segments.Contains("node_modules", StringComparer.OrdinalIgnoreCase));
+        CleanDirectories($"{Build.Directories.Source}/**/obj");
+    }
 
     var patterns = Build.Patterns.BuildSolutions.Select(pattern => $"{Build.Directories.Source}/{pattern}");
     var solutions = GetFiles(patterns);

@@ -9,6 +9,7 @@ public class ToolSettings
         bool? buildEmbedAllSources,
         int? buildMaxCpuCount,
         bool? buildRestoreLockedMode,
+        bool? buildSkipClean,
         bool? buildTreatWarningsAsErrors,
         string[] unitTestCollectors,
         string[] unitTestLoggers,
@@ -41,6 +42,7 @@ public class ToolSettings
         BuildEmbedAllSources = buildEmbedAllSources ?? false;
         BuildMaxCpuCount = buildMaxCpuCount;
         BuildRestoreLockedMode = buildRestoreLockedMode ?? false;
+        BuildSkipClean = buildSkipClean ?? false;
         BuildTreatWarningsAsErrors = buildTreatWarningsAsErrors ?? false;
 
         UnitTestCollectors = unitTestCollectors;
@@ -77,6 +79,7 @@ public class ToolSettings
     public bool BuildEmbedAllSources { get; }
     public int? BuildMaxCpuCount { get; }
     public bool BuildRestoreLockedMode { get; }
+    public bool BuildSkipClean { get; }
     public bool BuildTreatWarningsAsErrors { get; }
 
     public string[] UnitTestCollectors { get; }
