@@ -46,7 +46,7 @@ jobs:
         displayName: Install dotnet
         inputs:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          version: 9.0.102
+          version: 9.0.202
 
       - task: Cache@2
         displayName: Cache packages
@@ -70,7 +70,7 @@ jobs:
         displayName: Install dotnet
         inputs:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          version: 9.0.102
+          version: 9.0.202
 
       - task: Cache@2
         displayName: Cache packages
@@ -94,7 +94,7 @@ jobs:
         displayName: Install dotnet
         inputs:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          version: 9.0.102
+          version: 9.0.202
 
       - task: Cache@2
         displayName: Cache packages
