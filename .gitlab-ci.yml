@@ -38,7 +38,7 @@ build-linux:
       files: [ packages.lock.json ]
   script:
     # renovate: datasource=dotnet depName=dotnet-sdk
-    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 9.0.203
+    - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 9.0.305
     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
     - dotnet tool restore && dotnet cake --verbosity=verbose
 
@@ -52,7 +52,7 @@ build-linux:
 #       files: [ packages.lock.json ]
 #   script:
 #     # renovate: datasource=dotnet depName=dotnet-sdk
-#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 9.0.203
+#     - curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --version 9.0.305
 #     - export DOTNET_ROOT=$HOME/.dotnet && export PATH=$DOTNET_ROOT:$PATH
 #     - dotnet tool restore && dotnet cake --verbosity=verbose
 
@@ -66,6 +66,6 @@ build-windows:
       files: [ packages.lock.json ]
   script:
     # renovate: datasource=dotnet depName=dotnet-sdk
-    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 9.0.203"'
+    - '&powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1))) -Version 9.0.305"'
     - $env:DOTNET_ROOT="$env:LocalAppData\Microsoft\dotnet" ; $env:PATH="$env:DOTNET_ROOT;$env:PATH"
     - dotnet tool restore ; dotnet cake --verbosity=verbose
