@@ -13,9 +13,9 @@
       },
       "NuGetizer": {
         "type": "Direct",
-        "requested": "[1.2.4, )",
-        "resolved": "1.2.4",
-        "contentHash": "aobhLz/c+Fc9x0IYSX90DZZ7sAzWB/SfhVcdf9ga2ge5toKJ1Fj8ELdUwWchQ4+gjYpB6p4r7hzoHyNDK3EBCA=="
+        "requested": "[1.4.6, )",
+        "resolved": "1.4.6",
+        "contentHash": "3qk5v8OxU5UKYziI4rWOOezj66zcL56tb1XgSu0NGvKeGZB3xk0xoH2/89WlQ2/f6kfjL/YTuULf9zZ94fYhgg=="
       },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
