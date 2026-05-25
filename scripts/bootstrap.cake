@@ -1,7 +1,7 @@
 #addin nuget:?package=Cake.Docker&version=1.3.0
 
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.5.10
-#tool dotnet:?package=GitVersion.Tool&version=5.12.0
+#tool dotnet:?package=GitVersion.Tool&version=6.7.0
 
 #load aliases.cake
 #load builder.cake
