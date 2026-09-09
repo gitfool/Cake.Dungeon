@@ -13,14 +13,22 @@
       },
       "NuGetizer": {
         "type": "Direct",
-        "requested": "[1.4.7, )",
-        "resolved": "1.4.7",
-        "contentHash": "VnfkR/P/Lte/R1+FGIBHhQ3pvnCpeTMk3r3QbztZmm/chkthLjsWU/IBrxZgTVDlbXyc+RUyxrw2jZyJCPQD/g=="
+        "requested": "[1.5.0, )",
+        "resolved": "1.5.0",
+        "contentHash": "hRPT6g5qZoNInr1DyQk46FE3e85tjihomMPxRDWAiiaCeeqG/ZZtKzWDM2ITNMLdbJlJA+6Ft1DiGukVbm51qw==",
+        "dependencies": {
+          "Readme": "1.2.0"
+        }
       },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
         "resolved": "1.1.0",
         "contentHash": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A=="
+      },
+      "Readme": {
+        "type": "Transitive",
+        "resolved": "1.2.0",
+        "contentHash": "m15QDlWRtupw6aw23nduMMtahapaE/3LL7/j9e5yeyPPUDZOay5kerWqLq4DuOo3d7JXAOZErK1f08aJ12OSCg=="
       }
     }
   }
