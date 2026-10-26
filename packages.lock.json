@@ -13,9 +13,9 @@
       },
       "NuGetizer": {
         "type": "Direct",
-        "requested": "[1.5.0, )",
-        "resolved": "1.5.0",
-        "contentHash": "hRPT6g5qZoNInr1DyQk46FE3e85tjihomMPxRDWAiiaCeeqG/ZZtKzWDM2ITNMLdbJlJA+6Ft1DiGukVbm51qw==",
+        "requested": "[1.5.1, )",
+        "resolved": "1.5.1",
+        "contentHash": "rAQb5UQvHsFBZL6Gb/TGeBCm0PByozRNLLsQiGWNwIHKJljBE9Qi3ySF/jQW0vx4WyA9zGgOlYUcIGspRGi94w==",
         "dependencies": {
           "Readme": "1.2.0"
         }
