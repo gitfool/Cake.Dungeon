@@ -53,10 +53,10 @@ jobs:
           show-progress: false
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v6.0.0
+        uses: actions/setup-dotnet@v6.1.0
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 10.0.401
+          dotnet-version: 10.0.403
 
       - name: Cache packages
         uses: actions/cache@v6.1.0
@@ -79,10 +79,10 @@ jobs:
           show-progress: false
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v6.0.0
+        uses: actions/setup-dotnet@v6.1.0
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 10.0.401
+          dotnet-version: 10.0.403
 
       - name: Cache packages
         uses: actions/cache@v6.1.0
@@ -105,10 +105,10 @@ jobs:
           show-progress: false
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v6.0.0
+        uses: actions/setup-dotnet@v6.1.0
         with:
           # renovate: datasource=dotnet depName=dotnet-sdk
-          dotnet-version: 10.0.401
+          dotnet-version: 10.0.403
 
       - name: Cache packages
         uses: actions/cache@v6.1.0
