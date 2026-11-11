@@ -66,7 +66,8 @@ public static IEnumerable<KeyValuePair<string, object>> ToTokens(this object obj
 
     return obj?.GetType()
         .GetProperties()
-        .Where(property => property.GetIndexParameters().Length == 0) // filter indexed properties
+        .Where(property => !(typeof(ICakeContext).IsAssignableFrom(property.DeclaringType) && property.Name == nameof(ICakeContext.ServiceProvider)) && // filter cake context service provider
+            property.GetIndexParameters().Length == 0) // filter indexed properties
         .SelectMany(property => // flatten nested properties
         {
             var key = prefix != null ? $"{prefix}.{property.Name}" : property.Name;
