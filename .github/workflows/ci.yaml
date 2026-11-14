@@ -10,13 +10,17 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   Cake_Settings_EnableScriptCache: true
   Cake_Settings_ShowProcessCommandLine: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
   DOTNET_ROLL_FORWARD: Major
-  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+  NUGET_USERNAME: ${{ secrets.NUGET_USERNAME }}
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:

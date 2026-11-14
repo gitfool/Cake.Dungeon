@@ -89,8 +89,8 @@ Tasks.DockerBuild = Task("DockerBuild")
         settings.Platform = image.Platforms;
         if (Build.ToolSettings.DockerBuildCache)
         {
-            settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
-            settings.CacheTo = new[] { $"type=gha,mode=max,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+            settings.CacheFrom = new[] { $"type=gha,scope={GitHubActions.Environment.Workflow.Workflow}" };
+            settings.CacheTo = new[] { $"type=gha,mode=max,scope={GitHubActions.Environment.Workflow.Workflow}" };
         }
     }
     DockerBuildXBuild(settings, image.Context);
@@ -289,7 +289,7 @@ Tasks.PublishToDocker = Task("PublishToDocker")
         settings.Platform = image.Platforms;
         if (Build.ToolSettings.DockerBuildCache)
         {
-            settings.CacheFrom = new[] { $"type=gha,scope={BuildSystem.GitHubActions.Environment.Workflow.Workflow}" };
+            settings.CacheFrom = new[] { $"type=gha,scope={GitHubActions.Environment.Workflow.Workflow}" };
         }
     }
     DockerBuildXBuild(settings, image.Context);
@@ -298,10 +298,10 @@ Tasks.PublishToDocker = Task("PublishToDocker")
 Tasks.PublishToNuGet = Task("PublishToNuGet")
     .IsDependentOn("NuGetPack")
     .WithCriteria(() => Build.Parameters.RunPublishToNuGet, "Not run")
-    .WithCriteria(() => Build.Credentials.NuGet.IsConfigured && Build.ToolSettings.NuGetSource.IsConfigured(), "Not configured")
+    .WithCriteria(() => (Build.Credentials.NuGet.IsConfigured || (Build.Credentials.NuGet.UserName.IsConfigured() && BuildSystem.IsRunningOnGitHubActions)) && Build.ToolSettings.NuGetSource.IsConfigured(), "Not configured")
     .WithCriteria(() => Build.Version.IsPublic, "Not public")
     .WithCriteria(() => Build.Parameters.Publish, "Not publisher")
-    .Does(() =>
+    .Does(async () =>
 {
     var packages = GetFiles($"{Build.Directories.ArtifactsNuGet}/**/*.nupkg");
     if (!packages.Any())
@@ -310,29 +310,38 @@ Tasks.PublishToNuGet = Task("PublishToNuGet")
         return;
     }
 
-    if (Build.Credentials.NuGet.UserName.IsConfigured() && Build.Credentials.NuGet.Password.IsConfigured())
+    var apiKey = Build.Credentials.NuGet.ApiKey;
+
+    if (Build.Credentials.NuGet.UserName.IsConfigured())
     {
-        var sourceSettings = new DotNetNuGetSourceSettings
+        if (Build.Credentials.NuGet.Password.IsConfigured())
         {
-            UserName = Build.Credentials.NuGet.UserName,
-            Password = Build.Credentials.NuGet.Password,
-            StorePasswordInClearText = true,
-            Source = Build.ToolSettings.NuGetSource,
-            ConfigFile = Build.ToolSettings.NuGetSourceConfigFile
-        };
-        if (!DotNetNuGetHasSource(Build.ToolSettings.NuGetSourceName, sourceSettings))
-        {
-            DotNetNuGetAddSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            var sourceSettings = new DotNetNuGetSourceSettings
+            {
+                UserName = Build.Credentials.NuGet.UserName,
+                Password = Build.Credentials.NuGet.Password,
+                StorePasswordInClearText = true,
+                Source = Build.ToolSettings.NuGetSource,
+                ConfigFile = Build.ToolSettings.NuGetSourceConfigFile
+            };
+            if (!DotNetNuGetHasSource(Build.ToolSettings.NuGetSourceName, sourceSettings))
+            {
+                DotNetNuGetAddSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            }
+            else
+            {
+                DotNetNuGetUpdateSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            }
         }
-        else
+        else if (!apiKey.IsConfigured() && BuildSystem.IsRunningOnGitHubActions)
         {
-            DotNetNuGetUpdateSource(Build.ToolSettings.NuGetSourceName, sourceSettings);
+            apiKey = await GitHubActions.Commands.NuGetLogin(Build.Credentials.NuGet.UserName);
         }
     }
 
     var settings = new DotNetNuGetPushSettings
     {
-        ApiKey = Build.Credentials.NuGet.ApiKey,
+        ApiKey = apiKey,
         Source = Build.ToolSettings.NuGetSource,
         SkipDuplicate = Build.ToolSettings.NuGetPushSkipDuplicate
     };
